@@ -16,7 +16,6 @@ public class MutlverseCreatures extends JavaPlugin {
     }
 
     public void onEnable() {
-        saveDefaultConfig();
 
         getServer().getPluginManager().registerEvents(new MobHandler(this), this);
         getServer().getPluginManager().registerEvents(new ItemFoodHandler(), this);
