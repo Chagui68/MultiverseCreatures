@@ -51,13 +51,13 @@ public class MobHandler implements Listener {
 
     private static void equipWanderingVillager(WanderingTrader trader) {
         List<MerchantRecipe> tradeos = new ArrayList<>();
-        trader.setCustomName("Shaggy");
+        trader.setCustomName("§aShaggy");
         trader.setCustomNameVisible(true);
 
         ItemStack resultado1 = ItemsFoodTrades.SCOOBY_COOKIES.clone();
         resultado1.setAmount(5);
         MerchantRecipe precio1 = new MerchantRecipe(resultado1,999);
-        precio1.addIngredient(new ItemStack(Material.DIAMOND,15));
+        precio1.addIngredient(new ItemStack(Material.DIAMOND,20));
         tradeos.add(precio1);
         trader.setRecipes(tradeos);
 
