@@ -1,6 +1,6 @@
 package com.Chagui68.listener;
 
-import com.Chagui68.items.ItemsFoodTrades;
+import com.Chagui68.items.food.ScoobyCookie;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +26,7 @@ public class ItemFoodHandler implements Listener {
         }
 
         PersistentDataContainer data = meta.getPersistentDataContainer();
-        if (data.has(ItemsFoodTrades.COOKIE_KEY, PersistentDataType.INTEGER)) {
+        if (data.has(ScoobyCookie.COOKIE_KEY, PersistentDataType.INTEGER)) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 200, 5));
         }
     }
