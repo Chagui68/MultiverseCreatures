@@ -21,13 +21,14 @@ public class StarCore {
             meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Star Core");
 
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + "A compressed core of pure cosmic energy...");
+            lore.add(ChatColor.GRAY + "The strongest of this world, mixed with");
+            lore.add(ChatColor.GRAY + "the strongest of another, forged around");
+            lore.add(ChatColor.GRAY + "the heart of a superior entity.");
             lore.add("");
-            lore.add(ChatColor.WHITE + "Crafted from the essence of the Nether");
-            lore.add(ChatColor.WHITE + "and the hardest materials known.");
+            lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "The heart of a fallen star,");
+            lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "beating with ancient power.");
             lore.add("");
-            lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"The heart of a fallen star,\"");
-            lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"beating with ancient power.\"");
+            lore.add(ChatColor.DARK_GRAY + "✦ " + ChatColor.GRAY + "Multiverse" + ChatColor.DARK_GRAY + " ✦");
 
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(STAR_CORE_KEY, PersistentDataType.INTEGER, 1);

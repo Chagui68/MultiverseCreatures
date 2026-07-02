@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -25,7 +24,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -115,6 +116,7 @@ public class ItemCombatHandler implements Listener {
             int ticks = 0;
             double currentDistance = 0;
             final double step = 1.0;
+            final Set<UUID> hitThisCast = new HashSet<>();
 
             @Override
             public void run() {
@@ -138,8 +140,8 @@ public class ItemCombatHandler implements Listener {
 
                 for (Entity entity : p.getWorld().getNearbyEntities(beamCenter, beamRadius, beamRadius, beamRadius)) {
                     if (entity instanceof LivingEntity target && target != p) {
-                        if (!target.hasMetadata("solar_flare_hit")) {
-                            target.setMetadata("solar_flare_hit", new FixedMetadataValue(plugin, true));
+                        if (!hitThisCast.contains(target.getUniqueId())) {
+                            hitThisCast.add(target.getUniqueId());
                             target.damage(damage, p);
                             target.setFireTicks(fireTicks);
                             target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindnessDuration, 1));

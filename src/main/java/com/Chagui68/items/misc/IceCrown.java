@@ -29,6 +29,8 @@ public class IceCrown {
             lore.add(ChatColor.AQUA + "  ▸ " + ChatColor.WHITE + "Left-Click: " + ChatColor.GRAY + "Toggle Ice Path");
             lore.add("");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"Gunter, why you gotta be like that?\"");
+            lore.add("");
+            lore.add(ChatColor.DARK_GRAY + "✦ " + ChatColor.GRAY + "Ooo" + ChatColor.DARK_GRAY + " ✦");
             
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(ICE_CROWN_KEY, PersistentDataType.INTEGER, 1);

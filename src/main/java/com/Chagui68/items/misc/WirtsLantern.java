@@ -21,12 +21,14 @@ public class WirtsLantern {
             meta.setDisplayName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Wirt's Lantern");
             
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + "A lantern that holds a lost soul...");
+            lore.add(ChatColor.GRAY + "A lantern that holds a lost soul.");
             lore.add("");
             lore.add(ChatColor.WHITE + "Passive:");
-            lore.add(ChatColor.LIGHT_PURPLE + "  ▸ " + ChatColor.GRAY + "Repels hostile mobs in a radius");
+            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Repels hostile mobs in a radius");
             lore.add("");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"The flame knows no winter.\"");
+            lore.add("");
+            lore.add(ChatColor.DARK_GRAY + "✦ " + ChatColor.GRAY + "Khand" + ChatColor.DARK_GRAY + " ✦");
             
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(WIRTS_LANTERN_KEY, PersistentDataType.INTEGER, 1);

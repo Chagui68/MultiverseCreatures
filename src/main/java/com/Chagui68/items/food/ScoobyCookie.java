@@ -22,17 +22,19 @@ public class ScoobyCookie {
 
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "A mysterious cookie pulsating");
-            lore.add(ChatColor.GRAY + "with otherworldly energy...");
+            lore.add(ChatColor.GRAY + "with otherworldly energy.");
             lore.add("");
             lore.add(ChatColor.WHITE + "Effect on Consume:");
-            lore.add(ChatColor.GREEN + "  ▸ " + ChatColor.GRAY + "Resistance VI " + ChatColor.DARK_GRAY + "(10 seconds)");
+            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Resistance VI " + ChatColor.DARK_GRAY + "(10 seconds)");
             lore.add("");
             lore.add(ChatColor.AQUA + "Food: " + ChatColor.WHITE + "2 " + ChatColor.AQUA + "Saturation: " + ChatColor.WHITE + "0.4");
             lore.add("");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"Scooby-Dooby-Doo...\"");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"This tastes like courage!\"");
             lore.add("");
-            lore.add(ChatColor.GOLD + "✦ " + ChatColor.YELLOW + "Special " + ChatColor.GOLD + "✦");
+            lore.add(ChatColor.GOLD + "✦ " + ChatColor.YELLOW + "Special" + ChatColor.GOLD + " ✦");
+            lore.add("");
+            lore.add(ChatColor.DARK_GRAY + "✦ " + ChatColor.GRAY + "Mystery Inc." + ChatColor.DARK_GRAY + " ✦");
 
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(COOKIE_KEY, PersistentDataType.INTEGER, 1);

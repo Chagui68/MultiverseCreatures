@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -83,11 +84,16 @@ public class IceCrownHandler implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEvent e) {
-        if (e.getHand() != EquipmentSlot.HAND) return;
+        ItemStack item = e.getItem();
+        if (!isCrown(item)) return;
+
         Player p = e.getPlayer();
-        if (!hasCrown(p)) return;
 
         if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (e.getHand() != EquipmentSlot.HAND) {
+                e.setCancelled(true);
+                return;
+            }
             if (p.isSneaking()) {
                 performBlizzard(p);
             } else {
@@ -97,6 +103,7 @@ public class IceCrownHandler implements Listener {
         }
 
         if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+            if (e.getHand() != EquipmentSlot.HAND) return;
             toggleIcePath(p);
             e.setCancelled(true);
         }
@@ -248,7 +255,7 @@ public class IceCrownHandler implements Listener {
         w.playSound(loc, Sound.BLOCK_GLASS_BREAK, 1.2f, 0.5f);
         w.playSound(loc, Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.8f, 1f);
 
-        double damage = 6.0;
+        double damage = 12.0;
         target.damage(damage, shooter);
 
         if (isSnow) {
@@ -268,7 +275,6 @@ public class IceCrownHandler implements Listener {
 
         for (Block b : getNearbyBlocks(loc, 2)) {
             if (b.getType() == Material.WATER) b.setType(Material.ICE);
-            if (b.getType() == Material.AIR && random.nextDouble() < 0.2) b.setType(Material.SNOW);
         }
 
         if (fb.isValid()) fb.remove();
@@ -333,7 +339,7 @@ public class IceCrownHandler implements Listener {
                 for (Entity entity : p.getWorld().getNearbyEntities(center, expandingRadius, 4, expandingRadius)) {
                     if (entity instanceof LivingEntity && entity != p) {
                         LivingEntity le = (LivingEntity) entity;
-                        le.damage(1.5, p);
+                        le.damage(3.0, p);
                         le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 2));
                         le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS,40,2));
                         Vector pushDir = le.getLocation().toVector().subtract(center.toVector());
@@ -349,9 +355,6 @@ public class IceCrownHandler implements Listener {
                         if (x * x + z * z > expandingRadius * expandingRadius) continue;
                         Block b = center.clone().add(x, -1, z).getBlock();
                         if (b.getType() == Material.WATER) b.setType(Material.ICE);
-                        if (b.getType() == Material.AIR && random.nextDouble() < 0.1) {
-                            b.setType(Material.SNOW);
-                        }
                         Block ground = center.clone().add(x, 0, z).getBlock();
                         if (ground.getType() == Material.WATER) ground.setType(Material.ICE);
                     }
@@ -452,5 +455,12 @@ public class IceCrownHandler implements Listener {
         icePathActive.remove(id);
         activeBlizzards.remove(id);
         selectedBlocks.remove(id);
+    }
+
+    @EventHandler
+    public void onArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
+        ItemStack item = e.getPlayerItem();
+        if (item == null || !isCrown(item)) return;
+        e.setCancelled(true);
     }
 }

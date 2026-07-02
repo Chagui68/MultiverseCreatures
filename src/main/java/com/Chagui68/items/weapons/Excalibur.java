@@ -35,7 +35,9 @@ public class Excalibur {
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"if they be worthy, shall possess\"");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"the power of the Sun itself.\"");
             lore.add("");
-            lore.add(ChatColor.GOLD + "✦ " + ChatColor.YELLOW + "Mythic " + ChatColor.GOLD + "✦");
+            lore.add(ChatColor.GOLD + "✦ " + ChatColor.YELLOW + "Mythic" + ChatColor.GOLD + " ✦");
+            lore.add("");
+            lore.add(ChatColor.DARK_GRAY + "✦ " + ChatColor.GRAY + "Avalon" + ChatColor.DARK_GRAY + " ✦");
 
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(EXCALIBUR_KEY, PersistentDataType.INTEGER, 1);
