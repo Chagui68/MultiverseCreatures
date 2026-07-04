@@ -238,6 +238,20 @@ mahoraga:
     - "&f%player% was obliterated by Mahoraga"
     - "&f%player% stood no chance against Mahoraga"
 
+### Void Walker
+void-walker:
+  enabled: true
+  spawn-chance: 0.05
+  health: 80.0
+  aggro-range: 16.0
+  grab-range: 4.0
+  max-grab-distance: 20.0
+  damage-interval-ticks: 40
+  damage-per-interval: 4.0
+  void-y-level: -30.0
+  void-teleport-ticks: 120
+  ender-pearl-drop-chance: 0.5
+
 ### Commands
 commands:
   permission: "msc.admin"

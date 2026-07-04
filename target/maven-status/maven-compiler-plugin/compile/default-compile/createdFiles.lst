@@ -22,8 +22,10 @@ com/Chagui68/entities/Mahoraga.class
 com/Chagui68/entities/ZombieHorseTrap$1.class
 com/Chagui68/entities/CreeperJr.class
 com/Chagui68/entities/DioBoss$DioBossInstance$1.class
+com/Chagui68/entities/VoidWalker$1.class
 com/Chagui68/entities/HeadSlime.class
 com/Chagui68/listener/MantisClawsHandler$1.class
+com/Chagui68/entities/VoidWalker$VoidWalkerInstance.class
 com/Chagui68/items/misc/IceCrown.class
 com/Chagui68/listener/IceCrownHandler$2.class
 com/Chagui68/items/misc/MantisClaws.class
@@ -45,8 +47,10 @@ com/Chagui68/entities/ZombieHorseTrap$2.class
 com/Chagui68/commands/MSCCommand.class
 com/Chagui68/ability/FreezeAbility$1.class
 com/Chagui68/listener/IceCrownHandler.class
+com/Chagui68/listener/RecipeGuardListener.class
 com/Chagui68/entities/HeadSlime$HeadSlimeInstance.class
 com/Chagui68/items/misc/WirtsLantern.class
+com/Chagui68/entities/VoidWalker.class
 com/Chagui68/items/dio/DioStandHead.class
 com/Chagui68/items/misc/HeadSlimeHeart.class
 com/Chagui68/entities/DioBoss.class

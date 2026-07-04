@@ -259,7 +259,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
 
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(ChatColor.GOLD + "--- MultiverseCreatures Commands ---");
-        sender.sendMessage(ChatColor.YELLOW + "/msc spawn <type> " + ChatColor.WHITE + "- Spawn custom mobs (merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, adapter)");
+        sender.sendMessage(ChatColor.YELLOW + "/msc spawn <type> " + ChatColor.WHITE + "- Spawn custom mobs (merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga)");
         sender.sendMessage(ChatColor.YELLOW + "/msc give <item> [amount] " + ChatColor.WHITE + "- Give custom items");
         sender.sendMessage(ChatColor.YELLOW + "/msc cleanstands " + ChatColor.WHITE + "- Remove all custom plugin armor stands");
         sender.sendMessage(ChatColor.YELLOW + "/msc reload " + ChatColor.WHITE + "- Reload configuration");

@@ -24,5 +24,7 @@
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/misc/MilitaryComponent.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/commands/MSCCommand.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/food/ScoobyCookie.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/RecipeGuardListener.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/ItemCombatHandler.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/VoidWalker.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/MantisClawsHandler.java

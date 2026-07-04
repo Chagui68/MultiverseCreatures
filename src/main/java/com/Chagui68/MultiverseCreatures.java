@@ -54,6 +54,7 @@ public class MultiverseCreatures extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WirtsLanternHandler(this), this);
         getServer().getPluginManager().registerEvents(new MantisClawsHandler(this), this);
         getServer().getPluginManager().registerEvents(new MineHandler(this), this);
+        getServer().getPluginManager().registerEvents(new RecipeGuardListener(), this);
 
         com.Chagui68.commands.MSCCommand mscCommand = new com.Chagui68.commands.MSCCommand(this, mobHandler);
         getCommand("msc").setExecutor(mscCommand);
