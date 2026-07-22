@@ -118,7 +118,7 @@ All plugin interactions are handled via the `/msc` command (**Permission:** `msc
 
 ## 🚀 Requirements
 
-- **Server:** Paper or Spigot **1.21+**
+- **Server:** Purpur / Paper / Spigot **1.21+** (built against `purpur-api 1.21.11`)
 - **Java:** **21** or higher
 
 ## 🔨 Build
@@ -128,3 +128,60 @@ mvn clean package -DskipTests
 ```
 
 Output: `target/MultiverseCreatures-v${version}.jar`
+
+---
+
+## 🏗️ Project Structure
+
+```
+src/main/java/com/Chagui68/
+├── MultiverseCreatures.java      # Plugin entrypoint: onEnable/onDisable, recipe + listener registration
+├── ability/                       # Player abilities (e.g. FreezeAbility)
+├── commands/                      # /msc command executor and tab completer
+│   └── MSCCommand.java
+├── entities/                      # Custom mobs (each one implements Listener)
+│   ├── boss/
+│   │   ├── ArmorStandBoss.java    # Final boss: spawn, phases, shield, bar, AI ticker
+│   │   ├── MagicSealListener.java  # Particle seal rendering (not a Listener)
+│   │   ├── BossInstance.java       # Per-instance boss state struct
+│   │   └── attack/                # Boss attack framework + concrete attacks
+│   │       ├── BossAttack.java         # interface: execute(BossInstance), getName()
+│   │       ├── BossAttackBase.java     # abstract base: boss/plugin/random/sealDamage/...
+│   │       ├── aerial/                 # 13 air attacks (starfall, airslam, ...)
+│   │       ├── ground/                 # 11 ground attacks (shieldbash, groundslam, ...)
+│   │       └── ranged/                 # 12 ranged attacks (meteorstorm, spiritbeam, ...)
+│   ├── miniboss/                  # DioBoss, Mahoraga
+│   └── handler/                   # MobHandler (vanilla-spawn router)
+├── items/                         # Custom items, grouped by category
+│   ├── armor/      items/food/     items/dio/
+│   ├── components/                # Crafting ingredients (VoidEssence, MagmaCore, ...)
+│   ├── misc/                      # IceCrown, MantisClaws, WirtsLantern, MilitaryMine
+│   │   └── offhand/               # MarrowAegis, VeilwalkerMantle, FrostHeartOffhand
+│   └── weapons/{melee,ranged,magic}/
+├── listener/                      # Bukkit event handlers for items, bosses, rituals
+├── music/                         # NBS song playback (BossThemes)
+├── ritual/                        # Boss invocation rituals & private boss dimension
+└── utils/                         # Reusable helpers
+    ├── ItemBuilder.java           # Fluent builder for ItemStacks (lore, PDC tags, enchants)
+    └── MscEntityUtils.java        # setAttribute, spawnTagged, permanentFireResistance,
+                                   # isValidTarget, handleDeath — shared mob utilities
+```
+
+### Architectural conventions
+
+**Boss attacks** — All `ArmorStandBoss` attacks live as individual classes extending `BossAttackBase` under `entities/boss/attack/{aerial,ground,ranged}/`. They are registered in `ArmorStandBoss.initAttacks()` and dispatched polymorphically via `attackRegistry.get(name).execute(instance)`. The three random selectors (`executeRandomAerialAttack`, `executeRandomGroundAttack`, `executeRangedAttack`) and the `/msc triggerattack` switch all dispatch through the registry — adding a new attack is "create class + `registerAttack(new XxxAttack(this))`", no edits to dispatch code needed.
+
+**Mobs** — Each custom mob class implements `Listener` and self-registers in its own constructor (`Bukkit.getPluginManager().registerEvents(this, plugin)`). `MobHandler` is the exception: it's externally registered by `MultiverseCreatures.onEnable()` because it routes natural spawns.
+
+**Items** — All `ItemStack` construction goes through `utils/ItemBuilder` (fluent API: `ItemBuilder.of(Material).name(...).lore(...).tagged(KEY).build()`). Persistent data tags use `PersistentDataType.INTEGER` with a `NamespacedKey("multiversecreatures", "msc_<item>")` per item.
+
+**Attribute modifiers** — Use the modern `AttributeModifier(NamespacedKey, double, Operation)` constructor (NOT the deprecated UUID-based one). `ObsidianBastionHandler` is the reference implementation for armor set bonuses: idempotent `getModifier(key)` check before adding, `removeModifier(key)` on cleanup — no per-player modifier maps required.
+
+### Adding new content
+
+| To add... | Steps |
+|---|---|
+| **New item** | Create class under `items/<category>/` using `ItemBuilder`. Expose `public static final ItemStack` + `NamespacedKey KEY`. Register recipes in `MultiverseCreatures.registerRecipes()`. |
+| **New mob** | Create class under `entities/<...>/` implementing `Listener`. Use `MscEntityUtils.spawnTagged/setAttribute/handleDeath`. Self-register in constructor. Instantiate it in `MultiverseCreatures.onEnable()`. |
+| **New boss attack** | Create class extending `BossAttackBase` under `entities/boss/attack/<aerial\|ground\|ranged>/` returning a unique `getName()`. Delegate shared logic via `boss.<helper>()`. Register it in `ArmorStandBoss.initAttacks()`. |
+| **New tool/weapon handler** | Create `listener/XxxHandler` implementing `Listener`. Use `MscEntityUtils.isCreativeOrSpectator` for game-mode guards. Register it in `MultiverseCreatures.onEnable()` via `getServer().getPluginManager().registerEvents(new XxxHandler(this), this)`. |
