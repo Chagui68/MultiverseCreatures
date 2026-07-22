@@ -2,40 +2,52 @@ package com.Chagui68.commands;
 
 import com.Chagui68.items.dio.DioStandHead;
 import com.Chagui68.items.misc.IceCrown;
-import com.Chagui68.items.misc.MilitaryComponent;
+import com.Chagui68.items.components.MilitaryComponent;
 import com.Chagui68.items.misc.MilitaryMine;
-import com.Chagui68.items.weapons.Excalibur;
+import com.Chagui68.items.weapons.melee.Excalibur;
 import com.Chagui68.items.food.HeadSlimeGelatin;
 import com.Chagui68.items.food.ScoobyCookie;
-import com.Chagui68.items.misc.HeadSlimeHeart;
+import com.Chagui68.items.components.HeadSlimeHeart;
 import com.Chagui68.items.misc.MantisClaws;
-import com.Chagui68.items.misc.StarCore;
+import com.Chagui68.items.components.StarCore;
 import com.Chagui68.items.misc.WirtsLantern;
-import com.Chagui68.entities.Mahoraga;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
+import com.Chagui68.entities.miniboss.Mahoraga;
+import com.Chagui68.entities.boss.MagicSealListener;
+import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.EulerAngle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.Chagui68.entities.MobHandler;
+import com.Chagui68.entities.handler.MobHandler;
 import com.Chagui68.MultiverseCreatures;
+
+import static org.bukkit.ChatColor.*;
 
 public class MSCCommand implements CommandExecutor, TabCompleter {
 
     private final MultiverseCreatures plugin;
     private final MobHandler mobHandler;
+    private final Map<UUID, ArmorStand> playerDummies = new HashMap<>();
+    private final Map<UUID, BukkitRunnable> dummyWingTasks = new HashMap<>();
 
     public MSCCommand(MultiverseCreatures plugin, MobHandler mobHandler) {
         this.plugin = plugin;
@@ -45,7 +57,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+            sender.sendMessage(RED + "You do not have permission to use this command.");
             return true;
         }
 
@@ -60,17 +72,29 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "spawn":
                 handleSpawn(sender, args);
                 break;
-            case "reload":
-                handleReload(sender);
+            case "seal":
+                handleSeal(sender, args);
                 break;
             case "give":
                 handleGive(sender, args);
+                break;
+            case "dummy":
+                handleDummy(sender, args);
+                break;
+            case "dimtp":
+                handleDimtp(sender, args);
+                break;
+            case "attack":
+                handleAttack(sender, args);
+                break;
+            case "music":
+                handleMusic(sender, args);
                 break;
             case "cleanstands":
                 handleCleanStands(sender);
                 break;
             default:
-                sender.sendMessage(ChatColor.RED + "Unknown command. Use /msc for help.");
+                sender.sendMessage(RED + "Unknown command. Use /msc for help.");
                 sendHelp(sender);
                 break;
         }
@@ -80,12 +104,12 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
 
     private void handleSpawn(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "Only players can spawn entities.");
+            sender.sendMessage(RED + "Only players can spawn entities.");
             return;
         }
 
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /msc spawn <shaggy>");
+            sender.sendMessage(RED + "Usage: /msc spawn <shaggy>");
             return;
         }
 
@@ -95,106 +119,164 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             switch (type) {
             case "merchant" -> {
                 mobHandler.spawnShaggy(p.getLocation());
-                sender.sendMessage(ChatColor.GREEN + "Spawned Multiverse Merchant!");
+                sender.sendMessage(GREEN + "Spawned Multiverse Merchant!");
             }
             case "dio" -> {
                 boolean success = plugin.getDioBoss().trySpawnDio(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Dio Brando!");
+                    sender.sendMessage(GREEN + "Spawned Dio Brando!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Dio Brando.");
+                    sender.sendMessage(RED + "Failed to spawn Dio Brando.");
                 }
             }
             case "creeperjr" -> {
                 boolean success = plugin.getCreeperJr().trySpawn(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Creeper Jr.!");
+                    sender.sendMessage(GREEN + "Spawned Creeper Jr.!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Creeper Jr.");
+                    sender.sendMessage(RED + "Failed to spawn Creeper Jr.");
                 }
             }
             case "headslime" -> {
                 boolean success = plugin.getHeadSlime().trySpawn(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Head Slime!");
+                    sender.sendMessage(GREEN + "Spawned Head Slime!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Head Slime.");
+                    sender.sendMessage(RED + "Failed to spawn Head Slime.");
                 }
             }
             case "zombietrap", "army" -> {
                 boolean success = plugin.getZombieHorseTrap().trySpawn(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Military Zombie Horse trap!");
+                    sender.sendMessage(GREEN + "Spawned Military Zombie Horse trap!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn trap.");
+                    sender.sendMessage(RED + "Failed to spawn trap.");
                 }
             }
             case "tank" -> {
                 boolean success = plugin.getZombieHorseTrap().trySpawnTank(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Zombie Tank!");
+                    sender.sendMessage(GREEN + "Spawned Zombie Tank!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Zombie Tank.");
+                    sender.sendMessage(RED + "Failed to spawn Zombie Tank.");
                 }
             }
             case "duelist" -> {
                 boolean success = plugin.getZombieHorseTrap().trySpawnDuelist(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Military Skeleton Duelist!");
+                    sender.sendMessage(GREEN + "Spawned Military Skeleton Duelist!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Duelist.");
+                    sender.sendMessage(RED + "Failed to spawn Duelist.");
                 }
             }
             case "lancer" -> {
                 boolean success = plugin.getZombieHorseTrap().trySpawnLancer(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Zombie Lancer on horse!");
+                    sender.sendMessage(GREEN + "Spawned Zombie Lancer on horse!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Lancer.");
+                    sender.sendMessage(RED + "Failed to spawn Lancer.");
                 }
             }
             case "camel" -> {
                 boolean success = plugin.getZombieHorseTrap().trySpawnCamel(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Camel with riders!");
+                    sender.sendMessage(GREEN + "Spawned Camel with riders!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Camel.");
+                    sender.sendMessage(RED + "Failed to spawn Camel.");
                 }
             }
             case "sniper" -> {
                 boolean success = plugin.getZombieHorseTrap().trySpawnSniper(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Sniper Skeleton!");
+                    sender.sendMessage(GREEN + "Spawned Sniper Skeleton!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Sniper.");
+                    sender.sendMessage(RED + "Failed to spawn Sniper.");
                 }
             }
             case "mahoraga" -> {
                 boolean success = plugin.getMahoraga().trySpawn(p.getLocation());
                 if (success) {
-                    sender.sendMessage(ChatColor.GREEN + "Spawned Mahoraga!");
+                    sender.sendMessage(GREEN + "Spawned Mahoraga!");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Failed to spawn Mahoraga.");
+                    sender.sendMessage(RED + "Failed to spawn Mahoraga.");
                 }
             }
-            default -> sender.sendMessage(ChatColor.RED + "Unknown entity type. Available: merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga");
+            case "armorstand", "armorstandboss" -> {
+                boolean success = plugin.getArmorStandBoss().trySpawn(p.getLocation());
+                if (success) {
+                    sender.sendMessage(GREEN + "Spawned ArmorStand Boss!");
+                } else {
+                    sender.sendMessage(RED + "Failed to spawn ArmorStand Boss.");
+                }
+            }
+            case "shadowrogue", "rogue" -> {
+                boolean success = plugin.getShadowRogue().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Shadow Rogue!");
+                else sender.sendMessage(RED + "Failed to spawn Shadow Rogue.");
+            }
+            case "flameelemental", "flame" -> {
+                boolean success = plugin.getFlameElemental().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Flame Elemental!");
+                else sender.sendMessage(RED + "Failed to spawn Flame Elemental.");
+            }
+            case "frostgolem", "frost" -> {
+                boolean success = plugin.getFrostGolem().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Frost Golem!");
+                else sender.sendMessage(RED + "Failed to spawn Frost Golem.");
+            }
+            case "voidcrawler", "void" -> {
+                boolean success = plugin.getVoidCrawler().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Void Crawler!");
+                else sender.sendMessage(RED + "Failed to spawn Void Crawler.");
+            }
+            case "stormcaller", "storm" -> {
+                boolean success = plugin.getStormCaller().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Storm Caller!");
+                else sender.sendMessage(RED + "Failed to spawn Storm Caller.");
+            }
+            case "boneshield", "bone" -> {
+                boolean success = plugin.getBoneShield().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Bone Shield!");
+                else sender.sendMessage(RED + "Failed to spawn Bone Shield.");
+            }
+            case "venomwitch", "venom" -> {
+                boolean success = plugin.getVenomWitch().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Venom Witch!");
+                else sender.sendMessage(RED + "Failed to spawn Venom Witch.");
+            }
+            case "obsidianguard", "obsidian" -> {
+                boolean success = plugin.getObsidianGuard().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Obsidian Guard!");
+                else sender.sendMessage(RED + "Failed to spawn Obsidian Guard.");
+            }
+            case "soulreaper", "reaper" -> {
+                boolean success = plugin.getSoulReaper().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Soul Reaper!");
+                else sender.sendMessage(RED + "Failed to spawn Soul Reaper.");
+            }
+            case "chaosmage", "chaos" -> {
+                boolean success = plugin.getChaosMage().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Chaos Mage!");
+                else sender.sendMessage(RED + "Failed to spawn Chaos Mage.");
+            }
+            case "enderknight", "ender" -> {
+                boolean success = plugin.getEnderKnight().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Ender Knight!");
+                else sender.sendMessage(RED + "Failed to spawn Ender Knight.");
+            }
+            default -> sender.sendMessage(RED + "Unknown entity type. Available: armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight");
         }
-    }
-
-    private void handleReload(CommandSender sender) {
-        plugin.reloadConfig();
-        sender.sendMessage(ChatColor.GREEN + "[MSC] Configuration reloaded.");
     }
 
     private void handleGive(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "Only players can receive items.");
+            sender.sendMessage(RED + "Only players can receive items.");
             return;
         }
 
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /msc give <item> [amount]");
-            sender.sendMessage(ChatColor.YELLOW + "Available items: scoobycookie, excalibur, icecrown, wirtslantern, starcore, mantisclaws");
+            sender.sendMessage(RED + "Usage: /msc give <item> [amount]");
+            sender.sendMessage(YELLOW + "Available items: scoobycookie, excalibur, icecrown, wirtslantern, starcore, mantisclaws");
             return;
         }
 
@@ -206,11 +288,11 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             try {
                 amount = Integer.parseInt(args[2]);
                 if (amount < 1 || amount > 64) {
-                    sender.sendMessage(ChatColor.RED + "Amount must be between 1 and 64.");
+                    sender.sendMessage(RED + "Amount must be between 1 and 64.");
                     return;
                 }
             } catch (NumberFormatException e) {
-                sender.sendMessage(ChatColor.RED + "Invalid amount.");
+                sender.sendMessage(RED + "Invalid amount.");
                 return;
             }
         }
@@ -231,13 +313,89 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         };
 
         if (item == null) {
-            sender.sendMessage(ChatColor.RED + "Unknown item. Available: scoobycookie, excalibur, icecrown, wirtslantern, starcore, diostand, mantisclaws, militarycomponent, militarymine, headslimeheart, headslimegelatin");
+            sender.sendMessage(RED + "Unknown item. Available: scoobycookie, excalibur, icecrown, wirtslantern, starcore, diostand, mantisclaws, militarycomponent, militarymine, headslimeheart, headslimegelatin");
             return;
         }
 
         item.setAmount(amount);
         target.getInventory().addItem(item);
-        sender.sendMessage(ChatColor.GREEN + "Gave " + amount + "x " + item.getItemMeta().getDisplayName() + ChatColor.GREEN + "!");
+        sender.sendMessage(GREEN + "Gave " + amount + "x " + item.getItemMeta().getDisplayName() + GREEN + "!");
+    }
+
+    private void handleMusic(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(RED + "Only players can use this command.");
+            return;
+        }
+        if (args.length < 2) {
+            sender.sendMessage(RED + "Usage: /msc music <play|stop|list> [name] [loop]");
+            return;
+        }
+
+        var music = plugin.getMusicManager();
+
+        switch (args[1].toLowerCase()) {
+            case "play" -> {
+                if (args.length < 3) {
+                    player.sendMessage(RED + "Usage: /msc music play <name> [loop]");
+                    return;
+                }
+                boolean loop = args.length >= 4 && args[3].equalsIgnoreCase("loop");
+                music.play(args[2], player, loop);
+            }
+            case "stop" -> {
+                if (music.isPlaying(player)) {
+                    music.stop(player);
+                    player.sendMessage(GREEN + "Music stopped.");
+                } else {
+                    player.sendMessage(YELLOW + "No music is playing.");
+                }
+            }
+            case "list" -> {
+                var songs = music.getSongNames();
+                if (songs.isEmpty()) {
+                    player.sendMessage(YELLOW + "No songs available. Place .nbs files in plugins/MultiverseCreatures/music/");
+                } else {
+                    player.sendMessage(GOLD + "Available songs:");
+                    for (String s : songs) {
+                        player.sendMessage(YELLOW + " - " + s);
+                    }
+                }
+            }
+            default -> player.sendMessage(RED + "Usage: /msc music <play|stop|list>");
+        }
+    }
+
+    private void handleAttack(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(RED + "Only players can use this command.");
+            return;
+        }
+        if (args.length < 2) {
+            sender.sendMessage(RED + "Usage: /msc attack <attack> [range]");
+            sender.sendMessage(YELLOW + "Attacks: crossbarrage, groundslam, plant, retrieve, pentagram, trianglecall, reset, flyup, land, rain, airslam, shieldseal, heal, groundshatter, shieldbash, lancestorm, earthpillar, chaingrapple, warstomp, armorspikes, vortexpull, mirrorimage, doombeamer, starfall, aerialrush, sonicboom, lightningstorm, gravitywell, crossslash, novaburst, darkorb, windcutter, heavenlyjudgment, phaserage, phasebarrier, phasestorm, phasedespair, stoneskin, reflectbarrier, absorbshield");
+            return;
+        }
+
+        String attackName = args[1].toLowerCase();
+        double range = 100;
+        if (args.length >= 3) {
+            try { range = Double.parseDouble(args[2]); }
+            catch (NumberFormatException e) { sender.sendMessage(RED + "Invalid range."); return; }
+        }
+
+        var boss = plugin.getArmorStandBoss();
+        UUID bossId = boss.findNearestBoss(player.getLocation(), range);
+        if (bossId == null) {
+            sender.sendMessage(RED + "No boss found within " + (int)range + " blocks.");
+            return;
+        }
+        boolean success = boss.triggerAttack(bossId, attackName);
+        if (success) {
+            sender.sendMessage(GREEN + "Triggered attack: " + attackName);
+        } else {
+            sender.sendMessage(RED + "Cannot use " + attackName + " in the boss's current state.");
+        }
     }
 
     private void handleCleanStands(CommandSender sender) {
@@ -254,15 +412,770 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        sender.sendMessage(ChatColor.GREEN + "Removed " + count + " custom armor stands.");
+        sender.sendMessage(GREEN + "Removed " + count + " custom armor stands.");
+    }
+
+    private void handleSeal(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(RED + "Only players can spawn seals.");
+            return;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(RED + "Usage: /msc seal <pattern> [plane]");
+            sender.sendMessage(YELLOW + "Patterns: pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2, vortex, quake, divine, storm");
+            sender.sendMessage(YELLOW + "Planes: horizontal (default), vertical-north, vertical-east");
+            return;
+        }
+
+        String type = args[1].toLowerCase();
+        final MagicSealListener.Plane plane;
+        if (args.length >= 3) {
+            switch (args[2].toLowerCase()) {
+                case "vertical-north", "vertical", "v", "xy" -> plane = MagicSealListener.Plane.XY;
+                case "vertical-east", "ez", "yz" -> plane = MagicSealListener.Plane.YZ;
+                case "horizontal", "h", "xz" -> plane = MagicSealListener.Plane.XZ;
+                default -> {
+                    sender.sendMessage(RED + "Unknown plane. Use: horizontal, vertical-north, vertical-east");
+                    return;
+                }
+            }
+        } else {
+            plane = MagicSealListener.Plane.XZ;
+        }
+
+        Location center = player.getLocation();
+        MagicSealListener listener = plugin.getMagicSealListener();
+
+        switch (type) {
+            case "pentagram" -> {
+                spawnTemporaryStandAndFire(player, center, (stand, ticks) -> listener.spawnPentagramSeal(stand, ticks, plane));
+                sender.sendMessage(GOLD + "Spawned Pentagram Seal for 6 seconds in plane " + plane + ".");
+            }
+            case "triangle", "runic" -> {
+                spawnTemporaryStandAndFire(player, center, (stand, ticks) -> listener.spawnRunicTriangleSeal(stand, ticks, plane));
+                sender.sendMessage(GOLD + "Spawned Runic Triangle Seal for 6 seconds in plane " + plane + ".");
+            }
+            case "celestial" -> {
+                spawnTemporaryStandAndFire(player, center, (stand, ticks) -> listener.spawnCelestialSeal(stand, ticks, plane));
+                sender.sendMessage(GOLD + "Spawned Celestial Seal for 6 seconds in plane " + plane + ".");
+            }
+            case "circle" -> {
+                drawSingleCircle(center, 5.0, Color.fromRGB(0xFFFF55), 200, 130, plane);
+                sender.sendMessage(GOLD + "Drew single yellow circle (radius 5) in plane " + plane + ".");
+            }
+            case "ring" -> {
+                drawSingleCircle(center, 8.0, Color.fromRGB(0x00FFFF), 280, 130, plane);
+                sender.sendMessage(GOLD + "Drew single aqua ring (radius 8) in plane " + plane + ".");
+            }
+            case "star" -> {
+                drawSixPointStar(center, 6.0, Color.WHITE, 100, 130, plane);
+                sender.sendMessage(GOLD + "Drew six-point star (radius 6) in plane " + plane + ".");
+            }
+            case "floating", "shield" -> {
+                listener.spawnFloatingShieldSeal(center, 120);
+                sender.sendMessage(GOLD + "Spawned Floating Shield Seal for 6 seconds.");
+            }
+            case "wings" -> {
+                listener.spawnWingSeal(center, player.getLocation().getYaw(), 120);
+                sender.sendMessage(GOLD + "Spawned Wing Seal for 6 seconds.");
+            }
+            case "wings2" -> {
+                listener.spawnWingSeal2(center, player.getLocation().getYaw(), 120);
+                sender.sendMessage(GOLD + "Spawned Wing Seal 2 for 6 seconds.");
+            }
+            case "vortex" -> {
+                listener.spawnVortexSeal(center, 120);
+                sender.sendMessage(GOLD + "Spawned Vortex Seal for 6 seconds.");
+            }
+            case "quake" -> {
+                listener.spawnQuakeSeal(center, 120);
+                sender.sendMessage(GOLD + "Spawned Quake Seal for 6 seconds.");
+            }
+            case "divine" -> {
+                listener.spawnDivineSeal(center, 120);
+                sender.sendMessage(GOLD + "Spawned Divine Seal for 6 seconds.");
+            }
+            case "storm" -> {
+                listener.spawnStormSeal(center, 120);
+                sender.sendMessage(GOLD + "Spawned Storm Seal for 6 seconds.");
+            }
+            default -> sender.sendMessage(RED + "Unknown seal. Use: pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2, vortex, quake, divine, storm");
+        }
+    }
+
+    private interface SealTask {
+        void run(ArmorStand stand, int durationTicks);
+    }
+
+    private void spawnTemporaryStandAndFire(Player player, Location center, SealTask task) {
+        ArmorStand marker = player.getWorld().spawn(center, ArmorStand.class, entity -> {
+            entity.setVisible(false);
+            entity.setGravity(false);
+            entity.setMarker(true);
+            entity.setCustomNameVisible(false);
+        });
+        marker.addScoreboardTag("MSC_SealMarker");
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> task.run(marker, 120), 1L);
+        plugin.getServer().getScheduler().runTaskLater(plugin, marker::remove, 130L);
+    }
+
+    private void drawSingleCircle(Location center, double radius, org.bukkit.Color color, int samples, int ticks, MagicSealListener.Plane plane) {
+        new BukkitRunnable() {
+            int t = 0;
+            @Override
+            public void run() {
+                if (t >= ticks) {
+                    cancel();
+                    return;
+                }
+                double step = (2 * Math.PI) / samples;
+                World world = center.getWorld();
+                for (int i = 0; i < samples; i++) {
+                    double a = i * step + (t * 0.05);
+                    double c = radius * Math.cos(a);
+                    double s = radius * Math.sin(a);
+                    double x, y, z;
+                    switch (plane) {
+                        case XZ -> { x = center.getX() + c; y = center.getY() + 0.05; z = center.getZ() + s; }
+                        case XY -> { x = center.getX() + c; y = center.getY() + s; z = center.getZ(); }
+                        case YZ -> { x = center.getX(); y = center.getY() + c; z = center.getZ() + s; }
+                        default -> { x = center.getX() + c; y = center.getY() + 0.05; z = center.getZ() + s; }
+                    }
+                    Location loc = new Location(world, x, y, z);
+                    world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
+                            new Particle.DustOptions(color, 1.8f));
+                }
+                t++;
+            }
+        }.runTaskTimer(plugin, 0L, 1L);
+    }
+
+    private void drawSixPointStar(Location center, double radius, org.bukkit.Color color, int samples, int ticks, MagicSealListener.Plane plane) {
+        new BukkitRunnable() {
+            int t = 0;
+            @Override
+            public void run() {
+                if (t >= ticks) {
+                    cancel();
+                    return;
+                }
+                double step = (2 * Math.PI) / samples;
+                World world = center.getWorld();
+                for (int i = 0; i < samples; i++) {
+                    double angle = i * step + (t * 0.03);
+                    double r = radius * (i % (samples / 6) == 0 ? 1.0 : 0.55);
+                    double x, y, z;
+                    switch (plane) {
+                        case XZ -> { x = center.getX() + r * Math.cos(angle); y = center.getY() + 0.1; z = center.getZ() + r * Math.sin(angle); }
+                        case XY -> { x = center.getX() + r * Math.cos(angle); y = center.getY() + r * Math.sin(angle); z = center.getZ(); }
+                        case YZ -> { x = center.getX(); y = center.getY() + r * Math.cos(angle); z = center.getZ() + r * Math.sin(angle); }
+                        default -> { x = center.getX() + r * Math.cos(angle); y = center.getY() + 0.1; z = center.getZ() + r * Math.sin(angle); }
+                    }
+                    Location loc = new Location(world, x, y, z);
+                    world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
+                            new Particle.DustOptions(color, 1.8f));
+                }
+                t++;
+            }
+        }.runTaskTimer(plugin, 0L, 1L);
+    }
+
+    private void handleDummy(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(RED + "Only players can use this command.");
+            return;
+        }
+
+        if (args.length < 2) {
+            sendDummyHelp(player);
+            return;
+        }
+
+        String action = args[1].toLowerCase();
+
+        switch (action) {
+            case "spawn" -> spawnDummy(player);
+            case "remove" -> removeDummy(player);
+            case "set" -> dummySetPose(player, args);
+            case "wings" -> dummyWings(player);
+            case "wings2" -> dummyWings2(player);
+            case "nowings" -> dummyNoWings(player);
+            case "animate" -> dummyAnimate(player, args);
+            default -> dummyAdjustPose(player, args);
+        }
+    }
+
+    private void sendDummyHelp(Player player) {
+        player.sendMessage(GOLD + "--- Dummy ArmorStand Commands ---");
+        player.sendMessage(YELLOW + "/msc dummy spawn " + WHITE + "- Spawn a dummy armor stand (same scale/gear as boss)");
+        player.sendMessage(YELLOW + "/msc dummy remove " + WHITE + "- Remove your dummy");
+        player.sendMessage(YELLOW + "/msc dummy <part> <axis> <degrees> " + WHITE + "- Adjust pose incrementally");
+        player.sendMessage(YELLOW + "   " + GRAY + "Parts: rightarm, leftarm, body, head, rightleg, leftleg");
+        player.sendMessage(YELLOW + "   " + GRAY + "Axes: x (pitch), y (yaw), z (roll)");
+        player.sendMessage(YELLOW + "   " + GRAY + "Example: /msc dummy rightarm x 10  (adds 10° pitch)");
+        player.sendMessage(YELLOW + "/msc dummy set <part> <x> <y> <z> " + WHITE + "- Set exact pose in degrees");
+        player.sendMessage(YELLOW + "   " + GRAY + "Example: /msc dummy set rightarm -75 0 -15");
+        player.sendMessage(YELLOW + "/msc dummy wings " + WHITE + "- Add wing seal (gold) to your dummy");
+        player.sendMessage(YELLOW + "/msc dummy wings2 " + WHITE + "- Add wing seal 2 (red) to your dummy");
+        player.sendMessage(YELLOW + "/msc dummy nowings " + WHITE + "- Remove wing effects from your dummy");
+        player.sendMessage(YELLOW + "/msc dummy animate <anim> " + WHITE + "- Play a movement animation on your dummy");
+        player.sendMessage(YELLOW + "   " + GRAY + "Animations: flyup, land, airslam, shieldseal, healingcircle, rain, pentagram, triangle");
+    }
+
+    private void spawnDummy(Player player) {
+        ArmorStand existing = playerDummies.get(player.getUniqueId());
+        if (existing != null && existing.isValid()) {
+            player.sendMessage(YELLOW + "You already have a dummy. Use /msc dummy remove to remove it first.");
+            return;
+        }
+
+        ArmorStand stand = player.getWorld().spawn(player.getLocation(), ArmorStand.class, s -> {
+            s.setInvulnerable(false);
+            s.setCustomName(LIGHT_PURPLE + "Pose Dummy");
+            s.setCustomNameVisible(true);
+            s.setRemoveWhenFarAway(false);
+            s.setPersistent(true);
+            s.setAI(true);
+            s.setCanPickupItems(false);
+            s.setSmall(false);
+            s.setArms(true);
+            s.setBasePlate(false);
+            s.setGravity(false);
+        });
+
+        org.bukkit.attribute.AttributeInstance scaleAttr = stand.getAttribute(Attribute.SCALE);
+        if (scaleAttr != null) scaleAttr.setBaseValue(7.5);
+
+        EntityEquipment equip = stand.getEquipment();
+        if (equip != null) {
+            ItemStack spear = new ItemStack(Material.NETHERITE_SPEAR);
+            ItemMeta spearMeta = spear.getItemMeta();
+            if (spearMeta != null) {
+                spearMeta.setUnbreakable(true);
+                spear.setItemMeta(spearMeta);
+            }
+            equip.setItemInMainHand(spear);
+
+            ItemStack shield = new ItemStack(Material.SHIELD);
+            ItemMeta shieldMeta = shield.getItemMeta();
+            if (shieldMeta != null) {
+                shieldMeta.setUnbreakable(true);
+                shield.setItemMeta(shieldMeta);
+            }
+            equip.setItemInOffHand(shield);
+        }
+
+        stand.addScoreboardTag("MSC_Dummy");
+
+        playerDummies.put(player.getUniqueId(), stand);
+        player.sendMessage(GREEN + "Spawned pose dummy at your location.");
+        player.sendMessage(GRAY + "Current pose — RightArm: (0, 0, 0) LeftArm: (0, 0, 0) Body: (0, 0, 0)");
+    }
+
+    private void removeDummy(Player player) {
+        ArmorStand stand = playerDummies.remove(player.getUniqueId());
+        if (stand != null && stand.isValid()) {
+            stand.remove();
+            player.sendMessage(GREEN + "Dummy removed.");
+        } else {
+            player.sendMessage(RED + "You don't have a dummy.");
+        }
+    }
+
+    private void dummyWings(Player player) {
+        ArmorStand stand = playerDummies.get(player.getUniqueId());
+        if (stand == null || !stand.isValid()) {
+            player.sendMessage(RED + "You don't have a dummy. Use /msc dummy spawn first.");
+            return;
+        }
+        cancelDummyWings(player);
+        if (plugin.getMagicSealListener() != null) {
+            BukkitRunnable task = plugin.getMagicSealListener().spawnWingSeal(stand);
+            if (task != null) dummyWingTasks.put(player.getUniqueId(), task);
+            player.sendMessage(GREEN + "Wing seal added to your dummy.");
+        } else {
+            player.sendMessage(RED + "MagicSealListener not available.");
+        }
+    }
+
+    private void dummyWings2(Player player) {
+        ArmorStand stand = playerDummies.get(player.getUniqueId());
+        if (stand == null || !stand.isValid()) {
+            player.sendMessage(RED + "You don't have a dummy. Use /msc dummy spawn first.");
+            return;
+        }
+        cancelDummyWings(player);
+        if (plugin.getMagicSealListener() != null) {
+            BukkitRunnable task = plugin.getMagicSealListener().spawnWingSeal2(stand);
+            if (task != null) dummyWingTasks.put(player.getUniqueId(), task);
+            player.sendMessage(GREEN + "Wing seal 2 added to your dummy.");
+        } else {
+            player.sendMessage(RED + "MagicSealListener not available.");
+        }
+    }
+
+    private void dummyNoWings(Player player) {
+        if (!playerDummies.containsKey(player.getUniqueId())) {
+            player.sendMessage(RED + "You don't have a dummy. Use /msc dummy spawn first.");
+            return;
+        }
+        cancelDummyWings(player);
+        player.sendMessage(GREEN + "Wing effects removed from your dummy.");
+    }
+
+    private void cancelDummyWings(Player player) {
+        BukkitRunnable task = dummyWingTasks.remove(player.getUniqueId());
+        if (task != null) task.cancel();
+    }
+
+    private ArmorStand getOrDummy(Player player) {
+        ArmorStand stand = playerDummies.get(player.getUniqueId());
+        if (stand == null || !stand.isValid()) {
+            player.sendMessage(RED + "You don't have a dummy. Use /msc dummy spawn first.");
+            return null;
+        }
+        return stand;
+    }
+
+    private void dummyAnimate(Player player, String[] args) {
+        ArmorStand stand = getOrDummy(player);
+        if (stand == null) return;
+        if (args.length < 3) {
+            player.sendMessage(RED + "Usage: /msc dummy animate <anim>");
+            player.sendMessage(GRAY + "Animations: flyup, land, airslam, shieldseal, healingcircle, rain, pentagram, triangle");
+            return;
+        }
+
+        String anim = args[2].toLowerCase();
+        World world = stand.getWorld();
+        Location base = stand.getLocation();
+
+        switch (anim) {
+            case "flyup" -> {
+                stand.setRightArmPose(new EulerAngle(Math.toRadians(-45), 0, 0));
+                stand.setLeftArmPose(new EulerAngle(Math.toRadians(-45), 0, 0));
+                stand.setBodyPose(new EulerAngle(Math.toRadians(-5), 0, 0));
+                world.playSound(base, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.5f);
+                new BukkitRunnable() {
+                    int t = 0;
+                    @Override
+                    public void run() {
+                        if (!stand.isValid()) { cancel(); return; }
+                        if (t < 15) {
+                            Location l = stand.getLocation();
+                            world.spawnParticle(Particle.CLOUD, l.clone().add(0, -0.5, 0), 5, 1.0, 0.2, 1.0, 0.03);
+                            world.spawnParticle(Particle.END_ROD, l, 3, 0.5, 0.1, 0.5, 0.02);
+                            t++;
+                        } else {
+                            stand.setRightArmPose(new EulerAngle(0, 0, 0));
+                            stand.setLeftArmPose(new EulerAngle(0, 0, 0));
+                            stand.setBodyPose(new EulerAngle(0, 0, 0));
+                            world.playSound(base, Sound.ENTITY_ENDER_DRAGON_FLAP, 2.0f, 0.5f);
+                            new BukkitRunnable() {
+                                int up = 0;
+                                @Override
+                                public void run() {
+                                    if (!stand.isValid()) { cancel(); return; }
+                                    if (up >= 30) {
+                                        world.spawnParticle(Particle.CLOUD, stand.getLocation(), 20, 1.5, 0.3, 1.5, 0.1);
+                                        cancel();
+                                        return;
+                                    }
+                                    Location l = stand.getLocation();
+                                    l.setY(l.getY() + 0.5);
+                                    stand.teleport(l);
+                                    world.spawnParticle(Particle.CLOUD, l, 3, 0.3, 0.1, 0.3, 0.02);
+                                    up++;
+                                }
+                            }.runTaskTimer(plugin, 0L, 1L);
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(plugin, 0L, 1L);
+                player.sendMessage(GREEN + "Playing flyup animation on dummy.");
+            }
+            case "land" -> {
+                stand.setRightArmPose(new EulerAngle(Math.toRadians(10), 0, 0));
+                stand.setLeftArmPose(new EulerAngle(Math.toRadians(10), 0, 0));
+                stand.setBodyPose(new EulerAngle(Math.toRadians(5), 0, 0));
+                world.spawnParticle(Particle.CLOUD, base.clone().add(0, -0.5, 0), 8, 1.0, 0.2, 1.0, 0.05);
+                world.playSound(base, Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 0.7f);
+                new BukkitRunnable() {
+                    int t = 0;
+                    @Override
+                    public void run() {
+                        if (!stand.isValid()) { cancel(); return; }
+                        Location l = stand.getLocation();
+                        double targetY = base.getY();
+                        if (t >= 30 || l.getY() - 0.5 <= targetY) {
+                            l.setY(targetY);
+                            stand.teleport(l);
+                            stand.setRightArmPose(new EulerAngle(0, 0, 0));
+                            stand.setLeftArmPose(new EulerAngle(0, 0, 0));
+                            stand.setBodyPose(new EulerAngle(0, 0, 0));
+                            world.spawnParticle(Particle.CLOUD, l, 20, 1.5, 0.5, 1.5, 0.1);
+                            world.playSound(l, Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 0.7f);
+                            cancel();
+                            return;
+                        }
+                        l.setY(Math.max(targetY, l.getY() - 0.5));
+                        stand.teleport(l);
+                        world.spawnParticle(Particle.CLOUD, l, 3, 0.3, 0.1, 0.3, 0.02);
+                        t++;
+                    }
+                }.runTaskTimer(plugin, 0L, 1L);
+                player.sendMessage(GREEN + "Playing land animation on dummy.");
+            }
+            case "airslam" -> {
+                world.playSound(base, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.3f);
+                new BukkitRunnable() {
+                    int t = 0;
+                    @Override
+                    public void run() {
+                        if (!stand.isValid()) { cancel(); return; }
+                        Location l = stand.getLocation();
+                        if (t < 25) {
+                            double phase = (double) t / 20;
+                            stand.setRightArmPose(new EulerAngle(Math.toRadians(-90 * Math.min(1, phase)), 0, 0));
+                            stand.setLeftArmPose(new EulerAngle(Math.toRadians(-90 * Math.min(1, phase)), 0, 0));
+                            stand.setBodyPose(new EulerAngle(Math.toRadians(8 * Math.min(1, phase)), 0, 0));
+                            world.spawnParticle(Particle.FLAME, l, 4, 1.0, 0.5, 1.0, 0.02);
+                            world.spawnParticle(Particle.CRIT, l.clone().add(0, -1, 0), 3, 0.5, 0.5, 0.5, 0.03);
+                            t++;
+                        } else {
+                            stand.setRightArmPose(new EulerAngle(0, 0, 0));
+                            stand.setLeftArmPose(new EulerAngle(0, 0, 0));
+                            stand.setBodyPose(new EulerAngle(0, 0, 0));
+                            world.playSound(l, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.5f, 0.3f);
+                            world.spawnParticle(Particle.EXPLOSION, l, 5, 2.0, 0.5, 2.0, 0);
+                            world.spawnParticle(Particle.CLOUD, l, 30, 3.0, 1.0, 3.0, 0.1);
+                            player.sendMessage(GREEN + "AirSlam wind-up complete! (Impact animation only)");
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(plugin, 0L, 1L);
+                player.sendMessage(GREEN + "Playing airslam wind-up on dummy.");
+            }
+            case "shieldseal" -> {
+                world.playSound(base, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.8f);
+                new BukkitRunnable() {
+                    int t = 0;
+                    @Override
+                    public void run() {
+                        if (!stand.isValid()) { cancel(); return; }
+                        Location l = stand.getLocation();
+                        Location front = l.clone().add(l.getDirection().multiply(4));
+                        front.setY(front.getY() + 6);
+
+                        if (t < 25) {
+                            double phase = Math.min(1.0, (double) t / 20);
+                            stand.setRightArmPose(new EulerAngle(Math.toRadians(-60), Math.toRadians(30), 0));
+                            stand.setLeftArmPose(new EulerAngle(Math.toRadians(-60), Math.toRadians(-30), 0));
+
+                            int ringPts = (int)(8 + phase * 16);
+                            double r = 1.5 + phase * 2.5;
+                            for (int a = 0; a < ringPts; a++) {
+                                double angle = (2 * Math.PI * a / ringPts);
+                                double x = front.getX() + Math.cos(angle) * r;
+                                double z = front.getZ() + Math.sin(angle) * r;
+                                double y = front.getY() + Math.sin(angle * 2) * 1.0;
+                                world.spawnParticle(Particle.DUST, new Location(world, x, y, z), 1, 0, 0, 0, 0,
+                                    new Particle.DustOptions(Color.fromRGB(0x88CCFF), 2.0f * (float)phase));
+                                world.spawnParticle(Particle.END_ROD, new Location(world, x, y, z), 1, 0, 0, 0, 0);
+                            }
+                            t++;
+                        } else {
+                            stand.setRightArmPose(new EulerAngle(0, 0, 0));
+                            stand.setLeftArmPose(new EulerAngle(0, 0, 0));
+                            world.playSound(front, Sound.ITEM_SHIELD_BLOCK, 1.5f, 1.8f);
+                            world.spawnParticle(Particle.EXPLOSION, front, 3, 1.0, 1.0, 1.0, 0);
+                            player.sendMessage(GREEN + "ShieldSeal casting complete! (Shield would appear here)");
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(plugin, 0L, 1L);
+                player.sendMessage(GREEN + "Playing shieldseal casting on dummy.");
+            }
+            case "healingcircle", "heal" -> {
+                world.playSound(base, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1.0f, 1.2f);
+                new BukkitRunnable() {
+                    int t = 0;
+                    @Override
+                    public void run() {
+                        if (!stand.isValid()) { cancel(); return; }
+                        Location l = stand.getLocation();
+
+                        if (t < 35) {
+                            double phase = Math.min(1.0, (double) t / 30);
+                            stand.setRightArmPose(new EulerAngle(Math.toRadians(-140 * phase), 0, 0));
+                            stand.setLeftArmPose(new EulerAngle(Math.toRadians(-140 * phase), 0, 0));
+                            stand.setHeadPose(new EulerAngle(Math.toRadians(-15 * phase), 0, 0));
+                            stand.setBodyPose(new EulerAngle(Math.toRadians(-5 * phase), 0, 0));
+
+                            double radius = 4.0;
+                            int samples = (int)(10 + phase * 25);
+                            for (int i = 0; i < samples; i++) {
+                                double angle = (2 * Math.PI * i / samples) + t * 0.03;
+                                double x = l.getX() + Math.cos(angle) * radius * phase;
+                                double z = l.getZ() + Math.sin(angle) * radius * phase;
+                                double y = l.getY() + 0.1 + Math.sin(t * 0.15 + i * 0.5) * 0.2;
+                                world.spawnParticle(Particle.DUST, new Location(world, x, y, z), 1, 0, 0, 0, 0,
+                                    new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.2f * (float)phase));
+                            }
+                            for (int i = 0; i < (int)(2 + phase * 5); i++) {
+                                double angle = Math.random() * Math.PI * 2;
+                                double r = Math.random() * 4.0 * phase;
+                                double x = l.getX() + Math.cos(angle) * r;
+                                double z = l.getZ() + Math.sin(angle) * r;
+                                world.spawnParticle(Particle.END_ROD, new Location(world, x, l.getY() + 0.3 + Math.random() * 2 * phase, z), 1, 0, 0, 0, 0);
+                                world.spawnParticle(Particle.HEART, new Location(world, x, l.getY() + 0.3 + Math.random() * 2 * phase, z), 1, 0, 0, 0, 0);
+                            }
+                            t++;
+                        } else {
+                            stand.setRightArmPose(new EulerAngle(0, 0, 0));
+                            stand.setLeftArmPose(new EulerAngle(0, 0, 0));
+                            stand.setHeadPose(new EulerAngle(0, 0, 0));
+                            stand.setBodyPose(new EulerAngle(0, 0, 0));
+                            world.playSound(l, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 0.6f);
+                            world.spawnParticle(Particle.EXPLOSION, l.clone().add(0, 0.5, 0), 8, 2.0, 0.5, 2.0, 0);
+                            player.sendMessage(GREEN + "HealingCircle casting complete! (Circle would heal here)");
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(plugin, 0L, 1L);
+                player.sendMessage(GREEN + "Playing healingcircle casting on dummy.");
+            }
+            case "rain" -> {
+                new BukkitRunnable() {
+                    int t = 0;
+                    @Override
+                    public void run() {
+                        if (!stand.isValid()) { cancel(); return; }
+                        if (t < 30) {
+                            double phase = Math.min(1.0, (double) t / 25);
+                            stand.setRightArmPose(new EulerAngle(
+                                Math.toRadians(-180 + 90 * phase),
+                                Math.toRadians(10 * phase),
+                                Math.toRadians(20 * phase)
+                            ));
+                            if (t == 0) world.playSound(base, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.5f);
+
+                            for (int pi = 0; pi < 3; pi++) {
+                                Location sp = base.clone().add((Math.random() - 0.5) * 6, 20, (Math.random() - 0.5) * 6);
+                                world.spawnParticle(Particle.END_ROD, sp, (int)(1 + phase * 2), 0.3, 0.3, 0.3, 0.01);
+                                if (t % 5 == 0) {
+                                    for (int a = 0; a < (int)(4 * phase); a++) {
+                                        double ang = (2 * Math.PI * a / 4);
+                                        double r2 = 0.5 + phase * 1.0;
+                                        double x2 = sp.getX() + Math.cos(ang) * r2;
+                                        double z2 = sp.getZ() + Math.sin(ang) * r2;
+                                        world.spawnParticle(Particle.DUST, new Location(world, x2, sp.getY(), z2), 1, 0, 0, 0, 0,
+                                            new Particle.DustOptions(Color.fromRGB(0xFFAA00), 1.2f * (float)phase));
+                                    }
+                                }
+                            }
+                            t++;
+                        } else {
+                            stand.setRightArmPose(new EulerAngle(0, 0, 0));
+                            world.playSound(base, Sound.ENTITY_ENDER_DRAGON_FLAP, 1.5f, 0.8f);
+                            player.sendMessage(GREEN + "Rain of Lances wind-up complete! (Lances would fall here)");
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(plugin, 0L, 1L);
+                player.sendMessage(GREEN + "Playing rain wind-up on dummy.");
+            }
+            case "pentagram" -> {
+                world.playSound(base, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.6f);
+                MagicSealListener seals = plugin.getMagicSealListener();
+                if (seals != null) {
+                    seals.spawnPentagramSeal(base.clone().add(0, 5, 0), 60, MagicSealListener.Plane.XZ);
+                    player.sendMessage(GREEN + "Playing pentagram seal animation above dummy.");
+                } else {
+                    player.sendMessage(RED + "MagicSealListener not available.");
+                }
+            }
+            case "trianglecall", "triangle" -> {
+                world.playSound(base, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.9f);
+                MagicSealListener seals = plugin.getMagicSealListener();
+                if (seals != null) {
+                    ArmorStand marker = (ArmorStand) world.spawnEntity(base.clone().add(5, 0, 0), EntityType.ARMOR_STAND);
+                    if (marker != null) {
+                        marker.setVisible(false);
+                        marker.setGravity(false);
+                        marker.setMarker(true);
+                        marker.setCustomNameVisible(false);
+                        seals.spawnRunicTriangleSeal(marker, 80, MagicSealListener.Plane.YZ);
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                            if (marker.isValid()) marker.remove();
+                        }, 85);
+                        // Also spawn one on the other side
+                        ArmorStand marker2 = (ArmorStand) world.spawnEntity(base.clone().add(-5, 0, 0), EntityType.ARMOR_STAND);
+                        if (marker2 != null) {
+                            marker2.setVisible(false);
+                            marker2.setGravity(false);
+                            marker2.setMarker(true);
+                            marker2.setCustomNameVisible(false);
+                            seals.spawnRunicTriangleSeal(marker2, 80, MagicSealListener.Plane.YZ);
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                                if (marker2.isValid()) marker2.remove();
+                            }, 85);
+                        }
+                        player.sendMessage(GREEN + "Playing triangle seal animation on both sides of dummy.");
+                    }
+                } else {
+                    player.sendMessage(RED + "MagicSealListener not available.");
+                }
+            }
+            default -> player.sendMessage(RED + "Unknown animation: " + anim + ". Use: flyup, land, airslam, shieldseal, healingcircle, rain, pentagram, triangle");
+        }
+    }
+
+    private void dummySetPose(Player player, String[] args) {
+        if (args.length < 6) {
+            player.sendMessage(RED + "Usage: /msc dummy set <part> <x> <y> <z>");
+            player.sendMessage(GRAY + "Example: /msc dummy set rightarm -75 0 -15");
+            return;
+        }
+
+        ArmorStand stand = getOrDummy(player);
+        if (stand == null) return;
+
+        String part = args[2].toLowerCase();
+        double x, y, z;
+        try {
+            x = Math.toRadians(Double.parseDouble(args[3]));
+            y = Math.toRadians(Double.parseDouble(args[4]));
+            z = Math.toRadians(Double.parseDouble(args[5]));
+        } catch (NumberFormatException e) {
+            player.sendMessage(RED + "Invalid number. Use degrees (e.g., -75 0 -15).");
+            return;
+        }
+
+        EulerAngle angle = new EulerAngle(x, y, z);
+        switch (part) {
+            case "rightarm" -> stand.setRightArmPose(angle);
+            case "leftarm" -> stand.setLeftArmPose(angle);
+            case "body" -> stand.setBodyPose(angle);
+            case "head" -> stand.setHeadPose(angle);
+            case "rightleg" -> stand.setRightLegPose(angle);
+            case "leftleg" -> stand.setLeftLegPose(angle);
+            default -> {
+                player.sendMessage(RED + "Unknown part: " + part + ". Use: rightarm, leftarm, body, head, rightleg, leftleg");
+                return;
+            }
+        }
+
+        player.sendMessage(GREEN + "Set " + part + " to (" + args[3] + ", " + args[4] + ", " + args[5] + ") degrees.");
+    }
+
+    private void dummyAdjustPose(Player player, String[] args) {
+        if (args.length < 4) {
+            player.sendMessage(RED + "Usage: /msc dummy <part> <axis> <degrees>");
+            player.sendMessage(GRAY + "Example: /msc dummy rightarm x 10  (adds 10° pitch to right arm)");
+            return;
+        }
+
+        ArmorStand stand = getOrDummy(player);
+        if (stand == null) return;
+
+        String part = args[1].toLowerCase();
+        String axis = args[2].toLowerCase();
+        double delta;
+        try {
+            delta = Math.toRadians(Double.parseDouble(args[3]));
+        } catch (NumberFormatException e) {
+            player.sendMessage(RED + "Invalid number. Use degrees (e.g., 10 or -5).");
+            return;
+        }
+
+        EulerAngle current = switch (part) {
+            case "rightarm" -> stand.getRightArmPose();
+            case "leftarm" -> stand.getLeftArmPose();
+            case "body" -> stand.getBodyPose();
+            case "head" -> stand.getHeadPose();
+            case "rightleg" -> stand.getRightLegPose();
+            case "leftleg" -> stand.getLeftLegPose();
+            default -> {
+                player.sendMessage(RED + "Unknown part: " + part + ". Use: rightarm, leftarm, body, head, rightleg, leftleg");
+                yield null;
+            }
+        };
+
+        if (current == null) return;
+
+        double newX = current.getX();
+        double newY = current.getY();
+        double newZ = current.getZ();
+
+        switch (axis) {
+            case "x", "pitch" -> newX += delta;
+            case "y", "yaw" -> newY += delta;
+            case "z", "roll" -> newZ += delta;
+            default -> {
+                player.sendMessage(RED + "Unknown axis: " + axis + ". Use: x (pitch), y (yaw), or z (roll).");
+                return;
+            }
+        }
+
+        EulerAngle newAngle = new EulerAngle(newX, newY, newZ);
+        switch (part) {
+            case "rightarm" -> stand.setRightArmPose(newAngle);
+            case "leftarm" -> stand.setLeftArmPose(newAngle);
+            case "body" -> stand.setBodyPose(newAngle);
+            case "head" -> stand.setHeadPose(newAngle);
+            case "rightleg" -> stand.setRightLegPose(newAngle);
+            case "leftleg" -> stand.setLeftLegPose(newAngle);
+        }
+
+        player.sendMessage(GREEN + "Adjusted " + part + " " + axis + " by " + args[3] + "°.");
+        player.sendMessage(GRAY + "New " + part + " pose: (" +
+            String.format("%.1f", Math.toDegrees(newX)) + "°, " +
+            String.format("%.1f", Math.toDegrees(newY)) + "°, " +
+            String.format("%.1f", Math.toDegrees(newZ)) + "°)");
+    }
+
+    private void handleDimtp(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(RED + "Only players can use this command.");
+            return;
+        }
+        if (args.length < 2) {
+            sender.sendMessage(RED + "Usage: /msc dimtp <world>");
+            return;
+        }
+        String worldName = args[1];
+        World targetWorld = Bukkit.getWorld(worldName);
+        if (targetWorld == null) {
+            sender.sendMessage(RED + "World '" + worldName + "' not found.");
+            return;
+        }
+        if (targetWorld.equals(player.getWorld())) {
+            player.sendMessage(YELLOW + "You are already in " + worldName + ".");
+            return;
+        }
+        Location teleportLoc = player.getLocation();
+        teleportLoc.setWorld(targetWorld);
+        player.teleportAsync(teleportLoc).thenAccept(success -> {
+            if (success) {
+                player.sendMessage(GREEN + "Teleported to " + worldName + ".");
+            } else {
+                player.sendMessage(RED + "Failed to teleport to " + worldName + ".");
+            }
+        });
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(ChatColor.GOLD + "--- MultiverseCreatures Commands ---");
-        sender.sendMessage(ChatColor.YELLOW + "/msc spawn <type> " + ChatColor.WHITE + "- Spawn custom mobs (merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga)");
-        sender.sendMessage(ChatColor.YELLOW + "/msc give <item> [amount] " + ChatColor.WHITE + "- Give custom items");
-        sender.sendMessage(ChatColor.YELLOW + "/msc cleanstands " + ChatColor.WHITE + "- Remove all custom plugin armor stands");
-        sender.sendMessage(ChatColor.YELLOW + "/msc reload " + ChatColor.WHITE + "- Reload configuration");
+        sender.sendMessage(GOLD + "--- MultiverseCreatures Commands ---");
+        sender.sendMessage(YELLOW + "/msc spawn <type> " + WHITE + "- Spawn custom mobs (armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight)");
+        sender.sendMessage(YELLOW + "/msc give <item> [amount] " + WHITE + "- Give custom items");
+        sender.sendMessage(YELLOW + "/msc seal <pattern> [plane] " + WHITE + "- Spawn particle seals (pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2; planes: horizontal, vertical-north, vertical-east)");
+        sender.sendMessage(YELLOW + "/msc dummy " + WHITE + "- Spawn and pose a test dummy");
+        sender.sendMessage(YELLOW + "/msc attack <attack> [range] " + WHITE + "- Trigger boss attack (all 10 ground + 10 aerial attacks available)");
+        sender.sendMessage(YELLOW + "/msc music <play|stop|list> [name] [loop] " + WHITE + "- Play .nbs music");
+        sender.sendMessage(YELLOW + "/msc dimtp <world> " + WHITE + "- Teleport between dimensions");
+        sender.sendMessage(YELLOW + "/msc cleanstands " + WHITE + "- Remove all custom plugin armor stands");
     }
 
     @Override
@@ -274,14 +1187,14 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 1) {
-            List<String> subCommands = Arrays.asList("spawn", "reload", "give", "cleanstands");
+            List<String> subCommands = Arrays.asList("spawn", "give", "attack", "music", "cleanstands", "seal", "dummy", "dimtp");
             completions.addAll(subCommands.stream()
                     .filter(cmd -> cmd.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList()));
         } else if (args.length == 2) {
             String subCmd = args[0].toLowerCase();
             if (subCmd.equals("spawn")) {
-                List<String> entities = Arrays.asList("merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank", "duelist", "lancer", "camel", "sniper", "mahoraga");
+                List<String> entities = Arrays.asList("armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank", "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental", "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch", "obsidianguard", "soulreaper", "chaosmage", "enderknight");
                 completions.addAll(entities.stream()
                         .filter(e -> e.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
@@ -290,6 +1203,52 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 completions.addAll(items.stream()
                         .filter(i -> i.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
+            } else if (subCmd.equals("seal")) {
+                List<String> seals = Arrays.asList("pentagram", "triangle", "celestial", "circle", "ring", "star", "floating", "wings", "wings2");
+                completions.addAll(seals.stream()
+                        .filter(s -> s.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList()));
+    } else if (subCmd.equals("attack")) {
+        List<String> attacks = Arrays.asList("crossbarrage", "groundslam", "plant", "retrieve", "pentagram", "trianglecall", "reset", "flyup", "land", "rain", "airslam", "shieldseal", "heal", "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeamer", "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "phaserage", "phasebarrier", "phasestorm", "phasedespair", "stoneskin", "reflectbarrier", "absorbshield");
+                completions.addAll(attacks.stream()
+                        .filter(a -> a.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList()));
+            } else if (subCmd.equals("music")) {
+                List<String> actions = Arrays.asList("play", "stop", "list");
+                completions.addAll(actions.stream()
+                        .filter(a -> a.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList()));
+            } else if (subCmd.equals("dummy")) {
+                List<String> actions = Arrays.asList("spawn", "remove", "set", "wings", "wings2", "nowings", "animate", "rightarm", "leftarm", "body", "head", "rightleg", "leftleg");
+                completions.addAll(actions.stream()
+                        .filter(a -> a.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList()));
+            }
+        } else if (args.length == 3) {
+            String subCmd = args[0].toLowerCase();
+            if (subCmd.equals("music") && args[1].equalsIgnoreCase("play")) {
+                var songs = plugin.getMusicManager().getSongNames();
+                completions.addAll(songs.stream()
+                        .filter(s -> s.startsWith(args[2].toLowerCase()))
+                        .collect(Collectors.toList()));
+            } else if (subCmd.equals("dummy")) {
+                String action = args[1].toLowerCase();
+                if (action.equals("set")) {
+                    List<String> parts = Arrays.asList("rightarm", "leftarm", "body", "head", "rightleg", "leftleg");
+                    completions.addAll(parts.stream()
+                            .filter(p -> p.startsWith(args[2].toLowerCase()))
+                            .collect(Collectors.toList()));
+                } else if (action.equals("animate")) {
+                    List<String> anims = Arrays.asList("flyup", "land", "airslam", "shieldseal", "healingcircle", "rain", "pentagram", "triangle");
+                    completions.addAll(anims.stream()
+                            .filter(a -> a.startsWith(args[2].toLowerCase()))
+                            .collect(Collectors.toList()));
+                } else if (Arrays.asList("rightarm", "leftarm", "body", "head", "rightleg", "leftleg").contains(action)) {
+                    List<String> axes = Arrays.asList("x", "y", "z");
+                    completions.addAll(axes.stream()
+                            .filter(a -> a.startsWith(args[2].toLowerCase()))
+                            .collect(Collectors.toList()));
+                }
             }
         }
 

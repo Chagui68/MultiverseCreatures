@@ -40,9 +40,11 @@ public class DioStandHandler implements Listener {
 
     private void startStandVisualTask() {
         new BukkitRunnable() {
+            int scanTick = 0;
+
             @Override
             public void run() {
-                for (Map.Entry<UUID, DioPlayerStand> entry : new HashMap<>(playerStands).entrySet()) {
+                for (var entry : new HashMap<>(playerStands).entrySet()) {
                     Player player = Bukkit.getPlayer(entry.getKey());
                     DioPlayerStand dps = entry.getValue();
 
@@ -60,20 +62,22 @@ public class DioStandHandler implements Listener {
                         }
                     }
 
-                    Location behind = player.getLocation().clone()
+                    Location behind = player.getLocation()
                             .add(player.getLocation().getDirection().multiply(-1).setY(0).normalize().multiply(1))
                             .add(0, 2, 0);
                     dps.stand.teleport(behind);
                     dps.stand.setRotation(player.getLocation().getYaw(), 0);
                 }
 
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (playerStands.containsKey(player.getUniqueId())) continue;
-                    if (!hasStandInInventory(player)) continue;
+                if (++scanTick % 20 == 0) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (playerStands.containsKey(player.getUniqueId())) continue;
+                        if (!hasStandInInventory(player)) continue;
 
-                    ArmorStand stand = spawnStandFor(player);
-                    if (stand != null) {
-                        playerStands.put(player.getUniqueId(), new DioPlayerStand(stand));
+                        ArmorStand stand = spawnStandFor(player);
+                        if (stand != null) {
+                            playerStands.put(player.getUniqueId(), new DioPlayerStand(stand));
+                        }
                     }
                 }
             }
@@ -146,9 +150,8 @@ public class DioStandHandler implements Listener {
         int freezeDurationTicks = plugin.getConfig().getInt("dio-stand.freeze-duration-ticks", 100);
         FreezeAbility freeze = plugin.getFreezeAbility();
 
-        for (Player target : Bukkit.getOnlinePlayers()) {
+        for (Player target : player.getWorld().getPlayers()) {
             if (target.equals(player)) continue;
-            if (!target.getWorld().equals(player.getWorld())) continue;
             if (target.getLocation().distanceSquared(player.getLocation()) > freezeRadius * freezeRadius) continue;
 
             if (hasStandInInventory(target)) continue;

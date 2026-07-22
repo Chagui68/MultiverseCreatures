@@ -92,8 +92,7 @@ public class CreeperJr implements Listener {
             double maxDamage = plugin.getConfig().getDouble("creeper-jr.true-damage", 12.0);
             Location explosionLoc = event.getLocation();
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (!player.getWorld().equals(explosionLoc.getWorld())) continue;
+            for (Player player : explosionLoc.getWorld().getPlayers()) {
                 if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) continue;
 
                 double distance = player.getLocation().distance(explosionLoc);

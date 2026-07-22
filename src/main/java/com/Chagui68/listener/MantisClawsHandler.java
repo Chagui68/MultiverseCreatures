@@ -39,6 +39,8 @@ public class MantisClawsHandler implements Listener {
     private final Plugin plugin;
     private final Map<UUID, Boolean> lastJumpInput = new HashMap<>();
     private final Set<UUID> clingingPlayers = new HashSet<>();
+    private final Set<UUID> mantisPlayers = new HashSet<>();
+    private int rescanTick = 0;
     private static final double WALL_JUMP_VERTICAL = 0.55;
 
     public MantisClawsHandler(Plugin plugin) {
@@ -50,17 +52,32 @@ public class MantisClawsHandler implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (Player p : Bukkit.getOnlinePlayers()) {
+                if (++rescanTick % 20 == 0) {
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        if (holdingMantisClaws(p)) {
+                            mantisPlayers.add(p.getUniqueId());
+                        }
+                    }
+                }
+
+                for (UUID pid : new HashSet<>(mantisPlayers)) {
+                    Player p = Bukkit.getPlayer(pid);
+                    if (p == null || !p.isOnline()) {
+                        mantisPlayers.remove(pid);
+                        continue;
+                    }
                     try {
                         if (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) continue;
                         if (p.isGliding()) continue;
                         if (p.isInWater()) continue;
                         if (p.getLocation().getBlock().isLiquid()) continue;
-                        if (!holdingMantisClaws(p)) continue;
+                        if (!holdingMantisClaws(p)) {
+                            mantisPlayers.remove(pid);
+                            continue;
+                        }
                         if (p.isOnGround()) continue;
 
                         BlockFace wallDir = getWallDirection(p);
-                        UUID pid = p.getUniqueId();
 
                         if (wallDir != null && p.isSneaking()) {
                             clingingPlayers.add(pid);
@@ -95,12 +112,18 @@ public class MantisClawsHandler implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        addPacketHandler(e.getPlayer());
+        Player player = e.getPlayer();
+        addPacketHandler(player);
+        if (holdingMantisClaws(player)) {
+            mantisPlayers.add(player.getUniqueId());
+        }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        removePacketHandler(e.getPlayer());
+        Player player = e.getPlayer();
+        removePacketHandler(player);
+        mantisPlayers.remove(player.getUniqueId());
     }
 
     private void addPacketHandler(Player player) {

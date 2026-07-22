@@ -67,7 +67,6 @@ public class MineHandler implements Listener {
 
     public MineHandler(MultiverseCreatures plugin) {
         this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler

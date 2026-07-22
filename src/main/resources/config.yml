@@ -238,6 +238,53 @@ mahoraga:
     - "&f%player% was obliterated by Mahoraga"
     - "&f%player% stood no chance against Mahoraga"
 
+### Zombie Horse Trap
+zombie-horse-trap:
+  military-component-drop-chance: 0.3
+
+### Custom Mobs Spawn Chances
+bone-shield:
+  enabled: true
+  spawn-chance: 0.06
+chaos-mage:
+  enabled: true
+  spawn-chance: 0.06
+ender-knight:
+  enabled: true
+  spawn-chance: 0.04
+flame-elemental:
+  enabled: true
+  spawn-chance: 0.1
+frost-golem:
+  enabled: true
+  spawn-chance: 0.08
+obsidian-guard:
+  enabled: true
+  spawn-chance: 0.02
+shadow-rogue:
+  enabled: true
+  spawn-chance: 0.05
+soul-reaper:
+  enabled: true
+  spawn-chance: 0.05
+storm-caller:
+  enabled: true
+  spawn-chance: 0.04
+venom-witch:
+  enabled: true
+  spawn-chance: 0.05
+void-crawler:
+  enabled: true
+  spawn-chance: 0.07
+
+### Armor Stand Boss
+armor-stand-boss:
+  enabled: true
+  health: 500.0
+  aggro-range: 50.0
+  seal-damage: 15.0
+  hover-barrage-damage: 12.0
+
 ### Commands
 commands:
   permission: "msc.admin"

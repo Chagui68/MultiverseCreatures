@@ -1,5 +1,5 @@
 name: MultiverseCreatures
-version: '1.1.DEV'
+version: '5.6.DEV'
 main: com.Chagui68.MultiverseCreatures
 api-version: '1.21'
 load: STARTUP
@@ -11,5 +11,10 @@ softdepend: []
 commands:
   msc:
     description: Main command for MultiverseCreatures
-    usage: /msc <spawn|give|reload>
+    usage: /msc <spawn|give|seal|dummy|attack|music|dimtp|cleanstands>
     permission: msc.admin
+
+permissions:
+  msc.admin:
+    description: Allows all /msc commands
+    default: op

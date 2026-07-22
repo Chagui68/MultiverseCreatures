@@ -1,9 +1,10 @@
 package com.Chagui68.entities;
 
 import com.Chagui68.MultiverseCreatures;
-import com.Chagui68.items.misc.HeadSlimeHeart;
+import com.Chagui68.items.components.HeadSlimeHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -46,15 +47,62 @@ public class HeadSlime implements Listener {
     private final MultiverseCreatures plugin;
     private final Random random = new Random();
     private final Map<UUID, HeadSlimeInstance> activeSlimes = new ConcurrentHashMap<>();
+
+    private double speed;
+    private int size;
+    private double leapRange;
+    private double leapSpeed;
+    private int blindIntervalTicks;
+    private int damageIntervalTicks;
+    private double damagePerInterval;
+    private int maxAttachTicks;
+    private int buffIntervalTicks;
+    private int maxAttachTicksMob;
+    private boolean targetEntities;
+    private int skeletonBurstCooldown;
     public static final Set<UUID> immunePlayers = ConcurrentHashMap.newKeySet();
     private static final String TAG = "MSC_HeadSlime";
+    private static final Set<String> MSC_ENTITY_TAGS = Set.of(
+        "MSC_SoulReaper", "MSC_BoneShield", "MSC_ObsidianGuard",
+        "MSC_ShadowRogue", "MSC_FlameElemental", "MSC_FrostGolem",
+        "MSC_VoidCrawler", "MSC_StormCaller", "MSC_ChaosMage",
+        "MSC_EnderKnight", "MSC_VenomWitch"
+    );
+    private static final Set<String> MSC_BLACKLIST = Set.of(
+        TAG, "MSC_DioBoss", "MSC_Mahoraga", "MSC_ArmorBossSummoned"
+    );
+
+    private String getMscEntityTag(Set<String> tags) {
+        for (String t : tags) {
+            if (t.startsWith("MSC_") && !MSC_BLACKLIST.contains(t)) {
+                return t;
+            }
+        }
+        return null;
+    }
 
     public HeadSlime(MultiverseCreatures plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        reloadConfig();
         startTicker();
         startParticleTask();
         reloadExisting();
+    }
+
+    public void reloadConfig() {
+        speed = plugin.getConfig().getDouble("head-slime.speed", 0.5);
+        size = plugin.getConfig().getInt("head-slime.size", 1);
+        leapRange = plugin.getConfig().getDouble("head-slime.leap-range", 5.0);
+        leapSpeed = plugin.getConfig().getDouble("head-slime.leap-speed", 1.2);
+        blindIntervalTicks = plugin.getConfig().getInt("head-slime.blind-interval-ticks", 20);
+        damageIntervalTicks = plugin.getConfig().getInt("head-slime.damage-interval-ticks", 40);
+        damagePerInterval = plugin.getConfig().getDouble("head-slime.damage-per-interval", 3.0);
+        maxAttachTicks = plugin.getConfig().getInt("head-slime.max-attach-ticks", 200);
+        buffIntervalTicks = plugin.getConfig().getInt("head-slime.buff-interval-ticks", 40);
+        maxAttachTicksMob = plugin.getConfig().getInt("head-slime.max-attach-ticks-mob", 600);
+        targetEntities = plugin.getConfig().getBoolean("head-slime.target-entities", true);
+        skeletonBurstCooldown = plugin.getConfig().getInt("head-slime.skeleton-burst-cooldown", 60);
     }
 
     private void reloadExisting() {
@@ -130,9 +178,6 @@ public class HeadSlime implements Listener {
     }
 
     private void setupSlime(Slime slime) {
-        double speed = plugin.getConfig().getDouble("head-slime.speed", 0.5);
-        int size = plugin.getConfig().getInt("head-slime.size", 1);
-
         slime.setSize(size);
         if (slime.getAttribute(Attribute.MOVEMENT_SPEED) != null) {
             slime.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(speed);
@@ -179,7 +224,6 @@ public class HeadSlime implements Listener {
             plugin.getLogger().info("[HeadSlime] Tracking target: " + target.getName());
         }
 
-        double leapRange = plugin.getConfig().getDouble("head-slime.leap-range", 5.0);
         double distSq = slime.getLocation().distanceSquared(target.getLocation());
 
         if (distSq > leapRange * leapRange * 4) {
@@ -193,7 +237,6 @@ public class HeadSlime implements Listener {
             Vector dir = targetLoc.toVector().subtract(slime.getLocation().toVector());
             double dist = dir.length();
             dir.normalize();
-            double leapSpeed = plugin.getConfig().getDouble("head-slime.leap-speed", 1.2);
             slime.setVelocity(dir.multiply(Math.min(leapSpeed, dist * 0.3)));
         } else if (canAttach(slime, target)) {
             target.addPassenger(slime);
@@ -237,18 +280,14 @@ public class HeadSlime implements Listener {
             return;
         }
 
-        int blindInterval = plugin.getConfig().getInt("head-slime.blind-interval-ticks", 20);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindInterval + 10, 1, false, true));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, blindInterval + 10, 0, false, true));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindIntervalTicks + 10, 1, false, true));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, blindIntervalTicks + 10, 0, false, true));
 
-        int damageInterval = plugin.getConfig().getInt("head-slime.damage-interval-ticks", 40);
-        if (inst.damageTicks % damageInterval == 0) {
-            double damage = plugin.getConfig().getDouble("head-slime.damage-per-interval", 3.0);
-            player.damage(damage, DamageSource.builder(DamageType.MOB_ATTACK).withDirectEntity(slime).withCausingEntity(slime).build());
+        if (inst.damageTicks % damageIntervalTicks == 0) {
+            player.damage(damagePerInterval, DamageSource.builder(DamageType.MOB_ATTACK).withDirectEntity(slime).withCausingEntity(slime).build());
         }
 
-        int maxTicks = plugin.getConfig().getInt("head-slime.max-attach-ticks", 200);
-        if (inst.damageTicks >= maxTicks) {
+        if (inst.damageTicks >= maxAttachTicks) {
             detach(inst, player);
         }
     }
@@ -259,13 +298,11 @@ public class HeadSlime implements Listener {
             return;
         }
 
-        int buffInterval = plugin.getConfig().getInt("head-slime.buff-interval-ticks", 40);
-
-        if (inst.damageTicks % buffInterval == 0) {
-            mob.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, buffInterval + 20, 1, false, true));
-            mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, buffInterval + 20, 1, false, true));
-            mob.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, buffInterval + 20, 0, false, true));
-            mob.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, buffInterval + 20, 0, false, true));
+        if (inst.damageTicks % buffIntervalTicks == 0) {
+            mob.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, buffIntervalTicks + 20, 1, false, true));
+            mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, buffIntervalTicks + 20, 1, false, true));
+            mob.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, buffIntervalTicks + 20, 0, false, true));
+            mob.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, buffIntervalTicks + 20, 0, false, true));
         }
 
         if (inst.damageTicks % 20 == 0 && mob instanceof Creature creature) {
@@ -298,9 +335,109 @@ public class HeadSlime implements Listener {
             }
         }
 
-        int maxTicks = plugin.getConfig().getInt("head-slime.max-attach-ticks-mob", 600);
-        if (inst.damageTicks >= maxTicks) {
+        applyMscSpecialBuff(inst, mob);
+
+        if (inst.damageTicks >= maxAttachTicksMob) {
             detach(inst, mob);
+        }
+    }
+
+    private void applyMscSpecialBuff(HeadSlimeInstance inst, Mob mob) {
+        String tag = getMscEntityTag(mob.getScoreboardTags());
+        if (tag == null) return;
+
+        Location loc = mob.getLocation().add(0, 1.5, 0);
+        World world = mob.getWorld();
+
+        switch (tag) {
+            case "MSC_SoulReaper" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 60, 2, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.SOUL, loc, 8, 0.5, 0.5, 0.5, 0.02);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0xAA00AA), 1.5f));
+                }
+            }
+            case "MSC_BoneShield" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 60, 1, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.END_ROD, loc, 6, 0.5, 0.5, 0.5, 0.02);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.WHITE, 1.5f));
+                }
+            }
+            case "MSC_ObsidianGuard" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 60, 1, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.CRIT, loc, 8, 0.5, 0.5, 0.5, 0.05);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0x444444), 1.5f));
+                }
+            }
+            case "MSC_ShadowRogue" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, 2, false, true));
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 0, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.WITCH, loc, 4, 0.3, 0.3, 0.3, 0);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0x222222), 1.5f));
+                }
+            }
+            case "MSC_FlameElemental" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100, 0, false, true));
+                if (inst.damageTicks % 20 == 0) {
+                    world.spawnParticle(Particle.FLAME, loc, 10, 0.8, 0.8, 0.8, 0.03);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0xFF6600), 1.5f));
+                }
+            }
+            case "MSC_FrostGolem" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 0, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.SNOWFLAKE, loc, 6, 0.5, 0.5, 0.5, 0.01);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0x88CCFF), 1.5f));
+                }
+            }
+            case "MSC_VoidCrawler" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, 1, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.PORTAL, loc, 8, 0.5, 0.5, 0.5, 0.03);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0x440066), 1.5f));
+                }
+            }
+            case "MSC_StormCaller" -> {
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.ELECTRIC_SPARK, loc, 10, 0.8, 0.8, 0.8, 0.05);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0xFFFF00), 1.5f));
+                }
+            }
+            case "MSC_ChaosMage" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, 1, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.WITCH, loc, 6, 0.5, 0.5, 0.5, 0);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0x00FF88), 1.5f));
+                }
+            }
+            case "MSC_EnderKnight" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, 1, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.PORTAL, loc, 6, 0.5, 0.5, 0.5, 0.02);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0xAA00FF), 1.5f));
+                }
+            }
+            case "MSC_VenomWitch" -> {
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 60, 1, false, true));
+                if (inst.damageTicks % 30 == 0) {
+                    world.spawnParticle(Particle.WITCH, loc, 6, 0.5, 0.5, 0.5, 0);
+                    world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
+                        new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.5f));
+                }
+            }
         }
     }
 
@@ -328,13 +465,11 @@ public class HeadSlime implements Listener {
     }
 
     private UUID findNearestTarget(Slime slime) {
-        double range = plugin.getConfig().getDouble("head-slime.leap-range", 5.0);
-        boolean targetEntities = plugin.getConfig().getBoolean("head-slime.target-entities", true);
-        double rangeSq = range * range;
+        double rangeSq = leapRange * leapRange;
         Entity nearest = null;
         double nearestDist = Double.MAX_VALUE;
 
-        for (Entity entity : slime.getNearbyEntities(range, range, range)) {
+        for (Entity entity : slime.getNearbyEntities(leapRange, leapRange, leapRange)) {
             if (entity.equals(slime)) continue;
             if (entity.isDead() || !entity.isValid()) continue;
             if (hasHeadSlimeAttached(entity)) continue;
@@ -345,8 +480,10 @@ public class HeadSlime implements Listener {
                     && !p.isDead()
                     && p.isOnline();
 
-            if (!isTarget && targetEntities) {
-                isTarget = entity instanceof Monster && !entity.getScoreboardTags().contains(TAG) && !entity.getScoreboardTags().contains("MSC_DioBoss") && !entity.getScoreboardTags().contains("MSC_Mahoraga");
+            if (!isTarget && targetEntities && entity instanceof Monster) {
+                Set<String> tags = entity.getScoreboardTags();
+                isTarget = !tags.contains(TAG) && !tags.contains("MSC_DioBoss")
+                        && !tags.contains("MSC_Mahoraga") && getMscEntityTag(tags) != null;
             }
 
             if (!isTarget) continue;
@@ -362,7 +499,10 @@ public class HeadSlime implements Listener {
     }
 
     private boolean hasHeadSlimeAttached(Entity entity) {
-        return entity.getPassengers().stream().anyMatch(p -> p instanceof Slime s && s.getScoreboardTags().contains(TAG));
+        for (Entity p : entity.getPassengers()) {
+            if (p instanceof Slime s && s.getScoreboardTags().contains(TAG)) return true;
+        }
+        return false;
     }
 
     private Player findNearestPlayer(Location loc) {
@@ -411,11 +551,15 @@ public class HeadSlime implements Listener {
     @EventHandler
     public void onExplosion(EntityExplodeEvent event) {
         if (!(event.getEntity() instanceof Creeper creeper)) return;
-        boolean hasSlime = creeper.getPassengers().stream()
-                .anyMatch(p -> p instanceof Slime s && s.getScoreboardTags().contains(TAG));
+        boolean hasSlime = false;
+        for (Entity p : creeper.getPassengers()) {
+            if (p instanceof Slime s && s.getScoreboardTags().contains(TAG)) {
+                hasSlime = true;
+                break;
+            }
+        }
         if (!hasSlime) return;
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!player.getWorld().equals(event.getLocation().getWorld())) continue;
+        for (Player player : event.getLocation().getWorld().getPlayers()) {
             double dist = player.getLocation().distance(event.getLocation());
             if (dist > creeper.getExplosionRadius()) continue;
             double multiplier = 1.0 - (dist / creeper.getExplosionRadius());
@@ -461,7 +605,7 @@ public class HeadSlime implements Listener {
             this.damageTicks = 0;
             this.originalRadius = -1;
             this.lastSkeletonBurst = -100;
-            this.skeletonBurstCooldown = plugin.getConfig().getInt("head-slime.skeleton-burst-cooldown", 60);
+            this.skeletonBurstCooldown = HeadSlime.this.skeletonBurstCooldown;
         }
     }
 }

@@ -75,7 +75,7 @@ public class FreezeAbility implements Listener {
             }
         }
 
-        Location loc = player.getLocation().clone();
+        Location loc = player.getLocation();
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 255, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, Integer.MAX_VALUE, 128, false, false));
         player.setAllowFlight(false);

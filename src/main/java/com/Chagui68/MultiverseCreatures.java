@@ -1,18 +1,35 @@
 package com.Chagui68;
 
 import com.Chagui68.ability.FreezeAbility;
-import com.Chagui68.entities.Mahoraga;
+import com.Chagui68.entities.miniboss.Mahoraga;
+import com.Chagui68.entities.boss.ArmorStandBoss;
+import com.Chagui68.entities.boss.MagicSealListener;
+import com.Chagui68.entities.handler.MobHandler;
+import com.Chagui68.entities.BoneShield;
+import com.Chagui68.entities.ChaosMage;
 import com.Chagui68.entities.CreeperJr;
-import com.Chagui68.entities.DioBoss;
+import com.Chagui68.entities.miniboss.DioBoss;
+import com.Chagui68.entities.EnderKnight;
+import com.Chagui68.entities.FlameElemental;
+import com.Chagui68.entities.FrostGolem;
 import com.Chagui68.entities.HeadSlime;
-import com.Chagui68.entities.MobHandler;
+import com.Chagui68.entities.ObsidianGuard;
+import com.Chagui68.entities.ShadowRogue;
+import com.Chagui68.entities.SoulReaper;
+import com.Chagui68.entities.StormCaller;
+import com.Chagui68.entities.VenomWitch;
+import com.Chagui68.entities.VoidCrawler;
 import com.Chagui68.entities.ZombieHorseTrap;
 import com.Chagui68.items.food.HeadSlimeGelatin;
-import com.Chagui68.items.misc.HeadSlimeHeart;
-import com.Chagui68.items.misc.MilitaryComponent;
+import com.Chagui68.items.components.HeadSlimeHeart;
+import com.Chagui68.items.components.MilitaryComponent;
 import com.Chagui68.items.misc.MilitaryMine;
-import com.Chagui68.items.misc.StarCore;
+import com.Chagui68.items.components.StarCore;
 import com.Chagui68.listener.*;
+import com.Chagui68.music.MusicManager;
+import com.Chagui68.ritual.BossDimensionManager;
+import com.Chagui68.ritual.RitualManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -30,6 +47,22 @@ public class MultiverseCreatures extends JavaPlugin {
     private HeadSlime headSlime;
     private ZombieHorseTrap zombieHorseTrap;
     private Mahoraga mahoraga;
+    private ArmorStandBoss armorStandBoss;
+    private MagicSealListener magicSealListener;
+    private MusicManager musicManager;
+    private BossDimensionManager bossDimensionManager;
+    private RitualManager ritualManager;
+    private ShadowRogue shadowRogue;
+    private FlameElemental flameElemental;
+    private FrostGolem frostGolem;
+    private VoidCrawler voidCrawler;
+    private StormCaller stormCaller;
+    private BoneShield boneShield;
+    private VenomWitch venomWitch;
+    private ObsidianGuard obsidianGuard;
+    private SoulReaper soulReaper;
+    private ChaosMage chaosMage;
+    private EnderKnight enderKnight;
 
     @Override
     public void onEnable() {
@@ -44,6 +77,28 @@ public class MultiverseCreatures extends JavaPlugin {
         headSlime = new HeadSlime(this);
         zombieHorseTrap = new ZombieHorseTrap(this);
         mahoraga = new Mahoraga(this);
+        armorStandBoss = new ArmorStandBoss(this);
+        magicSealListener = new MagicSealListener(this);
+        musicManager = new MusicManager(this);
+        shadowRogue = new ShadowRogue(this);
+        flameElemental = new FlameElemental(this);
+        frostGolem = new FrostGolem(this);
+        voidCrawler = new VoidCrawler(this);
+        stormCaller = new StormCaller(this);
+        boneShield = new BoneShield(this);
+        venomWitch = new VenomWitch(this);
+        obsidianGuard = new ObsidianGuard(this);
+        soulReaper = new SoulReaper(this);
+        chaosMage = new ChaosMage(this);
+        enderKnight = new EnderKnight(this);
+        
+        bossDimensionManager = new BossDimensionManager(this);
+        
+        ritualManager = new RitualManager(this);
+
+        getServer().getScheduler().runTask(this, () -> {
+            bossDimensionManager.createBossDimension();
+        });
 
         MobHandler mobHandler = new MobHandler(this);
         getServer().getPluginManager().registerEvents(mobHandler, this);
@@ -55,6 +110,22 @@ public class MultiverseCreatures extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MantisClawsHandler(this), this);
         getServer().getPluginManager().registerEvents(new MineHandler(this), this);
         getServer().getPluginManager().registerEvents(new RecipeGuardListener(), this);
+        getServer().getPluginManager().registerEvents(new BossDimensionCommandHandler(this), this);
+        getServer().getPluginManager().registerEvents(new BossDimensionBlockHandler(this), this);
+        getServer().getPluginManager().registerEvents(new RitualCandleListener(this), this);
+        getServer().getPluginManager().registerEvents(new BossInvocationManager(this), this);
+
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.CinderGreatswordHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.VeilwalkerMantleHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.SoulreapScytheHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.MarrowAegisHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.ObsidianBastionHandler(), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.FrostHeartOffhandHandler(), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.SkyfireTalismanHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.NullshearEdgeHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.EightHandledWheelHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.AetherPullshotHandler(this), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.ChaosForgeHandler(), this);
 
         com.Chagui68.commands.MSCCommand mscCommand = new com.Chagui68.commands.MSCCommand(this, mobHandler);
         getCommand("msc").setExecutor(mscCommand);
@@ -90,6 +161,20 @@ public class MultiverseCreatures extends JavaPlugin {
         Bukkit.addRecipe(gelatinRecipe);
     }
 
+    @Override
+    public void onDisable() {
+        if (musicManager != null) {
+            musicManager.stopAll();
+        }
+        if (ritualManager != null) {
+            ritualManager.stopAllRituals();
+        }
+        
+        if (bossDimensionManager != null) {
+            bossDimensionManager.unloadBossDimension();
+        }
+    }
+
     public FreezeAbility getFreezeAbility() {
         return freezeAbility;
     }
@@ -117,4 +202,36 @@ public class MultiverseCreatures extends JavaPlugin {
     public Mahoraga getMahoraga() {
         return mahoraga;
     }
+
+    public ArmorStandBoss getArmorStandBoss() {
+        return armorStandBoss;
+    }
+
+    public MagicSealListener getMagicSealListener() {
+        return magicSealListener;
+    }
+
+    public BossDimensionManager getBossDimensionManager() {
+        return bossDimensionManager;
+    }
+
+    public RitualManager getRitualManager() {
+        return ritualManager;
+    }
+
+    public MusicManager getMusicManager() {
+        return musicManager;
+    }
+
+    public ShadowRogue getShadowRogue() { return shadowRogue; }
+    public FlameElemental getFlameElemental() { return flameElemental; }
+    public FrostGolem getFrostGolem() { return frostGolem; }
+    public VoidCrawler getVoidCrawler() { return voidCrawler; }
+    public StormCaller getStormCaller() { return stormCaller; }
+    public BoneShield getBoneShield() { return boneShield; }
+    public VenomWitch getVenomWitch() { return venomWitch; }
+    public ObsidianGuard getObsidianGuard() { return obsidianGuard; }
+    public SoulReaper getSoulReaper() { return soulReaper; }
+    public ChaosMage getChaosMage() { return chaosMage; }
+    public EnderKnight getEnderKnight() { return enderKnight; }
 }

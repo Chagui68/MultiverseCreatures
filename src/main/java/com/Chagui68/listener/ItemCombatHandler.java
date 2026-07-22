@@ -1,6 +1,6 @@
 package com.Chagui68.listener;
 
-import com.Chagui68.items.weapons.Excalibur;
+import com.Chagui68.items.weapons.melee.Excalibur;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

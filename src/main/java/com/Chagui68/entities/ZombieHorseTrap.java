@@ -1,7 +1,7 @@
 package com.Chagui68.entities;
 
 import com.Chagui68.MultiverseCreatures;
-import com.Chagui68.items.misc.MilitaryComponent;
+import com.Chagui68.items.components.MilitaryComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -145,12 +145,12 @@ public class ZombieHorseTrap implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
+    public void onTankDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Zombie zombie)) return;
         if (!zombie.getScoreboardTags().contains(TANK_TAG)) return;
 
         if (event.getCause() == DamageCause.PROJECTILE) {
-            event.setCancelled(true);
+            event.setDamage(event.getDamage() * 0.5);
         }
     }
 
@@ -171,7 +171,7 @@ public class ZombieHorseTrap implements Listener {
         Entity entity = event.getEntity();
 
         if (entity.getScoreboardTags().contains(LANCER_HORSE_TAG)) {
-            for (Map.Entry<UUID, ArmyInstance> entry : armies.entrySet()) {
+            for (var entry : armies.entrySet()) {
                 ArmyInstance army = entry.getValue();
                 if (army.lancerHorse != null && army.lancerHorse.getUniqueId().equals(entity.getUniqueId())) {
                     army.lancerHorseDead = true;
@@ -185,7 +185,7 @@ public class ZombieHorseTrap implements Listener {
         }
 
         if (entity.getScoreboardTags().contains(CAMEL_TAG)) {
-            for (Map.Entry<UUID, ArmyInstance> entry : armies.entrySet()) {
+            for (var entry : armies.entrySet()) {
                 ArmyInstance army = entry.getValue();
                 UUID eid = entity.getUniqueId();
                 if ((army.camel1 != null && army.camel1.getUniqueId().equals(eid)) ||
