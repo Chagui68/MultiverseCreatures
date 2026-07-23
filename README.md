@@ -14,7 +14,6 @@
 
 [📥 Download on Modrinth](https://modrinth.com/plugin/multiversecreatures) ·
 [📖 Full Wiki](./wiki/Home.md) ·
-[🐙 Source on GitHub](https://github.com/Chagui68/MultiverseCreatures) ·
 [🐛 Report Issues](https://github.com/Chagui68/MultiverseCreatures/issues)
 
 </div>
@@ -61,25 +60,6 @@ The project has a complete documentation site built into the repository. It cove
 | [Commands](./wiki/Commands.md) | Full `/msc` reference (spawn, give, seal, dummy, attack, music, dimtp, cleanstands) |
 | [Architecture](./wiki/Architecture.md) | Code structure, conventions and how to extend the plugin |
 | [Installation](./wiki/Installation.md) | Step-by-step install, config.yml guide, troubleshooting |
-
----
-
-## 🧭 Quick Links
-
-> 📖 **The complete documentation lives in the [`wiki/`](./wiki/Home.md) folder.** Below is a quick index of every page.
-
-| Topic | Page |
-|-------|------|
-| 🏠 Project overview & features | [Wiki Home](./wiki/Home.md) |
-| 🐉 ALL Bosses & minibosses | [Bosses](./wiki/Bosses.md) |
-| 🧟 All mobs & creatures | [Creatures](./wiki/Creatures.md) |
-| ⚔️ All weapons | [Weapons](./wiki/Weapons.md) |
-| 🪖 Armor & off-hand relics | [Armor-and-Relics](./wiki/Armor-and-Relics.md) |
-| 🎒 Misc items, food & utility | [Items](./wiki/Items.md) |
-| 🧪 Crafting ingredients & drops | [Components](./wiki/Components.md) |
-| 🛠️ Commands & config | [Commands](./wiki/Commands.md) |
-| 🏗️ Architecture & contributing | [Architecture](./wiki/Architecture.md) |
-| 📦 Installation | [Installation](./wiki/Installation.md) |
 
 ---
 
@@ -165,12 +145,6 @@ wiki/                             ← Documentation (NOT compiled with the plugi
 ```
 
 The `wiki/` folder is **pure Markdown documentation** and is excluded from the Maven build — it lives only on GitHub for reference and is never bundled into the plugin JAR.
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome! Before adding new content, please read the [Architecture wiki page](./wiki/Architecture.md) — it explains the boss attack registry, item builder, listener registration, and per-item persistence conventions. Keep the existing code style (no comments, fluent `ItemBuilder`, modern `AttributeModifier`, `MscEntityUtils.spawnTagged`).
 
 ---
 
