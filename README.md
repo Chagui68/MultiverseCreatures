@@ -112,24 +112,24 @@ Full breakdown (alias tables, all spawn types, giveable items, attack names, sea
 
 ```
 src/main/java/com/Chagui68/
-├── MultiverseCreatures.java      Plugin entrypoint
-├── ability/                      Player abilities (FreezeAbility)
-├── commands/                     /msc command executor + tab completer
+├── MultiverseCreatures.java      
+├── ability/                     
+├── commands/                     
 ├── entities/
-│   ├── boss/                     ArmorStandBoss + attack framework
-│   │   ├── attack/{aerial,ground,ranged}/   33 attacks dispatched via registry
+│   ├── boss/                    
+│   │   ├── attack/{aerial,ground,ranged}/  
 │   │   └── MagicSealListener / BossInstance
-│   ├── miniboss/                 DioBoss, Mahoraga
-│   └── handler/                 MobHandler (natural spawn router)
+│   ├── miniboss/                
+│   └── handler/               
 ├── items/
 │   ├── armor/ components/ food/ dio/
-│   ├── misc/                     IceCrown, MantisClaws, Wirt'sLantern, MilitaryMine
-│   │   └── offhand/              MarrowAegis, VeilwalkerMantle, FrostHeartOffhand
+│   ├── misc/                     
+│   │   └── offhand/              
 │   └── weapons/{melee,ranged,magic}/
-├── listener/                    Bukkit event handlers per item/relic
-├── music/                        NBS song playback (MusicManager)
-├── ritual/                       Ritual structures & private boss dimension
-└── utils/                        ItemBuilder + MscEntityUtils helpers
+├── listener/                   
+├── music/                       
+├── ritual/                       
+└── utils/                      
 
 wiki/                             
 ├── Home.md
