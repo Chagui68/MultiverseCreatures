@@ -758,7 +758,7 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2.0f, 0.3f);
         world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.5f, 0.8f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1, 0, 0, 0, 0);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
         world.spawnParticle(Particle.EXPLOSION, loc.clone().add(0, 5, 0), 50, 5, 5, 5, 0);
         for (int i = 0; i < 40; i++) {
             double angle = random.nextDouble() * Math.PI * 2;
@@ -800,7 +800,7 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2.0f, 0.6f);
         world.playSound(loc, Sound.ENTITY_WITHER_SPAWN, 1.5f, 0.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1, 0, 0, 0, 0);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
 
         for (int i = 0; i < 15; i++) {
             double angle = random.nextDouble() * Math.PI * 2;
@@ -849,7 +849,7 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.3f);
         world.playSound(loc, Sound.ENTITY_ENDER_DRAGON_DEATH, 2.0f, 0.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1, 0, 0, 0, 0);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
         world.spawnParticle(Particle.EXPLOSION, loc.clone().add(0, 5, 0), 80, 8, 8, 8, 0);
         world.spawnParticle(Particle.SOUL, loc.clone().add(0, 5, 0), 100, 6, 6, 6, 0.1);
         world.spawnParticle(Particle.PORTAL, loc.clone().add(0, 5, 0), 80, 5, 5, 5, 0.05);
@@ -932,7 +932,7 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.5f, 1.2f);
         world.playSound(loc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 1.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1, 0, 0, 0, 0);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
         world.spawnParticle(Particle.END_ROD, loc.clone().add(0, 5, 0), 50, 3, 5, 3, 0.05);
 
         stand.setBodyPose(new EulerAngle(0, 0, 0));
@@ -967,7 +967,7 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.ITEM_SHIELD_BLOCK, 2.0f, 1.5f);
         world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 0.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1, 0, 0, 0, 0);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
         world.spawnParticle(Particle.EXPLOSION, loc.clone().add(0, 5, 0), 30, 3, 5, 3, 0);
 
         stand.setBodyPose(new EulerAngle(Math.toRadians(5), 0, 0));
@@ -2383,17 +2383,27 @@ public class ArmorStandBoss implements Listener {
         String key = attackName.toLowerCase();
         BossAttack attack = attackRegistry.get(key);
         if (attack != null) {
+            boolean isAerial = isAerialAttackName(key);
+            boolean isGround = isGroundAttackName(key);
+            if (isAerial && !instance.isFlying) {
+                return false;
+            }
+            if (isGround && instance.isFlying) {
+                return false;
+            }
             attack.execute(instance);
             return true;
         }
 
         switch (key) {
             case "crossbarrage" -> {
+                if (!instance.isFlying) return false;
                 if (instance.shieldSealActive) return false;
                 stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.5f);
                 startHoverBarrage(instance);
             }
             case "groundslam", "slam" -> {
+                if (instance.isFlying) return false;
                 if (instance.shieldState == ShieldState.PLANTED || instance.shieldState == ShieldState.SLAM_DONE) {
                     attackRegistry.get("groundslam").execute(instance);
                 } else {
@@ -2401,11 +2411,11 @@ public class ArmorStandBoss implements Listener {
                     attackRegistry.get("groundslam").execute(instance);
                 }
             }
-            case "plant", "plantshield", "shield" -> plantShield(instance);
-            case "retrieve", "retrieveshield" -> retrieveShield(instance);
-            case "pentagram", "skyseal" -> skyPentagramAttack(instance);
             case "trianglecall", "call" -> startTriangleCall(instance);
-            case "rain", "rainoflances" -> executeAttack("rainoflances", instance, false);
+            case "rain", "rainoflances" -> {
+                if (!instance.isFlying) return false;
+                executeAttack("rainoflances", instance, false);
+            }
             case "flyup", "takeoff" -> {
                 if (instance.isFlying || instance.shieldSealActive) return false;
                 flyUp(instance, false);
@@ -2426,16 +2436,26 @@ public class ArmorStandBoss implements Listener {
                 if (instance.healingCircleActive || instance.isFlying) return false;
                 startHealingCircle(instance, false);
             }
-            // Ground / ranged / aerial attacks — dispatched polymorphically via attackRegistry
+            // Ground attacks — only while NOT flying
             case "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple",
-                 "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeamer", "doombeam",
-                 "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell",
-                 "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment",
-                 "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear",
-                 "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift",
-                 "arcanemissiles", "spiritbeam" -> {
+                 "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeamer", "doombeam" -> {
+                if (instance.isFlying) return false;
                 String lookup = key.equals("doombeamer") ? "doombeam" : key;
                 BossAttack a = attackRegistry.get(lookup);
+                if (a != null) a.execute(instance);
+            }
+            // Aerial attacks — only while flying
+            case "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell",
+                 "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment" -> {
+                if (!instance.isFlying) return false;
+                BossAttack a = attackRegistry.get(key);
+                if (a != null) a.execute(instance);
+            }
+            // Ranged attacks — usable in both states (ground + air)
+            case "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear",
+                 "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift",
+                 "arcanemissiles", "spiritbeam" -> {
+                BossAttack a = attackRegistry.get(key);
                 if (a != null) a.execute(instance);
             }
             case "reset", "resetpose" -> resetBossPose(instance);
@@ -2458,6 +2478,25 @@ public class ArmorStandBoss implements Listener {
         if (a instanceof RainOfLancesAttack r) r.execute(instance, telegraph);
         else if (a instanceof AirSlamAttack s) s.execute(instance, telegraph);
         else if (a != null) a.execute(instance);
+    }
+
+    private static final java.util.Set<String> AERIAL_ATTACK_NAMES = java.util.Set.of(
+        "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell",
+        "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment",
+        "rainoflances", "airslam", "hoverbarrage"
+    );
+
+    private static final java.util.Set<String> GROUND_ATTACK_NAMES = java.util.Set.of(
+        "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar",
+        "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam"
+    );
+
+    private boolean isAerialAttackName(String name) {
+        return AERIAL_ATTACK_NAMES.contains(name);
+    }
+
+    private boolean isGroundAttackName(String name) {
+        return GROUND_ATTACK_NAMES.contains(name);
     }
 
     private void syncBossBarPlayers(BossInstance instance) {

@@ -30,11 +30,12 @@ public class MirrorImageAttack extends BossAttackBase {
 
     @Override
     public void execute(BossInstance instance) {
+        if (instance.isFlying) return;
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
         if (plugin.getMagicSealListener() != null) {
-            plugin.getMagicSealListener().spawnCelestialSeal(stand, 80);
+            plugin.getMagicSealListener().spawnCelestialSeal(center.clone().add(0, 0.5, 0), 80);
         }
 
         new BukkitRunnable() {

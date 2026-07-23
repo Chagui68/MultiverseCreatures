@@ -24,6 +24,7 @@ public class HoverBarrageAttack extends BossAttackBase {
 
     @Override
     public void execute(BossInstance instance) {
+        if (!instance.isFlying) return;
         if (instance.hoverBarrageActive) return;
         instance.hoverBarrageActive = true;
 

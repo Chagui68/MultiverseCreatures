@@ -30,6 +30,7 @@ public class RainOfLancesAttack extends BossAttackBase {
     }
 
     public void execute(BossInstance instance, boolean telegraph) {
+        if (!instance.isFlying) return;
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
 

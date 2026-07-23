@@ -1,187 +1,189 @@
-# MultiverseCreatures
+<div align="center">
 
-Themed creatures and items plugin for Spigot/Paper **1.21+**.
+# ✦ MultiverseCreatures ✦
 
-MultiverseCreatures adds custom entities with unique trades and custom items to your Minecraft server.
+### Themed creatures, bosses & legendary items pulled from across the multiverse
 
-## 🛒 Multiverse Merchant & Themed Items
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21%2B-7C4DFF?logo=minecraft&logoColor=white)](https://modrinth.com/plugin/multiversecreatures)
+[![Purpur](https://img.shields.io/badge/Purpur-1.21.11-FFA000?logo=purpur)](https://purpurmc.org/)
+[![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![License](https://img.shields.io/badge/License-GPL--3.0-blue)](./LICENSE)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/gJCViBEN?label=Modrinth%20Downloads&logo=modrinth&color=2DD2A4)](https://modrinth.com/plugin/multiversecreatures)
 
-### Multiverse Merchant NPC
-A Wandering Trader replacement that spawns naturally (30% chance) with custom trades from across the multiverse:
+**A Paper/Purpur/Spigot plugin that brings adaptive bosses, signature weapons, and themed mobs inspired by JoJo, Jujutsu Kaisen, Hollow Knight, Adventure Time, Arthurian legend, Half-Life, Scooby-Doo, Diablo and more.**
 
-| Item | Cost | Uses | Effect |
-|------|------|------|--------|
-| **Scooby Cookie** (5x) | 20 Diamonds | 999 | Grants **Resistance VI** for 10s when eaten |
-| **Excalibur Sword** (1x) | 8 Netherite Ingots + 16 Diamond Blocks | 1 | Grants **Strength III** for 4s while held |
-| **Ice King's Crown** (1x) | 64 Packed Ice + 16 Blue Ice + 12 Diamonds | 1 | Winter crown with ice abilities |
-| **Mantis Claws** (1x) | 16 Iron Ingots + 8 String | ∞ | Cling to walls with **SHIFT**, jump off with **SPACE** |
+[📥 Download on Modrinth](https://modrinth.com/plugin/multiversecreatures) ·
+[📖 Full Wiki](./wiki/Home.md) ·
+[🐙 Source on GitHub](https://github.com/Chagui68/MultiverseCreatures) ·
+[🐛 Report Issues](https://github.com/Chagui68/MultiverseCreatures/issues)
 
-### 🧊 Ice King's Crown (Adventure Time)
-The legendary crown of the Ice King grants mastery over ice and snow.
-
-| Control | Ability | Cooldown |
-|---------|---------|----------|
-| **Right-Click** | Snow Block Launch — lifts targeted snow/ice block and launches it at your enemy | 10s |
-| **Shift + Right-Click** | Blizzard — AoE freezing storm that damages and slows nearby enemies | 60s |
-| **Left-Click** | Toggle Ice Path — walk on water by freezing it beneath your feet | No cooldown |
-
-**Snow Block Launch effects:**
-- Snow block → Slowness 3 + Weakness 1 (5s) + 6 damage
-- Ice block → Slowness 2 + Weakness 2 + Nausea 1 (5s) + 6 damage
-
-**Passive:** 20% damage reduction when holding the crown + freeze immunity.
-
-### 🦗 Mantis Claws (Hollow Knight)
-Replica of the Mantis Claws from Hallownest. Grants the wielder the ability to cling to and scale walls.
-
-| Control | Ability |
-|---------|---------|
-| **Shift** (mid-air, near wall) | Cling to wall + slow fall |
-| **Space** (while clinging) | Wall-jump upward |
-
-**Passive:** Cannot break blocks while holding. Unbreakable.
-
-### 🧟 Head Slime (Half-Life)
-A parasitic headcrab that leaps onto targets and controls them.
-
-| Target | Effect |
-|--------|--------|
-| **Player** | Blindness II + Slowness I + periodic true damage (3❤/2s) |
-| **Hostile Mob** | Strength II + Speed II + Resistance I — then attacks nearest player |
-
-**Detach conditions:** Player takes damage, slime is attacked, or host dies (slime survives).
-
-**Spawn:** 10% chance to replace natural slime spawns. Use `/msc spawn headslime` to summon.
+</div>
 
 ---
 
-### Custom Items
-- **Scooby Cookie** (✦ Mystery Inc. ✦) — `§6Scooby Cookie` — "A cookie that will fill you with courage"
-- **Excalibur** (✦ Avalon ✦) — `§6Excalibur` — "The legendary blade of kings"
-- **Ice King's Crown** (✦ Ooo ✦) — `§bIce King's Crown` — "A crown of eternal winter"
-- **Mantis Claws** (✦ Hallownest ✦) — `§6Mantis Claws` — "Claws forged from the silk and iron of Deepnest"
-- **Wirt's Lantern** (✦ Khand ✦) — `§5Wirt's Lantern` — "A lantern that holds a lost soul"
-- **Dio's Stand Head** (✦ JoJo ✦) — `§6Dio's Stand Head` — "Za Warudo! Toki wo tomare!"
-- **Star Core** — `§eStar Core` — "A compressed core of pure cosmic energy"
+## 🎲 What is MultiverseCreatures?
 
-### 💥 Creeper Jr.
-A smaller, faster creeper that deals true damage (bypasses armor).
+MultiverseCreatures is a content plugin for **Minecraft 1.21+** that turns a server into a multiverse playground. Every vanilla mob spawn has a chance to be replaced with a themed custom creature; each one has its own AI, drops specialized crafting ingredients, and is the source of a legendary item referencing a different universe.
 
-| Stat | Value |
+### ✨ Core Highlights
+
+- **🛡️ One Final Boss** — *THE OBSIDIAN SENTINEL*, a fully animated 5-phase ArmorStand boss with **33 unique attacks** (13 aerial · 11 ground · 12 ranged), boss bar, megalovania music, magic seals, summoned reinforcements, and defensive states.
+- **🧠 Adaptive Bosses** — *Mahoraga* reads your **full inventory every tick** and evolves its stats in real time (Sharpness → Resistance, Protection → Strength, Knockback → knockback immunity, distance → Speed).
+- **🌌 Themed Minibosses** — *Dio Brando* (JoJo) with an invulnerable Stand ArmorStand that casts **THE WORLD: FREEZING**, freezing every nearby player and locking their movement.
+- **⚔️ Legendary Weapons** — *Excalibur*, *Cinder Greatsword*, *Nullshear Edge*, *Soulreap Scythe*, *Aether Pullshot*, *Skyfire Talisman* — each with passive + active abilities, cooldowns, and themed lore.
+- **🔮 Themed Relics** — *Ice King's Crown* (ice projectile + blizzard + ice-path), *Mantis Claws* (wall-cling + wall-jump via packet interception), *Wirt's Lantern* (mob repel + Night Vision + immunity), *Dio's Stand Head* (summoned Stand with time-freeze attack).
+- **🪖 Armor Sets** — *Eight-Handled Wheel* (damage-cause adaptation), *Obsidian Bastion* (4-piece set bonus with +40% Health, knockback immunity, fire/lava immunity), plus off-hand relics *Marrow Aegis* (damage reflect), *Veilwalker Mantle* (stealth + backstab) and *Frost Heart* (chill aura + Frost Walker).
+- **🎒 Themed Food & Utility** — *Scooby Cookie* (Resistance VI), *Head Slime Gelatin* (Head Slime immunity), *Military Mine* (auto-camouflaged TNT).
+- **🌿 Natural-spawn replacements** for Zombies, Skeletons, Creepers, Spiders, Witches, Blazes, Iron Golems, Endermen, Wither Skeletons, Evokers, Slimes — each with its own chance, fully configurable.
+- **🐎 Full-Moon Military Ambush** — a rare 0.1% chance during a Full Moon to spawn a ZombieHorseTrap that unleashes a 5-unit undead army.
+- **🛒 Multiverse Merchant** — 30% of Wandering Trader spawns become "Shaggy" with custom multiverse trades.
+- **🎵 NBS Music Engine** — custom music playback (ships Megalovania as the boss theme).
+- **🔮 Ritual Structures & Private Boss Dimension** — scaffolding for future boss invocation arcs.
+- **⚙️ Fully Configurable** — every spawn chance, boss stat, item cooldown, death message and effect amplifier lives in `config.yml`.
+
+---
+
+## 📖 Documentation Wiki
+
+The project has a complete documentation site built into the repository. It covers every boss, mob, item, command and config knob in detail — all generated from the source code.
+
+**🔗 Browse the full wiki on GitHub:** https://github.com/Chagui68/MultiverseCreatures/tree/main/wiki
+
+| Page | Topic |
 |------|-------|
-| Size | 60% of normal creeper |
-| Speed | 1.5x normal creeper |
-| Explosion Radius | 2 (normal is 3) |
-| Damage Type | True damage (ignores armor) |
-| Block Damage | None (yield = 0) |
-
-**Spawn:** 15% chance to replace natural creeper spawns. Use `/msc spawn creeperjr` to summon.
-
----
-
-### 🐴 Military Zombie Trap (Full Moon Event)
-During a **Full Moon**, 0.1% of natural zombie spawns are replaced with a **Military Zombie Horse**. When a player approaches, the trap activates and spawns an undead army:
-
-| Unit | Description |
-|------|-------------|
-| **Zombie Tank** (center) | 350 HP, 10 dmg, 20% dmg reduction, 3 blocks tall, **arrow immune**, iron armor |
-| **Skeleton Duelist** (x2, flanking behind) | 50 HP, swaps between Flame 3/Power 3 bow and Sharp 3/Knockback 2 sword based on distance, chainmail armor |
-| **Zombie Lancer** (mounted, 3 blocks behind) | Iron lance, horse has Res 1 + Speed 3; on horse death gains Speed 3 + Str 1, iron armor |
-| **Camel Rider** (x2, flanking Lancers) | Zombie with diamond lance + Bogged skeleton; camel has Speed 2 + Res 2; on camel death riders gain speed/resistance |
-| **Sniper Skeleton** (rearguard) | Wither skeleton with Power 5 bow, 40-block range, arrows apply **Wither 1** + **Weakness 1** |
-
-*All units wear a dyed leather helmet matching their name color.*
-
-**Spawn:** Use `/msc spawn zombietrap` to summon the trap horse.
+| [Home](./wiki/Home.md) | Overview + featured themes |
+| [Bosses](./wiki/Bosses.md) | THE OBSIDIAN SENTINEL · Dio Brando · Mahoraga |
+| [Creatures](./wiki/Creatures.md) | 14 natural-spawn replacement mobs + ZombieHorseTrap army |
+| [Weapons](./wiki/Weapons.md) | Excalibur, Cinder Greatsword, Nullshear Edge, Soulreap Scythe, Aether Pullshot, Skyfire Talisman, Chaos Forge |
+| [Armor-and-Relics](./wiki/Armor-and-Relics.md) | Eight-Handled Wheel, Obsidian Bastion set, off-hand relics (Marrow Aegis, Veilwalker Mantle, Frost Heart) |
+| [Items](./wiki/Items.md) | Ice King's Crown, Mantis Claws, Wirt's Lantern, Dio's Stand Head, Military Mine, Scooby Cookie, Head Slime Gelatin |
+| [Components](./wiki/Components.md) | The 16 mob-drop crafting ingredients + the loot → item chains |
+| [Commands](./wiki/Commands.md) | Full `/msc` reference (spawn, give, seal, dummy, attack, music, dimtp, cleanstands) |
+| [Architecture](./wiki/Architecture.md) | Code structure, conventions and how to extend the plugin |
+| [Installation](./wiki/Installation.md) | Step-by-step install, config.yml guide, troubleshooting |
 
 ---
 
-## 🛠️ Commands
+## 🧭 Quick Links
 
-All plugin interactions are handled via the `/msc` command (**Permission:** `msc.admin`):
+> 📖 **The complete documentation lives in the [`wiki/`](./wiki/Home.md) folder.** Below is a quick index of every page.
 
-| Command | Description |
-|---|---|---|
-| `/msc spawn merchant` | Spawns the Multiverse Merchant at your location |
-| `/msc spawn dio` | Spawns Dio Brando boss at your location |
-| `/msc spawn creeperjr` | Spawns a Creeper Jr. at your location |
-| `/msc spawn headslime` | Spawns a Head Slime at your location |
-| `/msc spawn zombietrap` | Spawns a Military Zombie Horse trap at your location |
-| `/msc give <item>` | Give yourself a MultiverseCreatures item |
-| `/msc reload` | Reloads configuration |
-
-**Spawn types:** `merchant`, `dio`, `creeperjr`, `headslime`, `zombietrap`
-
-**Give items:** `scoobycookie`, `excalibur`, `crown`, `mantisclaws`, `claws`, `icekingscrown`
+| Topic | Page |
+|-------|------|
+| 🏠 Project overview & features | [Wiki Home](./wiki/Home.md) |
+| 🐉 ALL Bosses & minibosses | [Bosses](./wiki/Bosses.md) |
+| 🧟 All mobs & creatures | [Creatures](./wiki/Creatures.md) |
+| ⚔️ All weapons | [Weapons](./wiki/Weapons.md) |
+| 🪖 Armor & off-hand relics | [Armor-and-Relics](./wiki/Armor-and-Relics.md) |
+| 🎒 Misc items, food & utility | [Items](./wiki/Items.md) |
+| 🧪 Crafting ingredients & drops | [Components](./wiki/Components.md) |
+| 🛠️ Commands & config | [Commands](./wiki/Commands.md) |
+| 🏗️ Architecture & contributing | [Architecture](./wiki/Architecture.md) |
+| 📦 Installation | [Installation](./wiki/Installation.md) |
 
 ---
 
-## 🚀 Requirements
+## 📦 Installation
 
-- **Server:** Purpur / Paper / Spigot **1.21+** (built against `purpur-api 1.21.11`)
-- **Java:** **21** or higher
+1. Download the latest `.jar` from the [Modrinth page](https://modrinth.com/plugin/multiversecreatures).
+2. Drop it into your server's `plugins/` folder.
+3. Start the server once to generate the default `config.yml`.
+4. (Optional) Edit `plugins/MultiverseCreatures/config.yml` to tune spawn chances, cooldowns, boss stats, death messages, and effect amplifiers.
+5. Restart and enjoy. Use `/msc spawn <type>` to summon anything, or wait for natural spawns to be replaced.
 
-## 🔨 Build
+> **Requirements:** Paper / Purpur / Spigot **1.21+** (built against `purpur-api 1.21.11`) · **Java 21+**
+
+A full install guide lives in the [Installation wiki page](./wiki/Installation.md).
+
+---
+
+## 🚀 Build from Source
 
 ```bash
+git clone https://github.com/Chagui68/MultiverseCreatures.git
+cd MultiverseCreatures
 mvn clean package -DskipTests
 ```
 
-Output: `target/MultiverseCreatures-v${version}.jar`
+Output JAR will be at `target/MultiverseCreatures-v<version>.jar`.
 
 ---
 
-## 🏗️ Project Structure
+## 🛠️ Commands (Quick Reference)
+
+All interactions use the `/msc` command. **Permission:** `msc.admin` (server OP by default).
+
+```
+/msc spawn <type>      Summon a mob/boss/merchant at your location
+/msc give <item> [n]   Obtain an item (amount 1–64)
+/msc seal <pattern>    Render a particle seal pattern
+/msc dummy ...         Spawn/pose/an animation ArmorStand dummies
+/msc attack <name>     Trigger an ArmorStandBoss attack/mechanic
+/msc music <play|stop> Play or stop NBS songs
+/msc dimtp <world>     Teleport across worlds
+/msc cleanstands        Remove all MSC-related armor stands
+```
+
+Full breakdown (alias tables, all spawn types, giveable items, attack names, seal patterns, dummy animations) is in the [Commands wiki page](./wiki/Commands.md).
+
+---
+
+## 🗺️ Project Structure
 
 ```
 src/main/java/com/Chagui68/
-├── MultiverseCreatures.java      # Plugin entrypoint: onEnable/onDisable, recipe + listener registration
-├── ability/                       # Player abilities (e.g. FreezeAbility)
-├── commands/                      # /msc command executor and tab completer
-│   └── MSCCommand.java
-├── entities/                      # Custom mobs (each one implements Listener)
-│   ├── boss/
-│   │   ├── ArmorStandBoss.java    # Final boss: spawn, phases, shield, bar, AI ticker
-│   │   ├── MagicSealListener.java  # Particle seal rendering (not a Listener)
-│   │   ├── BossInstance.java       # Per-instance boss state struct
-│   │   └── attack/                # Boss attack framework + concrete attacks
-│   │       ├── BossAttack.java         # interface: execute(BossInstance), getName()
-│   │       ├── BossAttackBase.java     # abstract base: boss/plugin/random/sealDamage/...
-│   │       ├── aerial/                 # 13 air attacks (starfall, airslam, ...)
-│   │       ├── ground/                 # 11 ground attacks (shieldbash, groundslam, ...)
-│   │       └── ranged/                 # 12 ranged attacks (meteorstorm, spiritbeam, ...)
-│   ├── miniboss/                  # DioBoss, Mahoraga
-│   └── handler/                   # MobHandler (vanilla-spawn router)
-├── items/                         # Custom items, grouped by category
-│   ├── armor/      items/food/     items/dio/
-│   ├── components/                # Crafting ingredients (VoidEssence, MagmaCore, ...)
-│   ├── misc/                      # IceCrown, MantisClaws, WirtsLantern, MilitaryMine
-│   │   └── offhand/               # MarrowAegis, VeilwalkerMantle, FrostHeartOffhand
+├── MultiverseCreatures.java      Plugin entrypoint
+├── ability/                      Player abilities (FreezeAbility)
+├── commands/                     /msc command executor + tab completer
+├── entities/
+│   ├── boss/                     ArmorStandBoss + attack framework
+│   │   ├── attack/{aerial,ground,ranged}/   33 attacks dispatched via registry
+│   │   └── MagicSealListener / BossInstance
+│   ├── miniboss/                 DioBoss, Mahoraga
+│   └── handler/                 MobHandler (natural spawn router)
+├── items/
+│   ├── armor/ components/ food/ dio/
+│   ├── misc/                     IceCrown, MantisClaws, Wirt'sLantern, MilitaryMine
+│   │   └── offhand/              MarrowAegis, VeilwalkerMantle, FrostHeartOffhand
 │   └── weapons/{melee,ranged,magic}/
-├── listener/                      # Bukkit event handlers for items, bosses, rituals
-├── music/                         # NBS song playback (BossThemes)
-├── ritual/                        # Boss invocation rituals & private boss dimension
-└── utils/                         # Reusable helpers
-    ├── ItemBuilder.java           # Fluent builder for ItemStacks (lore, PDC tags, enchants)
-    └── MscEntityUtils.java        # setAttribute, spawnTagged, permanentFireResistance,
-                                   # isValidTarget, handleDeath — shared mob utilities
+├── listener/                    Bukkit event handlers per item/relic
+├── music/                        NBS song playback (MusicManager)
+├── ritual/                       Ritual structures & private boss dimension
+└── utils/                        ItemBuilder + MscEntityUtils helpers
+
+wiki/                             ← Documentation (NOT compiled with the plugin)
+├── Home.md
+├── Bosses.md
+├── Creatures.md
+├── Weapons.md
+├── Armor-and-Relics.md
+├── Items.md
+├── Components.md
+├── Commands.md
+├── Architecture.md
+└── Installation.md
 ```
 
-### Architectural conventions
+The `wiki/` folder is **pure Markdown documentation** and is excluded from the Maven build — it lives only on GitHub for reference and is never bundled into the plugin JAR.
 
-**Boss attacks** — All `ArmorStandBoss` attacks live as individual classes extending `BossAttackBase` under `entities/boss/attack/{aerial,ground,ranged}/`. They are registered in `ArmorStandBoss.initAttacks()` and dispatched polymorphically via `attackRegistry.get(name).execute(instance)`. The three random selectors (`executeRandomAerialAttack`, `executeRandomGroundAttack`, `executeRangedAttack`) and the `/msc triggerattack` switch all dispatch through the registry — adding a new attack is "create class + `registerAttack(new XxxAttack(this))`", no edits to dispatch code needed.
+---
 
-**Mobs** — Each custom mob class implements `Listener` and self-registers in its own constructor (`Bukkit.getPluginManager().registerEvents(this, plugin)`). `MobHandler` is the exception: it's externally registered by `MultiverseCreatures.onEnable()` because it routes natural spawns.
+## 🤝 Contributing
 
-**Items** — All `ItemStack` construction goes through `utils/ItemBuilder` (fluent API: `ItemBuilder.of(Material).name(...).lore(...).tagged(KEY).build()`). Persistent data tags use `PersistentDataType.INTEGER` with a `NamespacedKey("multiversecreatures", "msc_<item>")` per item.
+Pull requests are welcome! Before adding new content, please read the [Architecture wiki page](./wiki/Architecture.md) — it explains the boss attack registry, item builder, listener registration, and per-item persistence conventions. Keep the existing code style (no comments, fluent `ItemBuilder`, modern `AttributeModifier`, `MscEntityUtils.spawnTagged`).
 
-**Attribute modifiers** — Use the modern `AttributeModifier(NamespacedKey, double, Operation)` constructor (NOT the deprecated UUID-based one). `ObsidianBastionHandler` is the reference implementation for armor set bonuses: idempotent `getModifier(key)` check before adding, `removeModifier(key)` on cleanup — no per-player modifier maps required.
+---
 
-### Adding new content
+## 📜 License
 
-| To add... | Steps |
-|---|---|
-| **New item** | Create class under `items/<category>/` using `ItemBuilder`. Expose `public static final ItemStack` + `NamespacedKey KEY`. Register recipes in `MultiverseCreatures.registerRecipes()`. |
-| **New mob** | Create class under `entities/<...>/` implementing `Listener`. Use `MscEntityUtils.spawnTagged/setAttribute/handleDeath`. Self-register in constructor. Instantiate it in `MultiverseCreatures.onEnable()`. |
-| **New boss attack** | Create class extending `BossAttackBase` under `entities/boss/attack/<aerial\|ground\|ranged>/` returning a unique `getName()`. Delegate shared logic via `boss.<helper>()`. Register it in `ArmorStandBoss.initAttacks()`. |
-| **New tool/weapon handler** | Create `listener/XxxHandler` implementing `Listener`. Use `MscEntityUtils.isCreativeOrSpectator` for game-mode guards. Register it in `MultiverseCreatures.onEnable()` via `getServer().getPluginManager().registerEvents(new XxxHandler(this), this)`. |
+[GPL-3.0](./LICENSE) — MultiverseCreatures is open source. Not affiliated with Mojang/Microsoft. Not affiliated with any of the universes referenced — all themes are fan-made tributes.
+
+---
+
+<div align="center">
+
+**Made with ☕ and a love of the multiverse.**
+
+If you enjoy the plugin, leave a ⭐ on GitHub and a ❤ on [Modrinth](https://modrinth.com/plugin/multiversecreatures)!
+
+</div>

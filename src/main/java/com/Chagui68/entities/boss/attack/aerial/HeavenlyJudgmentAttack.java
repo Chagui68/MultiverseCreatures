@@ -23,6 +23,7 @@ public class HeavenlyJudgmentAttack extends BossAttackBase {
 
     @Override
     public void execute(BossInstance instance) {
+        if (!instance.isFlying) return;
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
@@ -69,7 +70,7 @@ public class HeavenlyJudgmentAttack extends BossAttackBase {
                     stand.setLeftArmPose(new EulerAngle(Math.toRadians(-180), Math.toRadians(-45), Math.toRadians(-30)));
                     world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 2.0f, 0.6f);
                     world.spawnParticle(Particle.EXPLOSION, center, 50, 8, 5, 8, 0);
-                    world.spawnParticle(Particle.FLASH, center, 1, 0, 0, 0, 0);
+                    world.spawnParticle(Particle.FLASH, center, 1);
                 } else if (t < 60) {
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-180), Math.toRadians(45), Math.toRadians(30)));
                     stand.setLeftArmPose(new EulerAngle(Math.toRadians(-180), Math.toRadians(-45), Math.toRadians(-30)));
@@ -82,7 +83,7 @@ public class HeavenlyJudgmentAttack extends BossAttackBase {
                             world.spawnParticle(Particle.DUST, beam, 1, 0, 0, 0, 0,
                                     new Particle.DustOptions(Color.fromRGB(0xFFDD00), 2.0f));
                             world.spawnParticle(Particle.FLAME, beam, 1, 0, 0, 0, 0);
-                            if (y % 5 == 0) world.spawnParticle(Particle.SONIC_BOOM, beam, 1, 0, 0, 0, 0);
+                            if (y % 5 == 0) world.spawnParticle(Particle.SONIC_BOOM, beam, 1);
                         }
                         double dmg = sealDamage * 2.0;
                         p.damage(dmg);

@@ -177,11 +177,18 @@ public class MagicSealListener {
     }
 
     public void spawnCelestialSeal(ArmorStand stand, int durationTicks) {
-        spawnCelestialSeal(stand, durationTicks, Plane.XY);
+        spawnCelestialSeal(stand.getLocation(), durationTicks, Plane.XY);
     }
 
     public void spawnCelestialSeal(ArmorStand stand, int durationTicks, Plane plane) {
-        Location center = stand.getLocation();
+        spawnCelestialSeal(stand.getLocation(), durationTicks, plane);
+    }
+
+    public void spawnCelestialSeal(Location center, int durationTicks) {
+        spawnCelestialSeal(center, durationTicks, Plane.XY);
+    }
+
+    public void spawnCelestialSeal(Location center, int durationTicks, Plane plane) {
         final boolean vertical = (plane == Plane.XY || plane == Plane.YZ);
         final double mul = vertical ? 1.6 : 1.0;
         final double rOuter = 7.5 * mul;
@@ -197,7 +204,7 @@ public class MagicSealListener {
             int frame = 0;
             @Override
             public void run() {
-                if (t >= durationTicks || !stand.isValid()) {
+                if (t >= durationTicks) {
                     cancel();
                     return;
                 }

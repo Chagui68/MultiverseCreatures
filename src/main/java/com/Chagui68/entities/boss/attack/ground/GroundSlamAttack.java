@@ -17,6 +17,7 @@ public class GroundSlamAttack extends BossAttackBase {
 
     @Override
     public void execute(BossInstance instance) {
+        if (instance.isFlying) return;
         ArmorStand stand = instance.stand;
         Location center = stand.getLocation();
         World world = center.getWorld();

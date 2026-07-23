@@ -1,16 +1,39 @@
 package com.Chagui68.commands;
 
-import com.Chagui68.items.dio.DioStandHead;
-import com.Chagui68.items.misc.IceCrown;
+import com.Chagui68.items.armor.EightHandledWheel;
+import com.Chagui68.items.armor.ObsidianBastion;
+import com.Chagui68.items.components.ChaosOrb;
+import com.Chagui68.items.components.EnderFragment;
+import com.Chagui68.items.components.FrostHeart;
+import com.Chagui68.items.components.HeadSlimeHeart;
+import com.Chagui68.items.components.MagmaCore;
 import com.Chagui68.items.components.MilitaryComponent;
-import com.Chagui68.items.misc.MilitaryMine;
-import com.Chagui68.items.weapons.melee.Excalibur;
+import com.Chagui68.items.components.ObsidianShard;
+import com.Chagui68.items.components.ReaperEssence;
+import com.Chagui68.items.components.ReinforcedBone;
+import com.Chagui68.items.components.ShadowCloak;
+import com.Chagui68.items.components.StarCore;
+import com.Chagui68.items.components.StormCrystal;
+import com.Chagui68.items.components.VenomGland;
+import com.Chagui68.items.components.VoidEssence;
+import com.Chagui68.items.components.WheelEssence;
+import com.Chagui68.items.dio.DioStandHead;
 import com.Chagui68.items.food.HeadSlimeGelatin;
 import com.Chagui68.items.food.ScoobyCookie;
-import com.Chagui68.items.components.HeadSlimeHeart;
+import com.Chagui68.items.misc.IceCrown;
 import com.Chagui68.items.misc.MantisClaws;
-import com.Chagui68.items.components.StarCore;
+import com.Chagui68.items.misc.MilitaryMine;
 import com.Chagui68.items.misc.WirtsLantern;
+import com.Chagui68.items.misc.offhand.FrostHeartOffhand;
+import com.Chagui68.items.misc.offhand.MarrowAegis;
+import com.Chagui68.items.misc.offhand.VeilwalkerMantle;
+import com.Chagui68.items.weapons.magic.ChaosForge;
+import com.Chagui68.items.weapons.magic.SkyfireTalisman;
+import com.Chagui68.items.weapons.melee.CinderGreatsword;
+import com.Chagui68.items.weapons.melee.Excalibur;
+import com.Chagui68.items.weapons.melee.NullshearEdge;
+import com.Chagui68.items.weapons.melee.SoulreapScythe;
+import com.Chagui68.items.weapons.ranged.AetherPullshot;
 import com.Chagui68.entities.miniboss.Mahoraga;
 import com.Chagui68.entities.boss.MagicSealListener;
 import org.bukkit.*;
@@ -276,7 +299,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
 
         if (args.length < 2) {
             sender.sendMessage(RED + "Usage: /msc give <item> [amount]");
-            sender.sendMessage(YELLOW + "Available items: scoobycookie, excalibur, icecrown, wirtslantern, starcore, mantisclaws");
+            sender.sendMessage(YELLOW + "Available items: scoobycookie, excalibur, icecrown, wirtslantern, starcore, diostand, mantisclaws, militarycomponent, militarymine, headslimeheart, headslimegelatin, aetherpullshot, chaosforge, cindergreatsword, nullshearedge, soulreapscythe, skyfiretalisman, eighthandledwheel, obsidianbastionhelmet, obsidianbastionchestplate, obsidianbastionleggings, obsidianbastionboots, frostheartoffhand, marrowaegis, veilwalkermantle, chaosorb, enderfragment, frostheart, magmacore, obsidianshard, reaperessence, reinforcedbone, shadowcloak, stormcrystal, venomgland, voidessence, wheelessence");
             return;
         }
 
@@ -309,11 +332,41 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "militarymine", "mine" -> MilitaryMine.MILITARY_MINE.clone();
             case "headslimeheart", "heart" -> HeadSlimeHeart.HEAD_SLIME_HEART.clone();
             case "headslimegelatin", "gelatin" -> HeadSlimeGelatin.HEAD_SLIME_GELATIN.clone();
+            // Weapons
+            case "aetherpullshot", "pullshot" -> AetherPullshot.AETHER_PULLSHOT.clone();
+            case "chaosforge" -> ChaosForge.CHAOS_FORGE.clone();
+            case "cindergreatsword", "greatsword" -> CinderGreatsword.CINDER_GREATSWORD.clone();
+            case "nullshearedge", "nullshear" -> NullshearEdge.NULLSHEAR_EDGE.clone();
+            case "soulreapscythe", "scythe" -> SoulreapScythe.SOULREAP_SCYTHE.clone();
+            case "skyfiretalisman", "talisman" -> SkyfireTalisman.SKYFIRE_TALISMAN.clone();
+            // Armor
+            case "eighthandledwheel", "wheel" -> EightHandledWheel.EIGHT_HANDLED_WHEEL.clone();
+            case "obsidianbastionhelmet", "bastionhelmet" -> ObsidianBastion.HELMET.clone();
+            case "obsidianbastionchestplate", "bastionchestplate" -> ObsidianBastion.CHESTPLATE.clone();
+            case "obsidianbastionleggings", "bastionleggings" -> ObsidianBastion.LEGGINGS.clone();
+            case "obsidianbastionboots", "bastionboots" -> ObsidianBastion.BOOTS.clone();
+            // Off-hand / misc equipables
+            case "frostheartoffhand", "frostoffhand" -> FrostHeartOffhand.FROST_HEART_OFFHAND.clone();
+            case "marrowaegis", "aegis" -> MarrowAegis.MARROW_AEGIS.clone();
+            case "veilwalkermantle", "mantle" -> VeilwalkerMantle.VEILWALKER_MANTLE.clone();
+            // Components / ingredients
+            case "chaosorb" -> ChaosOrb.CHAOS_ORB.clone();
+            case "enderfragment", "ender" -> EnderFragment.ENDER_FRAGMENT.clone();
+            case "frostheart", "frost" -> FrostHeart.FROST_HEART.clone();
+            case "magmacore", "magma" -> MagmaCore.MAGMA_CORE.clone();
+            case "obsidianshard", "shard" -> ObsidianShard.OBSIDIAN_SHARD.clone();
+            case "reaperessence", "reaper" -> ReaperEssence.REAPER_ESSENCE.clone();
+            case "reinforcedbone", "bone" -> ReinforcedBone.REINFORCED_BONE.clone();
+            case "shadowcloak", "cloak" -> ShadowCloak.SHADOW_CLOAK.clone();
+            case "stormcrystal", "storm" -> StormCrystal.STORM_CRYSTAL.clone();
+            case "venomgland", "venom" -> VenomGland.VENOM_GLAND.clone();
+            case "voidessence", "void" -> VoidEssence.VOID_ESSENCE.clone();
+            case "wheelessence", "whelessence" -> WheelEssence.WHEEL_ESSENCE.clone();
             default -> null;
         };
 
         if (item == null) {
-            sender.sendMessage(RED + "Unknown item. Available: scoobycookie, excalibur, icecrown, wirtslantern, starcore, diostand, mantisclaws, militarycomponent, militarymine, headslimeheart, headslimegelatin");
+            sender.sendMessage(RED + "Unknown item. Available: scoobycookie, excalibur, icecrown, wirtslantern, starcore, diostand, mantisclaws, militarycomponent, militarymine, headslimeheart, headslimegelatin, aetherpullshot, chaosforge, cindergreatsword, nullshearedge, soulreapscythe, skyfiretalisman, eighthandledwheel, obsidianbastionhelmet, obsidianbastionchestplate, obsidianbastionleggings, obsidianbastionboots, frostheartoffhand, marrowaegis, veilwalkermantle, chaosorb, enderfragment, frostheart, magmacore, obsidianshard, reaperessence, reinforcedbone, shadowcloak, stormcrystal, venomgland, voidessence, wheelessence");
             return;
         }
 
@@ -373,7 +426,12 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
         if (args.length < 2) {
             sender.sendMessage(RED + "Usage: /msc attack <attack> [range]");
-            sender.sendMessage(YELLOW + "Attacks: crossbarrage, groundslam, plant, retrieve, pentagram, trianglecall, reset, flyup, land, rain, airslam, shieldseal, heal, groundshatter, shieldbash, lancestorm, earthpillar, chaingrapple, warstomp, armorspikes, vortexpull, mirrorimage, doombeamer, starfall, aerialrush, sonicboom, lightningstorm, gravitywell, crossslash, novaburst, darkorb, windcutter, heavenlyjudgment, phaserage, phasebarrier, phasestorm, phasedespair, stoneskin, reflectbarrier, absorbshield");
+            sender.sendMessage(YELLOW + "Attacks (ground): groundslam, groundshatter, shieldbash, lancestorm, earthpillar, chaingrapple, warstomp, armorspikes, vortexpull, mirrorimage, doombeam");
+            sender.sendMessage(YELLOW + "Attacks (aerial): starfall, aerialrush, sonicboom, lightningstorm, gravitywell, crossslash, novaburst, darkorb, windcutter, heavenlyjudgment, rainoflances, airslam, hoverbarrage, crossbarrage");
+            sender.sendMessage(YELLOW + "Attacks (ranged): lancesnipe, meteorstorm, voidbeam, frostlance, lightningspear, shadowvolley, chainlightning, crystalbarrage, arcaneorb, voidrift, arcanemissiles, spiritbeam");
+            sender.sendMessage(YELLOW + "Mechanics: trianglecall, flyup, land, shieldseal, heal, reset");
+            sender.sendMessage(YELLOW + "Phase transitions: phaserage, phasebarrier, phasestorm, phasedespair");
+            sender.sendMessage(YELLOW + "Defenses: stoneskin, reflectbarrier, absorbshield");
             return;
         }
 
@@ -1199,7 +1257,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                         .filter(e -> e.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
             } else if (subCmd.equals("give")) {
-                List<String> items = Arrays.asList("scoobycookie", "excalibur", "icecrown", "wirtslantern", "starcore", "diostand", "mantisclaws", "militarycomponent", "militarymine", "headslimeheart", "headslimegelatin");
+                List<String> items = Arrays.asList(
+                    "scoobycookie", "excalibur", "icecrown", "wirtslantern", "starcore", "diostand", "mantisclaws", "militarycomponent", "militarymine", "headslimeheart", "headslimegelatin",
+                    "aetherpullshot", "chaosforge", "cindergreatsword", "nullshearedge", "soulreapscythe", "skyfiretalisman",
+                    "eighthandledwheel", "obsidianbastionhelmet", "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots",
+                    "frostheartoffhand", "marrowaegis", "veilwalkermantle",
+                    "chaosorb", "enderfragment", "frostheart", "magmacore", "obsidianshard", "reaperessence", "reinforcedbone", "shadowcloak", "stormcrystal", "venomgland", "voidessence", "wheelessence"
+                );
                 completions.addAll(items.stream()
                         .filter(i -> i.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
@@ -1209,7 +1273,14 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                         .filter(s -> s.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
     } else if (subCmd.equals("attack")) {
-        List<String> attacks = Arrays.asList("crossbarrage", "groundslam", "plant", "retrieve", "pentagram", "trianglecall", "reset", "flyup", "land", "rain", "airslam", "shieldseal", "heal", "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeamer", "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "phaserage", "phasebarrier", "phasestorm", "phasedespair", "stoneskin", "reflectbarrier", "absorbshield");
+        List<String> attacks = Arrays.asList(
+            "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam",
+            "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "rainoflances", "airslam", "hoverbarrage", "crossbarrage",
+            "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift", "arcanemissiles", "spiritbeam",
+            "trianglecall", "flyup", "land", "shieldseal", "heal", "reset",
+            "phaserage", "phasebarrier", "phasestorm", "phasedespair",
+            "stoneskin", "reflectbarrier", "absorbshield"
+        );
                 completions.addAll(attacks.stream()
                         .filter(a -> a.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));

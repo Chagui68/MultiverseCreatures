@@ -23,6 +23,7 @@ public class LightningStormAttack extends BossAttackBase {
 
     @Override
     public void execute(BossInstance instance) {
+        if (!instance.isFlying) return;
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();

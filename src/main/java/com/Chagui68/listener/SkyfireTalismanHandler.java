@@ -60,7 +60,7 @@ public class SkyfireTalismanHandler implements Listener {
         Location strikeLoc = target.clone().add(0.5, 0, 0.5);
         p.getWorld().strikeLightningEffect(strikeLoc);
         p.getWorld().playSound(strikeLoc, org.bukkit.Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.2f);
-        p.getWorld().spawnParticle(org.bukkit.Particle.FLASH, strikeLoc, 1, 0, 0, 0, 0);
+        p.getWorld().spawnParticle(org.bukkit.Particle.FLASH, strikeLoc, 1);
 
         double radius = SkyfireTalisman.STRIKE_RADIUS;
         double dmg = SkyfireTalisman.STRIKE_DAMAGE;

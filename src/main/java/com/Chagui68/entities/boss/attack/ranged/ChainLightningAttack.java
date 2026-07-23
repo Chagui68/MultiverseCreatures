@@ -26,7 +26,7 @@ public class ChainLightningAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
-        List<Player> targets = boss.getValidPlayersNear(center, 2500);
+        List<Player> targets = boss.getValidPlayersNear(center, 10000);
         if (targets.isEmpty()) return;
 
         new BukkitRunnable() {

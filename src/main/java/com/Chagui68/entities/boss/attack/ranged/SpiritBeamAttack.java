@@ -31,7 +31,7 @@ public class SpiritBeamAttack extends BossAttackBase {
         if (plugin.getMagicSealListener() != null) {
             plugin.getMagicSealListener().spawnDivineSeal(center.clone().add(0, 0.5, 0), 60);
         }
-        List<Player> targets = boss.getValidPlayersNear(center, 2500);
+        List<Player> targets = boss.getValidPlayersNear(center, 10000);
 
         new BukkitRunnable() {
             int t = 0;
@@ -58,7 +58,7 @@ public class SpiritBeamAttack extends BossAttackBase {
                     if (t % 6 == 0) world.playSound(center, Sound.ENTITY_EVOKER_PREPARE_SUMMON, 0.8f, 0.4f);
                 } else if (t < 90) {
                     if (t == 35) {
-                        world.spawnParticle(Particle.FLASH, center.clone().add(0, 1, 0), 1, 0, 0, 0, 0);
+                        world.spawnParticle(Particle.FLASH, center.clone().add(0, 1, 0), 1);
                         world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 1.5f, 1.5f);
                     }
                     for (Player p : targets) {
