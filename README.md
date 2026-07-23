@@ -131,7 +131,7 @@ src/main/java/com/Chagui68/
 ├── ritual/                       Ritual structures & private boss dimension
 └── utils/                        ItemBuilder + MscEntityUtils helpers
 
-wiki/                             ← Documentation (NOT compiled with the plugin)
+wiki/                             
 ├── Home.md
 ├── Bosses.md
 ├── Creatures.md
