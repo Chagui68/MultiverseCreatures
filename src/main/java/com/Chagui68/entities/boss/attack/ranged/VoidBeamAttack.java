@@ -35,7 +35,10 @@ public class VoidBeamAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || !target.isOnline()) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || !target.isOnline()) {
+                    cancel();
+                    return;
+                }
                 if (t < 25) {
                     double phase = (double) t / 25;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-90 * phase), Math.toRadians(60 * phase), 0));
@@ -53,7 +56,7 @@ public class VoidBeamAttack extends BossAttackBase {
                         Location pl = beamPos.clone().add(toTarget.clone().multiply(d));
                         world.spawnParticle(Particle.PORTAL, pl, 3, 0.2, 0.2, 0.2, 0.05);
                         world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                            new Particle.DustOptions(Color.fromRGB(0x660066), 2.0f));
+                                new Particle.DustOptions(Color.fromRGB(0x660066), 2.0f));
                     }
                     if (t % 5 == 0) world.playSound(center, Sound.BLOCK_BEACON_AMBIENT, 0.6f, 0.3f);
                     for (Player p : boss.getValidPlayers(world)) {

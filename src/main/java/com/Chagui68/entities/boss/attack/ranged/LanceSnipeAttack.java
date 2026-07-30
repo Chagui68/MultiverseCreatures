@@ -37,7 +37,10 @@ public class LanceSnipeAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 80) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 80) {
+                    cancel();
+                    return;
+                }
                 if (t < 20) {
                     double phase = (double) t / 20;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-90 * phase), Math.toRadians(30 * phase), 0));
@@ -49,7 +52,7 @@ public class LanceSnipeAttack extends BossAttackBase {
                     traveled += speed;
                     world.spawnParticle(Particle.CRIT, pos, 4, 0.1, 0.1, 0.1, 0.02);
                     world.spawnParticle(Particle.DUST, pos, 1, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0xFFAA00), 1.8f));
+                            new Particle.DustOptions(Color.fromRGB(0xFFAA00), 1.8f));
                     for (Player p : boss.getValidPlayers(world)) {
                         if (p.getLocation().distanceSquared(pos) < 4) {
                             p.damage(sealDamage);

@@ -11,43 +11,43 @@ import com.Chagui68.MultiverseCreatures;
 import com.Chagui68.ritual.RitualStructure;
 
 public class RitualCandleListener implements Listener {
-    
+
     private final MultiverseCreatures plugin;
-    
+
     public RitualCandleListener(MultiverseCreatures plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onCandleLight(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        
+
         Block block = event.getClickedBlock();
         if (block == null) return;
-        
+
         if (block.getType() != Material.CANDLE && block.getType() != Material.CANDLE_CAKE) {
             return;
         }
-        
+
         Candle candleData = (Candle) block.getBlockData();
-        
+
         if (candleData.isLit()) {
             return;
         }
-        
+
         if (event.getItem() == null) {
             return;
         }
-        
+
         Material itemInHand = event.getItem().getType();
-        if (itemInHand != Material.FLINT_AND_STEEL && 
-            itemInHand != Material.FIRE_CHARGE &&
-            !itemInHand.name().contains("CANDLE")) {
+        if (itemInHand != Material.FLINT_AND_STEEL &&
+                itemInHand != Material.FIRE_CHARGE &&
+                !itemInHand.name().contains("CANDLE")) {
             return;
         }
-        
+
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             Block updatedBlock = block.getLocation().getBlock();
             if (updatedBlock.getType() == Material.CANDLE || updatedBlock.getType() == Material.CANDLE_CAKE) {
@@ -58,7 +58,7 @@ public class RitualCandleListener implements Listener {
             }
         }, 5L);
     }
-    
+
     private void checkRitualCompletion(org.bukkit.Location candleLoc) {
         java.util.Map<org.bukkit.Location, Material> candleLocations =
                 RitualStructure.getCandleLocations();
@@ -73,10 +73,10 @@ public class RitualCandleListener implements Listener {
             int startZ = candleLoc.getBlockZ() - relZ;
 
             org.bukkit.Location origin = new org.bukkit.Location(
-                candleLoc.getWorld(),
-                startX,
-                startY,
-                startZ
+                    candleLoc.getWorld(),
+                    startX,
+                    startY,
+                    startZ
             );
 
             if (RitualStructure.isStructureComplete(origin)) {

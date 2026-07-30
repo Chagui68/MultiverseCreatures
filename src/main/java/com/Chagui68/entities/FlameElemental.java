@@ -50,7 +50,8 @@ public class FlameElemental implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     FlameElementalInstance inst = entry.getValue();
                     if (inst.blaze.isDead() || !inst.blaze.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickFlame(inst);
                 }
@@ -80,7 +81,8 @@ public class FlameElemental implements Listener {
         if (!(blaze.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            blaze.setTarget(null); return;
+            blaze.setTarget(null);
+            return;
         }
 
         Location bLoc = blaze.getLocation();
@@ -115,15 +117,15 @@ public class FlameElemental implements Listener {
                 Location pLoc = meteor.pos.clone();
                 for (int i = 0; i < 3; i++) {
                     Location pl = pLoc.clone().add(
-                        (random.nextDouble() - 0.5) * 0.6,
-                        (random.nextDouble() - 0.5) * 0.6,
-                        (random.nextDouble() - 0.5) * 0.6);
+                            (random.nextDouble() - 0.5) * 0.6,
+                            (random.nextDouble() - 0.5) * 0.6,
+                            (random.nextDouble() - 0.5) * 0.6);
                     meteor.world.spawnParticle(Particle.FLAME, pl, 2, 0, 0, 0, 0.02);
                     meteor.world.spawnParticle(Particle.SMOKE, pl, 1, 0, 0, 0, 0.02);
                 }
                 meteor.world.spawnParticle(Particle.LAVA, pLoc, 1, 0.2, 0.1, 0.2, 0);
                 meteor.world.spawnParticle(Particle.DUST, pLoc, 1, 0, 0, 0, 0,
-                    new Particle.DustOptions(Color.ORANGE, 2.0f));
+                        new Particle.DustOptions(Color.ORANGE, 2.0f));
                 meteor.world.playSound(pLoc, Sound.BLOCK_FIRE_AMBIENT, 0.4f, 1.5f);
 
                 for (Player p : meteor.world.getPlayers()) {
@@ -187,7 +189,10 @@ public class FlameElemental implements Listener {
         final Blaze blaze;
         int meteorCooldown = 0;
         MeteorProjectile activeMeteor;
-        FlameElementalInstance(Blaze b) { this.blaze = b; }
+
+        FlameElementalInstance(Blaze b) {
+            this.blaze = b;
+        }
     }
 
     private static class MeteorProjectile {
@@ -197,6 +202,7 @@ public class FlameElemental implements Listener {
         Location pos;
         Location targetLoc;
         int traveled = 0;
+
         MeteorProjectile(Location origin, Player target) {
             this.world = origin.getWorld();
             this.target = target;

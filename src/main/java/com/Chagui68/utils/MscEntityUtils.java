@@ -21,14 +21,15 @@ import java.util.function.Consumer;
 
 /**
  * Reusable helpers for MSC custom mobs. Eliminates the per-class duplication of:
- *   setAttribute / spawnEntity cast + tag + customName + persistent + FIRE_RESISTANCE
- *   / clearDrops + dropChance + setDroppedExp / target-guard (creative/spectator/isDead).
+ * setAttribute / spawnEntity cast + tag + customName + persistent + FIRE_RESISTANCE
+ * / clearDrops + dropChance + setDroppedExp / target-guard (creative/spectator/isDead).
  */
 public final class MscEntityUtils {
 
     public static final int PERMANENT_DURATION = 999999;
 
-    private MscEntityUtils() {}
+    private MscEntityUtils() {
+    }
 
     public static void setAttribute(Entity entity, Attribute attribute, double value) {
         if (entity instanceof LivingEntity le) {
@@ -72,7 +73,9 @@ public final class MscEntityUtils {
         return gm == GameMode.CREATIVE || gm == GameMode.SPECTATOR;
     }
 
-    /** True if the player is a valid MSC target (alive, online, not in creative/spectator). */
+    /**
+     * True if the player is a valid MSC target (alive, online, not in creative/spectator).
+     */
     public static boolean isValidTarget(Player player) {
         return player != null && !player.isDead() && player.isOnline() && !isCreativeOrSpectator(player);
     }
@@ -82,7 +85,7 @@ public final class MscEntityUtils {
      * Mirrors the onDeath boilerplate duplicated across all MSC mob classes.
      */
     public static void handleDeath(EntityDeathEvent event, String expectedTag,
-                                    double dropChance, int droppedExp, ItemStack... extraDrops) {
+                                   double dropChance, int droppedExp, ItemStack... extraDrops) {
         LivingEntity entity = event.getEntity();
         if (expectedTag != null && !entity.getScoreboardTags().contains(expectedTag)) return;
         event.getDrops().clear();

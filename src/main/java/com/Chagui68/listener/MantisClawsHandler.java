@@ -250,7 +250,8 @@ public class MantisClawsHandler implements Listener {
             try {
                 Method m = clazz.getMethod(name);
                 if (m.getReturnType() == boolean.class) return m;
-            } catch (NoSuchMethodException ignored) {}
+            } catch (NoSuchMethodException ignored) {
+            }
         }
         return null;
     }

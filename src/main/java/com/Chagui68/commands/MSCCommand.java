@@ -139,7 +139,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         Player p = (Player) sender;
         String type = args[1].toLowerCase();
 
-            switch (type) {
+        switch (type) {
             case "merchant" -> {
                 mobHandler.spawnShaggy(p.getLocation());
                 sender.sendMessage(GREEN + "Spawned Multiverse Merchant!");
@@ -287,7 +287,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 if (success) sender.sendMessage(GREEN + "Spawned Ender Knight!");
                 else sender.sendMessage(RED + "Failed to spawn Ender Knight.");
             }
-            default -> sender.sendMessage(RED + "Unknown entity type. Available: armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight");
+            case "voidstatue", "statue" -> {
+                boolean success = plugin.getVoidStatue().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Void Statue!");
+                else sender.sendMessage(RED + "Failed to spawn Void Statue.");
+            }
+            default ->
+                    sender.sendMessage(RED + "Unknown entity type. Available: armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight, voidstatue");
         }
     }
 
@@ -438,14 +444,18 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         String attackName = args[1].toLowerCase();
         double range = 100;
         if (args.length >= 3) {
-            try { range = Double.parseDouble(args[2]); }
-            catch (NumberFormatException e) { sender.sendMessage(RED + "Invalid range."); return; }
+            try {
+                range = Double.parseDouble(args[2]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage(RED + "Invalid range.");
+                return;
+            }
         }
 
         var boss = plugin.getArmorStandBoss();
         UUID bossId = boss.findNearestBoss(player.getLocation(), range);
         if (bossId == null) {
-            sender.sendMessage(RED + "No boss found within " + (int)range + " blocks.");
+            sender.sendMessage(RED + "No boss found within " + (int) range + " blocks.");
             return;
         }
         boolean success = boss.triggerAttack(bossId, attackName);
@@ -558,7 +568,8 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 listener.spawnStormSeal(center, 120);
                 sender.sendMessage(GOLD + "Spawned Storm Seal for 6 seconds.");
             }
-            default -> sender.sendMessage(RED + "Unknown seal. Use: pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2, vortex, quake, divine, storm");
+            default ->
+                    sender.sendMessage(RED + "Unknown seal. Use: pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2, vortex, quake, divine, storm");
         }
     }
 
@@ -581,6 +592,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
     private void drawSingleCircle(Location center, double radius, org.bukkit.Color color, int samples, int ticks, MagicSealListener.Plane plane) {
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
                 if (t >= ticks) {
@@ -595,10 +607,26 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                     double s = radius * Math.sin(a);
                     double x, y, z;
                     switch (plane) {
-                        case XZ -> { x = center.getX() + c; y = center.getY() + 0.05; z = center.getZ() + s; }
-                        case XY -> { x = center.getX() + c; y = center.getY() + s; z = center.getZ(); }
-                        case YZ -> { x = center.getX(); y = center.getY() + c; z = center.getZ() + s; }
-                        default -> { x = center.getX() + c; y = center.getY() + 0.05; z = center.getZ() + s; }
+                        case XZ -> {
+                            x = center.getX() + c;
+                            y = center.getY() + 0.05;
+                            z = center.getZ() + s;
+                        }
+                        case XY -> {
+                            x = center.getX() + c;
+                            y = center.getY() + s;
+                            z = center.getZ();
+                        }
+                        case YZ -> {
+                            x = center.getX();
+                            y = center.getY() + c;
+                            z = center.getZ() + s;
+                        }
+                        default -> {
+                            x = center.getX() + c;
+                            y = center.getY() + 0.05;
+                            z = center.getZ() + s;
+                        }
                     }
                     Location loc = new Location(world, x, y, z);
                     world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
@@ -612,6 +640,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
     private void drawSixPointStar(Location center, double radius, org.bukkit.Color color, int samples, int ticks, MagicSealListener.Plane plane) {
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
                 if (t >= ticks) {
@@ -625,10 +654,26 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                     double r = radius * (i % (samples / 6) == 0 ? 1.0 : 0.55);
                     double x, y, z;
                     switch (plane) {
-                        case XZ -> { x = center.getX() + r * Math.cos(angle); y = center.getY() + 0.1; z = center.getZ() + r * Math.sin(angle); }
-                        case XY -> { x = center.getX() + r * Math.cos(angle); y = center.getY() + r * Math.sin(angle); z = center.getZ(); }
-                        case YZ -> { x = center.getX(); y = center.getY() + r * Math.cos(angle); z = center.getZ() + r * Math.sin(angle); }
-                        default -> { x = center.getX() + r * Math.cos(angle); y = center.getY() + 0.1; z = center.getZ() + r * Math.sin(angle); }
+                        case XZ -> {
+                            x = center.getX() + r * Math.cos(angle);
+                            y = center.getY() + 0.1;
+                            z = center.getZ() + r * Math.sin(angle);
+                        }
+                        case XY -> {
+                            x = center.getX() + r * Math.cos(angle);
+                            y = center.getY() + r * Math.sin(angle);
+                            z = center.getZ();
+                        }
+                        case YZ -> {
+                            x = center.getX();
+                            y = center.getY() + r * Math.cos(angle);
+                            z = center.getZ() + r * Math.sin(angle);
+                        }
+                        default -> {
+                            x = center.getX() + r * Math.cos(angle);
+                            y = center.getY() + 0.1;
+                            z = center.getZ() + r * Math.sin(angle);
+                        }
                     }
                     Location loc = new Location(world, x, y, z);
                     world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
@@ -817,9 +862,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 world.playSound(base, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.5f);
                 new BukkitRunnable() {
                     int t = 0;
+
                     @Override
                     public void run() {
-                        if (!stand.isValid()) { cancel(); return; }
+                        if (!stand.isValid()) {
+                            cancel();
+                            return;
+                        }
                         if (t < 15) {
                             Location l = stand.getLocation();
                             world.spawnParticle(Particle.CLOUD, l.clone().add(0, -0.5, 0), 5, 1.0, 0.2, 1.0, 0.03);
@@ -832,9 +881,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                             world.playSound(base, Sound.ENTITY_ENDER_DRAGON_FLAP, 2.0f, 0.5f);
                             new BukkitRunnable() {
                                 int up = 0;
+
                                 @Override
                                 public void run() {
-                                    if (!stand.isValid()) { cancel(); return; }
+                                    if (!stand.isValid()) {
+                                        cancel();
+                                        return;
+                                    }
                                     if (up >= 30) {
                                         world.spawnParticle(Particle.CLOUD, stand.getLocation(), 20, 1.5, 0.3, 1.5, 0.1);
                                         cancel();
@@ -861,9 +914,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 world.playSound(base, Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 0.7f);
                 new BukkitRunnable() {
                     int t = 0;
+
                     @Override
                     public void run() {
-                        if (!stand.isValid()) { cancel(); return; }
+                        if (!stand.isValid()) {
+                            cancel();
+                            return;
+                        }
                         Location l = stand.getLocation();
                         double targetY = base.getY();
                         if (t >= 30 || l.getY() - 0.5 <= targetY) {
@@ -889,9 +946,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 world.playSound(base, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.3f);
                 new BukkitRunnable() {
                     int t = 0;
+
                     @Override
                     public void run() {
-                        if (!stand.isValid()) { cancel(); return; }
+                        if (!stand.isValid()) {
+                            cancel();
+                            return;
+                        }
                         Location l = stand.getLocation();
                         if (t < 25) {
                             double phase = (double) t / 20;
@@ -919,9 +980,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 world.playSound(base, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.8f);
                 new BukkitRunnable() {
                     int t = 0;
+
                     @Override
                     public void run() {
-                        if (!stand.isValid()) { cancel(); return; }
+                        if (!stand.isValid()) {
+                            cancel();
+                            return;
+                        }
                         Location l = stand.getLocation();
                         Location front = l.clone().add(l.getDirection().multiply(4));
                         front.setY(front.getY() + 6);
@@ -931,7 +996,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                             stand.setRightArmPose(new EulerAngle(Math.toRadians(-60), Math.toRadians(30), 0));
                             stand.setLeftArmPose(new EulerAngle(Math.toRadians(-60), Math.toRadians(-30), 0));
 
-                            int ringPts = (int)(8 + phase * 16);
+                            int ringPts = (int) (8 + phase * 16);
                             double r = 1.5 + phase * 2.5;
                             for (int a = 0; a < ringPts; a++) {
                                 double angle = (2 * Math.PI * a / ringPts);
@@ -939,7 +1004,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                                 double z = front.getZ() + Math.sin(angle) * r;
                                 double y = front.getY() + Math.sin(angle * 2) * 1.0;
                                 world.spawnParticle(Particle.DUST, new Location(world, x, y, z), 1, 0, 0, 0, 0,
-                                    new Particle.DustOptions(Color.fromRGB(0x88CCFF), 2.0f * (float)phase));
+                                        new Particle.DustOptions(Color.fromRGB(0x88CCFF), 2.0f * (float) phase));
                                 world.spawnParticle(Particle.END_ROD, new Location(world, x, y, z), 1, 0, 0, 0, 0);
                             }
                             t++;
@@ -959,9 +1024,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 world.playSound(base, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1.0f, 1.2f);
                 new BukkitRunnable() {
                     int t = 0;
+
                     @Override
                     public void run() {
-                        if (!stand.isValid()) { cancel(); return; }
+                        if (!stand.isValid()) {
+                            cancel();
+                            return;
+                        }
                         Location l = stand.getLocation();
 
                         if (t < 35) {
@@ -972,16 +1041,16 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                             stand.setBodyPose(new EulerAngle(Math.toRadians(-5 * phase), 0, 0));
 
                             double radius = 4.0;
-                            int samples = (int)(10 + phase * 25);
+                            int samples = (int) (10 + phase * 25);
                             for (int i = 0; i < samples; i++) {
                                 double angle = (2 * Math.PI * i / samples) + t * 0.03;
                                 double x = l.getX() + Math.cos(angle) * radius * phase;
                                 double z = l.getZ() + Math.sin(angle) * radius * phase;
                                 double y = l.getY() + 0.1 + Math.sin(t * 0.15 + i * 0.5) * 0.2;
                                 world.spawnParticle(Particle.DUST, new Location(world, x, y, z), 1, 0, 0, 0, 0,
-                                    new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.2f * (float)phase));
+                                        new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.2f * (float) phase));
                             }
-                            for (int i = 0; i < (int)(2 + phase * 5); i++) {
+                            for (int i = 0; i < (int) (2 + phase * 5); i++) {
                                 double angle = Math.random() * Math.PI * 2;
                                 double r = Math.random() * 4.0 * phase;
                                 double x = l.getX() + Math.cos(angle) * r;
@@ -1007,29 +1076,33 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "rain" -> {
                 new BukkitRunnable() {
                     int t = 0;
+
                     @Override
                     public void run() {
-                        if (!stand.isValid()) { cancel(); return; }
+                        if (!stand.isValid()) {
+                            cancel();
+                            return;
+                        }
                         if (t < 30) {
                             double phase = Math.min(1.0, (double) t / 25);
                             stand.setRightArmPose(new EulerAngle(
-                                Math.toRadians(-180 + 90 * phase),
-                                Math.toRadians(10 * phase),
-                                Math.toRadians(20 * phase)
+                                    Math.toRadians(-180 + 90 * phase),
+                                    Math.toRadians(10 * phase),
+                                    Math.toRadians(20 * phase)
                             ));
                             if (t == 0) world.playSound(base, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.5f);
 
                             for (int pi = 0; pi < 3; pi++) {
                                 Location sp = base.clone().add((Math.random() - 0.5) * 6, 20, (Math.random() - 0.5) * 6);
-                                world.spawnParticle(Particle.END_ROD, sp, (int)(1 + phase * 2), 0.3, 0.3, 0.3, 0.01);
+                                world.spawnParticle(Particle.END_ROD, sp, (int) (1 + phase * 2), 0.3, 0.3, 0.3, 0.01);
                                 if (t % 5 == 0) {
-                                    for (int a = 0; a < (int)(4 * phase); a++) {
+                                    for (int a = 0; a < (int) (4 * phase); a++) {
                                         double ang = (2 * Math.PI * a / 4);
                                         double r2 = 0.5 + phase * 1.0;
                                         double x2 = sp.getX() + Math.cos(ang) * r2;
                                         double z2 = sp.getZ() + Math.sin(ang) * r2;
                                         world.spawnParticle(Particle.DUST, new Location(world, x2, sp.getY(), z2), 1, 0, 0, 0, 0,
-                                            new Particle.DustOptions(Color.fromRGB(0xFFAA00), 1.2f * (float)phase));
+                                                new Particle.DustOptions(Color.fromRGB(0xFFAA00), 1.2f * (float) phase));
                                     }
                                 }
                             }
@@ -1086,7 +1159,8 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(RED + "MagicSealListener not available.");
                 }
             }
-            default -> player.sendMessage(RED + "Unknown animation: " + anim + ". Use: flyup, land, airslam, shieldseal, healingcircle, rain, pentagram, triangle");
+            default ->
+                    player.sendMessage(RED + "Unknown animation: " + anim + ". Use: flyup, land, airslam, shieldseal, healingcircle, rain, pentagram, triangle");
         }
     }
 
@@ -1189,9 +1263,9 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
 
         player.sendMessage(GREEN + "Adjusted " + part + " " + axis + " by " + args[3] + "°.");
         player.sendMessage(GRAY + "New " + part + " pose: (" +
-            String.format("%.1f", Math.toDegrees(newX)) + "°, " +
-            String.format("%.1f", Math.toDegrees(newY)) + "°, " +
-            String.format("%.1f", Math.toDegrees(newZ)) + "°)");
+                String.format("%.1f", Math.toDegrees(newX)) + "°, " +
+                String.format("%.1f", Math.toDegrees(newY)) + "°, " +
+                String.format("%.1f", Math.toDegrees(newZ)) + "°)");
     }
 
     private void handleDimtp(CommandSender sender, String[] args) {
@@ -1252,17 +1326,17 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         } else if (args.length == 2) {
             String subCmd = args[0].toLowerCase();
             if (subCmd.equals("spawn")) {
-                List<String> entities = Arrays.asList("armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank", "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental", "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch", "obsidianguard", "soulreaper", "chaosmage", "enderknight");
+                List<String> entities = Arrays.asList("armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank", "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental", "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch", "obsidianguard", "soulreaper", "chaosmage", "enderknight", "voidstatue");
                 completions.addAll(entities.stream()
                         .filter(e -> e.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
             } else if (subCmd.equals("give")) {
                 List<String> items = Arrays.asList(
-                    "scoobycookie", "excalibur", "icecrown", "wirtslantern", "starcore", "diostand", "mantisclaws", "militarycomponent", "militarymine", "headslimeheart", "headslimegelatin",
-                    "aetherpullshot", "chaosforge", "cindergreatsword", "nullshearedge", "soulreapscythe", "skyfiretalisman",
-                    "eighthandledwheel", "obsidianbastionhelmet", "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots",
-                    "frostheartoffhand", "marrowaegis", "veilwalkermantle",
-                    "chaosorb", "enderfragment", "frostheart", "magmacore", "obsidianshard", "reaperessence", "reinforcedbone", "shadowcloak", "stormcrystal", "venomgland", "voidessence", "wheelessence"
+                        "scoobycookie", "excalibur", "icecrown", "wirtslantern", "starcore", "diostand", "mantisclaws", "militarycomponent", "militarymine", "headslimeheart", "headslimegelatin",
+                        "aetherpullshot", "chaosforge", "cindergreatsword", "nullshearedge", "soulreapscythe", "skyfiretalisman",
+                        "eighthandledwheel", "obsidianbastionhelmet", "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots",
+                        "frostheartoffhand", "marrowaegis", "veilwalkermantle",
+                        "chaosorb", "enderfragment", "frostheart", "magmacore", "obsidianshard", "reaperessence", "reinforcedbone", "shadowcloak", "stormcrystal", "venomgland", "voidessence", "wheelessence"
                 );
                 completions.addAll(items.stream()
                         .filter(i -> i.startsWith(args[1].toLowerCase()))
@@ -1272,15 +1346,15 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 completions.addAll(seals.stream()
                         .filter(s -> s.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
-    } else if (subCmd.equals("attack")) {
-        List<String> attacks = Arrays.asList(
-            "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam",
-            "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "rainoflances", "airslam", "hoverbarrage", "crossbarrage",
-            "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift", "arcanemissiles", "spiritbeam",
-            "trianglecall", "flyup", "land", "shieldseal", "heal", "reset",
-            "phaserage", "phasebarrier", "phasestorm", "phasedespair",
-            "stoneskin", "reflectbarrier", "absorbshield"
-        );
+            } else if (subCmd.equals("attack")) {
+                List<String> attacks = Arrays.asList(
+                        "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam",
+                        "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "rainoflances", "airslam", "hoverbarrage", "crossbarrage",
+                        "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift", "arcanemissiles", "spiritbeam",
+                        "trianglecall", "flyup", "land", "shieldseal", "heal", "reset",
+                        "phaserage", "phasebarrier", "phasestorm", "phasedespair",
+                        "stoneskin", "reflectbarrier", "absorbshield"
+                );
                 completions.addAll(attacks.stream()
                         .filter(a -> a.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));

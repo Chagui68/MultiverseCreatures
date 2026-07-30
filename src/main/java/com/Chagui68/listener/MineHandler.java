@@ -27,39 +27,39 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MineHandler implements Listener {
 
     private static final Set<Material> UNCOPYABLE = Set.of(
-        Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK,
-        Material.BEDROCK, Material.BARRIER, Material.REINFORCED_DEEPSLATE,
-        Material.END_PORTAL, Material.END_PORTAL_FRAME, Material.END_GATEWAY, Material.NETHER_PORTAL,
-        Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW,
-        Material.LIGHT, Material.MOVING_PISTON,
-        Material.BUBBLE_COLUMN, Material.WATER, Material.LAVA
+            Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK,
+            Material.BEDROCK, Material.BARRIER, Material.REINFORCED_DEEPSLATE,
+            Material.END_PORTAL, Material.END_PORTAL_FRAME, Material.END_GATEWAY, Material.NETHER_PORTAL,
+            Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW,
+            Material.LIGHT, Material.MOVING_PISTON,
+            Material.BUBBLE_COLUMN, Material.WATER, Material.LAVA
     );
 
     private static final Set<Material> BANNERS = Set.of(
-        Material.WHITE_BANNER, Material.ORANGE_BANNER, Material.MAGENTA_BANNER,
-        Material.LIGHT_BLUE_BANNER, Material.YELLOW_BANNER, Material.LIME_BANNER,
-        Material.PINK_BANNER, Material.GRAY_BANNER, Material.LIGHT_GRAY_BANNER,
-        Material.CYAN_BANNER, Material.PURPLE_BANNER, Material.BLUE_BANNER,
-        Material.BROWN_BANNER, Material.GREEN_BANNER, Material.RED_BANNER, Material.BLACK_BANNER,
-        Material.WHITE_WALL_BANNER, Material.ORANGE_WALL_BANNER, Material.MAGENTA_WALL_BANNER,
-        Material.LIGHT_BLUE_WALL_BANNER, Material.YELLOW_WALL_BANNER, Material.LIME_WALL_BANNER,
-        Material.PINK_WALL_BANNER, Material.GRAY_WALL_BANNER, Material.LIGHT_GRAY_WALL_BANNER,
-        Material.CYAN_WALL_BANNER, Material.PURPLE_WALL_BANNER, Material.BLUE_WALL_BANNER,
-        Material.BROWN_WALL_BANNER, Material.GREEN_WALL_BANNER, Material.RED_WALL_BANNER, Material.BLACK_WALL_BANNER
+            Material.WHITE_BANNER, Material.ORANGE_BANNER, Material.MAGENTA_BANNER,
+            Material.LIGHT_BLUE_BANNER, Material.YELLOW_BANNER, Material.LIME_BANNER,
+            Material.PINK_BANNER, Material.GRAY_BANNER, Material.LIGHT_GRAY_BANNER,
+            Material.CYAN_BANNER, Material.PURPLE_BANNER, Material.BLUE_BANNER,
+            Material.BROWN_BANNER, Material.GREEN_BANNER, Material.RED_BANNER, Material.BLACK_BANNER,
+            Material.WHITE_WALL_BANNER, Material.ORANGE_WALL_BANNER, Material.MAGENTA_WALL_BANNER,
+            Material.LIGHT_BLUE_WALL_BANNER, Material.YELLOW_WALL_BANNER, Material.LIME_WALL_BANNER,
+            Material.PINK_WALL_BANNER, Material.GRAY_WALL_BANNER, Material.LIGHT_GRAY_WALL_BANNER,
+            Material.CYAN_WALL_BANNER, Material.PURPLE_WALL_BANNER, Material.BLUE_WALL_BANNER,
+            Material.BROWN_WALL_BANNER, Material.GREEN_WALL_BANNER, Material.RED_WALL_BANNER, Material.BLACK_WALL_BANNER
     );
 
     private static final Set<Material> HANGING_SIGNS = Set.of(
-        Material.OAK_HANGING_SIGN, Material.OAK_WALL_HANGING_SIGN,
-        Material.SPRUCE_HANGING_SIGN, Material.SPRUCE_WALL_HANGING_SIGN,
-        Material.BIRCH_HANGING_SIGN, Material.BIRCH_WALL_HANGING_SIGN,
-        Material.JUNGLE_HANGING_SIGN, Material.JUNGLE_WALL_HANGING_SIGN,
-        Material.ACACIA_HANGING_SIGN, Material.ACACIA_WALL_HANGING_SIGN,
-        Material.DARK_OAK_HANGING_SIGN, Material.DARK_OAK_WALL_HANGING_SIGN,
-        Material.MANGROVE_HANGING_SIGN, Material.MANGROVE_WALL_HANGING_SIGN,
-        Material.CHERRY_HANGING_SIGN, Material.CHERRY_WALL_HANGING_SIGN,
-        Material.BAMBOO_HANGING_SIGN, Material.BAMBOO_WALL_HANGING_SIGN,
-        Material.CRIMSON_HANGING_SIGN, Material.CRIMSON_WALL_HANGING_SIGN,
-        Material.WARPED_HANGING_SIGN, Material.WARPED_WALL_HANGING_SIGN
+            Material.OAK_HANGING_SIGN, Material.OAK_WALL_HANGING_SIGN,
+            Material.SPRUCE_HANGING_SIGN, Material.SPRUCE_WALL_HANGING_SIGN,
+            Material.BIRCH_HANGING_SIGN, Material.BIRCH_WALL_HANGING_SIGN,
+            Material.JUNGLE_HANGING_SIGN, Material.JUNGLE_WALL_HANGING_SIGN,
+            Material.ACACIA_HANGING_SIGN, Material.ACACIA_WALL_HANGING_SIGN,
+            Material.DARK_OAK_HANGING_SIGN, Material.DARK_OAK_WALL_HANGING_SIGN,
+            Material.MANGROVE_HANGING_SIGN, Material.MANGROVE_WALL_HANGING_SIGN,
+            Material.CHERRY_HANGING_SIGN, Material.CHERRY_WALL_HANGING_SIGN,
+            Material.BAMBOO_HANGING_SIGN, Material.BAMBOO_WALL_HANGING_SIGN,
+            Material.CRIMSON_HANGING_SIGN, Material.CRIMSON_WALL_HANGING_SIGN,
+            Material.WARPED_HANGING_SIGN, Material.WARPED_WALL_HANGING_SIGN
     );
 
     private final MultiverseCreatures plugin;
@@ -212,7 +212,8 @@ public class MineHandler implements Listener {
             case FARMLAND, SEA_PICKLE, TURTLE_EGG, SNIFFER_EGG,
                  DRAGON_EGG, SPAWNER, TRIAL_SPAWNER, VAULT,
                  COPPER_BULB, EXPOSED_COPPER_BULB, WEATHERED_COPPER_BULB, OXIDIZED_COPPER_BULB,
-                 WAXED_COPPER_BULB, WAXED_EXPOSED_COPPER_BULB, WAXED_WEATHERED_COPPER_BULB, WAXED_OXIDIZED_COPPER_BULB -> false;
+                 WAXED_COPPER_BULB, WAXED_EXPOSED_COPPER_BULB, WAXED_WEATHERED_COPPER_BULB,
+                 WAXED_OXIDIZED_COPPER_BULB -> false;
 
             default -> true;
         };

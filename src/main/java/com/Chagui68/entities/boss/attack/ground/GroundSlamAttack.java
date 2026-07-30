@@ -8,6 +8,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 
 public class GroundSlamAttack extends BossAttackBase {
@@ -46,8 +47,11 @@ public class GroundSlamAttack extends BossAttackBase {
 
         world.spawnParticle(Particle.CLOUD, center.clone().add(0, 0.5, 0), 40, 3.0, 0.2, 3.0, 0.1);
 
-        stand.setRightArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(30), Math.toRadians(180)));
-        stand.setLeftArmPose(new EulerAngle(Math.toRadians(-45), Math.toRadians(15), Math.toRadians(45)));
+        // Both arms swung forward/down for the slam. Z=0 keeps them alongside the
+        // body rather than rotated backwards (the previous Z=180° / Z=45° values
+        // made the arms point behind the stand and never reset).
+        stand.setRightArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(30), Math.toRadians(0)));
+        stand.setLeftArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(-15), Math.toRadians(0)));
         stand.setHeadPose(new EulerAngle(Math.toRadians(7), 0, 0));
         stand.setBodyPose(new EulerAngle(Math.toRadians(5), 0, 0));
         stand.setRightLegPose(new EulerAngle(Math.toRadians(15), 0, 0));
@@ -57,6 +61,16 @@ public class GroundSlamAttack extends BossAttackBase {
 
         instance.shieldState = BossInstance.ShieldState.SLAM_DONE;
         instance.shieldTimer = 0;
+
+        // Reset the slam pose shortly afterwards so the arms don't stay swung back.
+        // Every other ground/aerial attack calls resetBossPose; GroundSlam was the
+        // only one missing it, which left the stand frozen with arms pointing back.
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                boss.resetBossPose(instance);
+            }
+        }.runTaskLater(plugin, 50L);
     }
 
     @Override

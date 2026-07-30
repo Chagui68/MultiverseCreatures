@@ -67,6 +67,7 @@ public class IceCrownHandler implements Listener {
             return System.currentTimeMillis() - timestamp > SELECT_TIMEOUT_MS;
         }
     }
+
     public IceCrownHandler(Plugin plugin) {
         this.plugin = plugin;
     }
@@ -341,7 +342,7 @@ public class IceCrownHandler implements Listener {
                         LivingEntity le = (LivingEntity) entity;
                         le.damage(3.0, p);
                         le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 2));
-                        le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS,40,2));
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 2));
                         Vector pushDir = le.getLocation().toVector().subtract(center.toVector());
                         if (pushDir.lengthSquared() > 0) {
                             le.setVelocity(le.getVelocity().add(pushDir.normalize().multiply(0.15)));

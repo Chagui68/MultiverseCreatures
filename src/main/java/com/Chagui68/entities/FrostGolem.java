@@ -54,7 +54,7 @@ public class FrostGolem implements Listener {
         Block leftArm = below.getRelative(BlockFace.WEST);
         Block rightArm = below.getRelative(BlockFace.EAST);
         boolean armsValid = (leftArm.getType() == Material.ICE || leftArm.getType() == Material.PACKED_ICE || leftArm.getType() == Material.BLUE_ICE)
-            && (rightArm.getType() == Material.ICE || rightArm.getType() == Material.PACKED_ICE || rightArm.getType() == Material.BLUE_ICE);
+                && (rightArm.getType() == Material.ICE || rightArm.getType() == Material.PACKED_ICE || rightArm.getType() == Material.BLUE_ICE);
 
         if (!armsValid) return;
 
@@ -88,7 +88,8 @@ public class FrostGolem implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     FrostGolemInstance inst = entry.getValue();
                     if (inst.golem.isDead() || !inst.golem.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickFrost(inst);
                 }
@@ -113,8 +114,13 @@ public class FrostGolem implements Listener {
         if (eq != null) {
             ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE);
             LeatherArmorMeta meta = (LeatherArmorMeta) chest.getItemMeta();
-            if (meta != null) { meta.setColor(Color.AQUA); meta.setUnbreakable(true); chest.setItemMeta(meta); }
-            eq.setChestplate(chest); eq.setChestplateDropChance(0);
+            if (meta != null) {
+                meta.setColor(Color.AQUA);
+                meta.setUnbreakable(true);
+                chest.setItemMeta(meta);
+            }
+            eq.setChestplate(chest);
+            eq.setChestplateDropChance(0);
         }
         golem.setAI(true);
         active.put(golem.getUniqueId(), new FrostGolemInstance(golem));
@@ -126,7 +132,8 @@ public class FrostGolem implements Listener {
         if (!(golem.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            golem.setTarget(null); return;
+            golem.setTarget(null);
+            return;
         }
 
         Location gLoc = golem.getLocation();
@@ -143,7 +150,7 @@ public class FrostGolem implements Listener {
                 double z = gLoc.getZ() + Math.sin(angle) * r;
                 Location pl = new Location(gLoc.getWorld(), x, gLoc.getY() + 0.2, z);
                 gLoc.getWorld().spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                    new Particle.DustOptions(Color.fromRGB(0x88DDFF), 2.0f));
+                        new Particle.DustOptions(Color.fromRGB(0x88DDFF), 2.0f));
                 gLoc.getWorld().spawnParticle(Particle.SNOWFLAKE, pl, 2, 0.2, 0.1, 0.2, 0);
             }
             target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 3));
@@ -159,7 +166,7 @@ public class FrostGolem implements Listener {
                 Location pl = gLoc.clone().add(dir.clone().multiply(d));
                 pl.setY(pl.getY() + 1.5);
                 gLoc.getWorld().spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                    new Particle.DustOptions(Color.fromRGB(0x88DDFF), 1.8f));
+                        new Particle.DustOptions(Color.fromRGB(0x88DDFF), 1.8f));
                 gLoc.getWorld().spawnParticle(Particle.SNOWFLAKE, pl, 1, 0, 0, 0, 0);
             }
             target.damage(10.0);
@@ -207,6 +214,9 @@ public class FrostGolem implements Listener {
         final IronGolem golem;
         int iceAuraCooldown = 0;
         int freezeBeamCooldown = 0;
-        FrostGolemInstance(IronGolem g) { this.golem = g; }
+
+        FrostGolemInstance(IronGolem g) {
+            this.golem = g;
+        }
     }
 }

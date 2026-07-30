@@ -55,7 +55,8 @@ public class SoulReaper implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     SoulReaperInstance inst = entry.getValue();
                     if (inst.skeleton.isDead() || !inst.skeleton.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickReaper(inst);
                 }
@@ -86,15 +87,20 @@ public class SoulReaper implements Listener {
                 meta.setItemName("Soul Reaper's Scythe");
                 axe.setItemMeta(meta);
             }
-            eq.setItemInMainHand(axe); eq.setItemInMainHandDropChance(0);
-            eq.setHelmet(new ItemStack(Material.WITHER_SKELETON_SKULL)); eq.setHelmetDropChance(0);
+            eq.setItemInMainHand(axe);
+            eq.setItemInMainHandDropChance(0);
+            eq.setHelmet(new ItemStack(Material.WITHER_SKELETON_SKULL));
+            eq.setHelmetDropChance(0);
 
             ItemStack chest = coloredLeather(Material.LEATHER_CHESTPLATE, Color.fromRGB(0x1A1A1A));
             ItemStack legs = coloredLeather(Material.LEATHER_LEGGINGS, Color.fromRGB(0x1A1A1A));
             ItemStack boots = coloredLeather(Material.LEATHER_BOOTS, Color.fromRGB(0x1A1A1A));
-            eq.setChestplate(chest); eq.setChestplateDropChance(0);
-            eq.setLeggings(legs); eq.setLeggingsDropChance(0);
-            eq.setBoots(boots); eq.setBootsDropChance(0);
+            eq.setChestplate(chest);
+            eq.setChestplateDropChance(0);
+            eq.setLeggings(legs);
+            eq.setLeggingsDropChance(0);
+            eq.setBoots(boots);
+            eq.setBootsDropChance(0);
         }
         ws.setAI(true);
         active.put(ws.getUniqueId(), new SoulReaperInstance(ws));
@@ -106,7 +112,8 @@ public class SoulReaper implements Listener {
         if (!(ws.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            ws.setTarget(null); return;
+            ws.setTarget(null);
+            return;
         }
 
         Location wLoc = ws.getLocation();
@@ -124,7 +131,7 @@ public class SoulReaper implements Listener {
             for (int i = 0; i < 10; i++) {
                 Location pl = tLoc.clone().add((random.nextDouble() - 0.5) * 1.5, random.nextDouble() * 2, (random.nextDouble() - 0.5) * 1.5);
                 wLoc.getWorld().spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                    new Particle.DustOptions(Color.fromRGB(0x440000), 2.0f));
+                        new Particle.DustOptions(Color.fromRGB(0x440000), 2.0f));
             }
             Vector soul = wLoc.toVector().subtract(tLoc.toVector());
             for (double d = 0; d < 1; d += 0.1) {
@@ -140,7 +147,11 @@ public class SoulReaper implements Listener {
     private ItemStack coloredLeather(Material mat, Color color) {
         ItemStack item = new ItemStack(mat);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-        if (meta != null) { meta.setColor(color); meta.setUnbreakable(true); item.setItemMeta(meta); }
+        if (meta != null) {
+            meta.setColor(color);
+            meta.setUnbreakable(true);
+            item.setItemMeta(meta);
+        }
         return item;
     }
 
@@ -170,6 +181,9 @@ public class SoulReaper implements Listener {
     private static class SoulReaperInstance {
         final WitherSkeleton skeleton;
         int soulDrainCooldown = 0;
-        SoulReaperInstance(WitherSkeleton ws) { this.skeleton = ws; }
+
+        SoulReaperInstance(WitherSkeleton ws) {
+            this.skeleton = ws;
+        }
     }
 }

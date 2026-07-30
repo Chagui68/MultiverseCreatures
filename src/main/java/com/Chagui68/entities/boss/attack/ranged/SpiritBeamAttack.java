@@ -38,7 +38,10 @@ public class SpiritBeamAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 95) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 95) {
+                    cancel();
+                    return;
+                }
                 if (t < 35) {
                     double phase = (double) t / 35;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-180 * phase), Math.toRadians(45), Math.toRadians(40 * phase)));
@@ -52,7 +55,7 @@ public class SpiritBeamAttack extends BossAttackBase {
                         Location pl = new Location(world, x, center.getY() + 1, z);
                         world.spawnParticle(Particle.SOUL, pl, 1, 0.1, 0.3, 0.1, 0.02);
                         world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                            new Particle.DustOptions(Color.fromRGB(0x44FFCC), 1.5f * (float) phase));
+                                new Particle.DustOptions(Color.fromRGB(0x44FFCC), 1.5f * (float) phase));
                     }
                     if (t == 1) world.playSound(center, Sound.ENTITY_WITHER_SHOOT, 1.0f, 0.5f);
                     if (t % 6 == 0) world.playSound(center, Sound.ENTITY_EVOKER_PREPARE_SUMMON, 0.8f, 0.4f);
@@ -70,7 +73,7 @@ public class SpiritBeamAttack extends BossAttackBase {
                             Location pl = center.clone().add(0, 1.5, 0).add(toP.clone().multiply(d));
                             world.spawnParticle(Particle.SOUL, pl, 2, 0.2, 0.2, 0.2, 0.05);
                             world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(Color.fromRGB(0x44FFCC), 2.0f));
+                                    new Particle.DustOptions(Color.fromRGB(0x44FFCC), 2.0f));
                             world.spawnParticle(Particle.END_ROD, pl, 1, 0, 0, 0, 0);
                         }
                         if (t % 10 == 0) {

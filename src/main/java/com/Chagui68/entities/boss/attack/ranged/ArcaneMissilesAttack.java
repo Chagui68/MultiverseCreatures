@@ -39,7 +39,10 @@ public class ArcaneMissilesAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 110) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 110) {
+                    cancel();
+                    return;
+                }
                 if (t < 22) {
                     double phase = (double) t / 22;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-120 * phase), Math.toRadians(45), Math.toRadians(30 * phase)));
@@ -69,7 +72,7 @@ public class ArcaneMissilesAttack extends BossAttackBase {
                     p.add(d);
                     world.spawnParticle(Particle.FLAME, p, 3, 0.05, 0.05, 0.05, 0);
                     world.spawnParticle(Particle.DUST, p, 1, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0xFF6644), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0xFF6644), 1.5f));
                     for (Player pl : boss.getValidPlayers(world)) {
                         if (pl.getLocation().distanceSquared(p) < 5) {
                             pl.damage(sealDamage * 0.4);

@@ -2,6 +2,7 @@ com/Chagui68/entities/boss/attack/aerial/HeavenlyJudgmentAttack.class
 com/Chagui68/entities/boss/attack/aerial/SonicBoomAttack.class
 com/Chagui68/entities/boss/attack/ranged/VoidRiftAttack$1.class
 com/Chagui68/commands/MSCCommand$4.class
+com/Chagui68/entities/VoidStatue$1.class
 com/Chagui68/entities/miniboss/Mahoraga.class
 com/Chagui68/music/NBSSong.class
 com/Chagui68/entities/ChaosMage$ChaosMageInstance.class
@@ -9,6 +10,7 @@ com/Chagui68/entities/boss/attack/BossAttackBase.class
 com/Chagui68/entities/boss/attack/aerial/CrossSlashAttack.class
 com/Chagui68/listener/IceCrownHandler$SelectedBlock.class
 com/Chagui68/entities/boss/attack/ranged/ChainLightningAttack$1.class
+com/Chagui68/entities/boss/attack/ground/GroundSlamAttack$1.class
 com/Chagui68/items/weapons/melee/NullshearEdge.class
 com/Chagui68/commands/MSCCommand$3$1.class
 com/Chagui68/entities/boss/ArmorStandBoss$8.class
@@ -23,6 +25,7 @@ com/Chagui68/entities/boss/attack/ground/EarthPillarAttack.class
 com/Chagui68/items/weapons/ranged/AetherPullshot.class
 com/Chagui68/entities/boss/attack/ranged/ArcaneOrbAttack$1.class
 com/Chagui68/listener/SkyfireTalismanHandler.class
+com/Chagui68/listener/EightHandledWheelHandler$CauseState.class
 com/Chagui68/listener/DioStandHandler$1.class
 com/Chagui68/entities/BossInstance$ShieldState.class
 com/Chagui68/entities/boss/MagicSealListener$11.class
@@ -116,7 +119,6 @@ com/Chagui68/entities/boss/MagicSealListener$10.class
 com/Chagui68/entities/boss/ArmorStandBoss$18.class
 com/Chagui68/listener/AetherPullshotHandler.class
 com/Chagui68/entities/boss/attack/ranged/FrostLanceAttack$1.class
-com/Chagui68/listener/ObsidianBastionHandler$1.class
 com/Chagui68/MultiverseCreatures.class
 com/Chagui68/entities/boss/MagicSealListener.class
 com/Chagui68/entities/boss/attack/aerial/CrossSlashAttack$1.class
@@ -129,6 +131,7 @@ com/Chagui68/entities/boss/attack/aerial/AirSlamAttack$1$1.class
 com/Chagui68/entities/boss/attack/aerial/AirSlamAttack.class
 com/Chagui68/entities/boss/attack/ranged/VoidRiftAttack.class
 com/Chagui68/items/weapons/melee/Excalibur.class
+com/Chagui68/entities/VoidStatue.class
 com/Chagui68/entities/boss/attack/ranged/SpiritBeamAttack.class
 com/Chagui68/ritual/RitualParticles$2.class
 com/Chagui68/entities/boss/attack/ranged/LanceSnipeAttack$1.class
@@ -180,6 +183,7 @@ com/Chagui68/entities/boss/MagicSealListener$13.class
 com/Chagui68/entities/boss/MagicSealListener$3.class
 com/Chagui68/entities/ShadowRogue$1.class
 com/Chagui68/listener/MantisClawsHandler$2.class
+com/Chagui68/entities/VoidStatue$StatueInstance.class
 com/Chagui68/entities/SoulReaper$SoulReaperInstance.class
 com/Chagui68/entities/boss/attack/aerial/LightningStormAttack.class
 com/Chagui68/entities/VoidCrawler$VoidCrawlerInstance.class

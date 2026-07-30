@@ -327,6 +327,7 @@ public class DioBoss implements Listener {
 
         new BukkitRunnable() {
             int ticks = 0;
+
             @Override
             public void run() {
                 if (ticks >= durationTicks || zombie.isDead()) {
@@ -449,33 +450,33 @@ public class DioBoss implements Listener {
                         List<ItemDisplay> pSwords = entry.getValue();
 
                         for (int i = 0; i < pSwords.size(); i++) {
-                                ItemDisplay sword = pSwords.get(i);
-                                if (!sword.isValid()) continue;
+                            ItemDisplay sword = pSwords.get(i);
+                            if (!sword.isValid()) continue;
 
-                                Location spawnLoc = swordSpawnLocations.get(sword);
-                                if (spawnLoc == null) continue;
+                            Location spawnLoc = swordSpawnLocations.get(sword);
+                            if (spawnLoc == null) continue;
 
-                                Vector flyDir = swordFlyDirections.get(sword);
-                                if (flyDir == null) continue;
+                            Vector flyDir = swordFlyDirections.get(sword);
+                            if (flyDir == null) continue;
 
-                                Location passThrough = targetLoc.clone().add(flyDir.clone().multiply(4));
+                            Location passThrough = targetLoc.clone().add(flyDir.clone().multiply(4));
 
-                                float progress = Math.min(1.0f, (float) phaseTicks / flyDurationTicks);
-                                double lerpX = spawnLoc.getX() + (passThrough.getX() - spawnLoc.getX()) * progress;
-                                double lerpY = spawnLoc.getY() + (passThrough.getY() - spawnLoc.getY()) * progress;
-                                double lerpZ = spawnLoc.getZ() + (passThrough.getZ() - spawnLoc.getZ()) * progress;
+                            float progress = Math.min(1.0f, (float) phaseTicks / flyDurationTicks);
+                            double lerpX = spawnLoc.getX() + (passThrough.getX() - spawnLoc.getX()) * progress;
+                            double lerpY = spawnLoc.getY() + (passThrough.getY() - spawnLoc.getY()) * progress;
+                            double lerpZ = spawnLoc.getZ() + (passThrough.getZ() - spawnLoc.getZ()) * progress;
 
-                                float yaw = (float) Math.atan2(-flyDir.getX(), flyDir.getZ());
-                                Vector3f translation = new Vector3f(
-                                        (float) (lerpX - spawnLoc.getX()),
-                                        (float) (lerpY - spawnLoc.getY()),
-                                        (float) (lerpZ - spawnLoc.getZ())
-                                );
-                                Quaternionf leftRot = new Quaternionf().rotateY(yaw).rotateX((float) Math.toRadians(-90));
-                                sword.setTransformation(new Transformation(translation, leftRot, new Vector3f(0.7f), new Quaternionf()));
-                                sword.setInterpolationDelay(0);
-                                sword.setInterpolationDuration(1);
-                            }
+                            float yaw = (float) Math.atan2(-flyDir.getX(), flyDir.getZ());
+                            Vector3f translation = new Vector3f(
+                                    (float) (lerpX - spawnLoc.getX()),
+                                    (float) (lerpY - spawnLoc.getY()),
+                                    (float) (lerpZ - spawnLoc.getZ())
+                            );
+                            Quaternionf leftRot = new Quaternionf().rotateY(yaw).rotateX((float) Math.toRadians(-90));
+                            sword.setTransformation(new Transformation(translation, leftRot, new Vector3f(0.7f), new Quaternionf()));
+                            sword.setInterpolationDelay(0);
+                            sword.setInterpolationDuration(1);
+                        }
                     }
                     if (phaseTicks >= flyDurationTicks) {
                         phase = 2;

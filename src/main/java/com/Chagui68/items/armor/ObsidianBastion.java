@@ -19,7 +19,7 @@ public class ObsidianBastion {
 
     public static final NamespacedKey HELMET_KEY = new NamespacedKey("multiversecreatures", "msc_obsidian_bastion_helmet");
     public static final NamespacedKey CHEST_KEY = new NamespacedKey("multiversecreatures", "msc_obsidian_bastion_chest");
-    public static final NamespacedKey LEGS_KEY  = new NamespacedKey("multiversecreatures", "msc_obsidian_bastion_legs");
+    public static final NamespacedKey LEGS_KEY = new NamespacedKey("multiversecreatures", "msc_obsidian_bastion_legs");
     public static final NamespacedKey BOOTS_KEY = new NamespacedKey("multiversecreatures", "msc_obsidian_bastion_boots");
 
     public static final ItemStack HELMET = buildPiece(Material.NETHERITE_HELMET, HELMET_KEY, "Helm");

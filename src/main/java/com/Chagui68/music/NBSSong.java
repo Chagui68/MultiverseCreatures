@@ -34,9 +34,17 @@ public class NBSSong {
         this.length = length;
     }
 
-    public String getTitle() { return title; }
-    public int getLength() { return length; }
-    public float getSpeed() { return speed; }
+    public String getTitle() {
+        return title;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
 
     public long getTickDelayMs() {
         return Math.max(25, (long) (1000.0f / speed));

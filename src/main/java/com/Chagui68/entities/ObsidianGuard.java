@@ -54,7 +54,8 @@ public class ObsidianGuard implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     ObsidianGuardInstance inst = entry.getValue();
                     if (inst.zombie.isDead() || !inst.zombie.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickGuard(inst);
                 }
@@ -81,10 +82,14 @@ public class ObsidianGuard implements Listener {
         zombie.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 999999, 1, false, false));
         EntityEquipment eq = zombie.getEquipment();
         if (eq != null) {
-            eq.setHelmet(new ItemStack(Material.OBSIDIAN)); eq.setHelmetDropChance(0);
-            eq.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE)); eq.setChestplateDropChance(0);
-            eq.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS)); eq.setLeggingsDropChance(0);
-            eq.setBoots(new ItemStack(Material.NETHERITE_BOOTS)); eq.setBootsDropChance(0);
+            eq.setHelmet(new ItemStack(Material.OBSIDIAN));
+            eq.setHelmetDropChance(0);
+            eq.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
+            eq.setChestplateDropChance(0);
+            eq.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
+            eq.setLeggingsDropChance(0);
+            eq.setBoots(new ItemStack(Material.NETHERITE_BOOTS));
+            eq.setBootsDropChance(0);
             ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);
             ItemMeta meta = sword.getItemMeta();
             if (meta != null) {
@@ -93,7 +98,8 @@ public class ObsidianGuard implements Listener {
                 meta.setItemName("Obsidian Blade");
                 sword.setItemMeta(meta);
             }
-            eq.setItemInMainHand(sword); eq.setItemInMainHandDropChance(0);
+            eq.setItemInMainHand(sword);
+            eq.setItemInMainHandDropChance(0);
         }
         zombie.setAI(true);
         active.put(zombie.getUniqueId(), new ObsidianGuardInstance(zombie));
@@ -105,7 +111,8 @@ public class ObsidianGuard implements Listener {
         if (!(zombie.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            zombie.setTarget(null); return;
+            zombie.setTarget(null);
+            return;
         }
 
         Location zLoc = zombie.getLocation();
@@ -114,12 +121,12 @@ public class ObsidianGuard implements Listener {
         if (inst.tauntCooldown > 100) {
             for (Player p : zLoc.getWorld().getPlayers()) {
                 if (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) continue;
-                    if (p.getLocation().distanceSquared(zLoc) < 400) {
-                        zombie.setTarget(p);
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 60, 1));
-                        p.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Obsidian Guard: " + ChatColor.GRAY + "Face me!");
-                    }
+                if (p.getLocation().distanceSquared(zLoc) < 400) {
+                    zombie.setTarget(p);
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 60, 1));
+                    p.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Obsidian Guard: " + ChatColor.GRAY + "Face me!");
+                }
             }
             zLoc.getWorld().spawnParticle(Particle.EXPLOSION, zLoc.clone().add(0, 2, 0), 8, 2, 1, 2, 0);
             zLoc.getWorld().playSound(zLoc, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1.5f, 0.5f);
@@ -161,6 +168,9 @@ public class ObsidianGuard implements Listener {
         final Zombie zombie;
         int tauntCooldown = 0;
         int healCooldown = 0;
-        ObsidianGuardInstance(Zombie z) { this.zombie = z; }
+
+        ObsidianGuardInstance(Zombie z) {
+            this.zombie = z;
+        }
     }
 }

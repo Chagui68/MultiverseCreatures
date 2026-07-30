@@ -39,7 +39,10 @@ public class FrostLanceAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 100) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 100) {
+                    cancel();
+                    return;
+                }
                 if (t < 22) {
                     double phase = (double) t / 22;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-120 * phase), Math.toRadians(20), 0));
@@ -49,7 +52,7 @@ public class FrostLanceAttack extends BossAttackBase {
                     traveled += speed;
                     world.spawnParticle(Particle.SNOWFLAKE, pos, 3, 0.15, 0.15, 0.15, 0);
                     world.spawnParticle(Particle.DUST, pos, 1, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x88DDFF), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x88DDFF), 1.5f));
                     for (Player p : boss.getValidPlayers(world)) {
                         if (p.getLocation().distanceSquared(pos) < 6) {
                             p.damage(sealDamage * 0.8);

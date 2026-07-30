@@ -38,7 +38,10 @@ public class LightningSpearAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 80) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 80) {
+                    cancel();
+                    return;
+                }
                 if (t < 18) {
                     double phase = (double) t / 18;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-150 * phase), Math.toRadians(45), 0));

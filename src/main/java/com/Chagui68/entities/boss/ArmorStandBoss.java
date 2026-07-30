@@ -155,9 +155,17 @@ public class ArmorStandBoss implements Listener {
         this.aggroRange = plugin.getConfig().getDouble("armor-stand-boss.aggro-range", 50.0);
     }
 
-    public MultiverseCreatures getPlugin() { return plugin; }
-    public double getSealDamage() { return sealDamage; }
-    public double getHoverBarrageDamage() { return hoverBarrageDamage; }
+    public MultiverseCreatures getPlugin() {
+        return plugin;
+    }
+
+    public double getSealDamage() {
+        return sealDamage;
+    }
+
+    public double getHoverBarrageDamage() {
+        return hoverBarrageDamage;
+    }
 
     public List<Player> getValidPlayers(World world) {
         List<Player> result = new ArrayList<>();
@@ -909,9 +917,13 @@ public class ArmorStandBoss implements Listener {
 
         instance.defenseTask = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.STONE_SKIN) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.STONE_SKIN) {
+                    cancel();
+                    return;
+                }
                 if (t % 10 == 0) {
                     world.spawnParticle(Particle.CRIT, stand.getLocation().add(0, 5, 0), 10, 1.5, 4, 1.5, 0.02);
                     world.spawnParticle(Particle.BLOCK, stand.getLocation().add(0, 1, 0), 5, 1, 1, 1, 0.02, Material.STONE.createBlockData());
@@ -942,13 +954,17 @@ public class ArmorStandBoss implements Listener {
 
         instance.defenseTask = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.REFLECT_BARRIER) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.REFLECT_BARRIER) {
+                    cancel();
+                    return;
+                }
                 if (t % 8 == 0) {
                     world.spawnParticle(Particle.END_ROD, stand.getLocation().add(0, 5, 0), 15, 2.5, 4, 2.5, 0.03);
                     world.spawnParticle(Particle.DUST, stand.getLocation().add(0, 5, 0), 10, 2, 4, 2, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x88CCFF), 2.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x88CCFF), 2.5f));
                 }
                 t++;
             }
@@ -981,14 +997,18 @@ public class ArmorStandBoss implements Listener {
 
         instance.defenseTask = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.ABSORB_SHIELD) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.ABSORB_SHIELD) {
+                    cancel();
+                    return;
+                }
                 if (t % 5 == 0) {
                     double healthPct = instance.absorbShieldHealth / 100.0;
                     Color shieldColor = healthPct > 0.5 ? Color.fromRGB(0x88CCFF) : Color.fromRGB(0xFF6666);
                     world.spawnParticle(Particle.DUST, stand.getLocation().add(0, 5, 0), 8, 2, 4, 2, 0,
-                        new Particle.DustOptions(shieldColor, 2.0f));
+                            new Particle.DustOptions(shieldColor, 2.0f));
                     world.spawnParticle(Particle.END_ROD, stand.getLocation().add(0, 5, 0), 5, 1.5, 3, 1.5, 0.02);
                 }
                 t++;
@@ -1416,7 +1436,7 @@ public class ArmorStandBoss implements Listener {
         return Math.sqrt(nearest);
     }
 
-    private enum DistCategory { CLOSE, MEDIUM, FAR }
+    private enum DistCategory {CLOSE, MEDIUM, FAR}
 
     private void executeRandomAerialAttack(BossInstance instance) {
         ArmorStand stand = instance.stand;
@@ -2048,7 +2068,7 @@ public class ArmorStandBoss implements Listener {
 
             double damage = hoverBarrageDamage;
             double radius = 4.0;
-                            for (Player p : getValidPlayers(w)) {
+            for (Player p : getValidPlayers(w)) {
                 if (p.getLocation().distanceSquared(pos) <= radius * radius) {
                     p.damage(damage);
                     p.setVelocity(p.getVelocity().add(new Vector(0, 0.5, 0)));
@@ -2472,7 +2492,9 @@ public class ArmorStandBoss implements Listener {
         return true;
     }
 
-    /** Dispatch helper for attacks that accept a telegraph flag (RainOfLances, AirSlam). */
+    /**
+     * Dispatch helper for attacks that accept a telegraph flag (RainOfLances, AirSlam).
+     */
     private void executeAttack(String name, BossInstance instance, boolean telegraph) {
         BossAttack a = attackRegistry.get(name);
         if (a instanceof RainOfLancesAttack r) r.execute(instance, telegraph);
@@ -2481,14 +2503,14 @@ public class ArmorStandBoss implements Listener {
     }
 
     private static final java.util.Set<String> AERIAL_ATTACK_NAMES = java.util.Set.of(
-        "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell",
-        "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment",
-        "rainoflances", "airslam", "hoverbarrage"
+            "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell",
+            "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment",
+            "rainoflances", "airslam", "hoverbarrage"
     );
 
     private static final java.util.Set<String> GROUND_ATTACK_NAMES = java.util.Set.of(
-        "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar",
-        "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam"
+            "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar",
+            "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam"
     );
 
     private boolean isAerialAttackName(String name) {

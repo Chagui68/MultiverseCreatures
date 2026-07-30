@@ -19,6 +19,7 @@ import com.Chagui68.entities.SoulReaper;
 import com.Chagui68.entities.StormCaller;
 import com.Chagui68.entities.VenomWitch;
 import com.Chagui68.entities.VoidCrawler;
+import com.Chagui68.entities.VoidStatue;
 import com.Chagui68.entities.ZombieHorseTrap;
 import com.Chagui68.items.food.HeadSlimeGelatin;
 import com.Chagui68.items.components.HeadSlimeHeart;
@@ -63,6 +64,7 @@ public class MultiverseCreatures extends JavaPlugin {
     private SoulReaper soulReaper;
     private ChaosMage chaosMage;
     private EnderKnight enderKnight;
+    private VoidStatue voidStatue;
 
     @Override
     public void onEnable() {
@@ -91,9 +93,10 @@ public class MultiverseCreatures extends JavaPlugin {
         soulReaper = new SoulReaper(this);
         chaosMage = new ChaosMage(this);
         enderKnight = new EnderKnight(this);
-        
+        voidStatue = new VoidStatue(this);
+
         bossDimensionManager = new BossDimensionManager(this);
-        
+
         ritualManager = new RitualManager(this);
 
         getServer().getScheduler().runTask(this, () -> {
@@ -119,7 +122,7 @@ public class MultiverseCreatures extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new com.Chagui68.listener.VeilwalkerMantleHandler(this), this);
         getServer().getPluginManager().registerEvents(new com.Chagui68.listener.SoulreapScytheHandler(this), this);
         getServer().getPluginManager().registerEvents(new com.Chagui68.listener.MarrowAegisHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.ObsidianBastionHandler(), this);
+        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.ObsidianBastionHandler(this), this);
         getServer().getPluginManager().registerEvents(new com.Chagui68.listener.FrostHeartOffhandHandler(), this);
         getServer().getPluginManager().registerEvents(new com.Chagui68.listener.SkyfireTalismanHandler(this), this);
         getServer().getPluginManager().registerEvents(new com.Chagui68.listener.NullshearEdgeHandler(this), this);
@@ -169,7 +172,7 @@ public class MultiverseCreatures extends JavaPlugin {
         if (ritualManager != null) {
             ritualManager.stopAllRituals();
         }
-        
+
         if (bossDimensionManager != null) {
             bossDimensionManager.unloadBossDimension();
         }
@@ -223,15 +226,51 @@ public class MultiverseCreatures extends JavaPlugin {
         return musicManager;
     }
 
-    public ShadowRogue getShadowRogue() { return shadowRogue; }
-    public FlameElemental getFlameElemental() { return flameElemental; }
-    public FrostGolem getFrostGolem() { return frostGolem; }
-    public VoidCrawler getVoidCrawler() { return voidCrawler; }
-    public StormCaller getStormCaller() { return stormCaller; }
-    public BoneShield getBoneShield() { return boneShield; }
-    public VenomWitch getVenomWitch() { return venomWitch; }
-    public ObsidianGuard getObsidianGuard() { return obsidianGuard; }
-    public SoulReaper getSoulReaper() { return soulReaper; }
-    public ChaosMage getChaosMage() { return chaosMage; }
-    public EnderKnight getEnderKnight() { return enderKnight; }
+    public ShadowRogue getShadowRogue() {
+        return shadowRogue;
+    }
+
+    public FlameElemental getFlameElemental() {
+        return flameElemental;
+    }
+
+    public FrostGolem getFrostGolem() {
+        return frostGolem;
+    }
+
+    public VoidCrawler getVoidCrawler() {
+        return voidCrawler;
+    }
+
+    public StormCaller getStormCaller() {
+        return stormCaller;
+    }
+
+    public BoneShield getBoneShield() {
+        return boneShield;
+    }
+
+    public VenomWitch getVenomWitch() {
+        return venomWitch;
+    }
+
+    public ObsidianGuard getObsidianGuard() {
+        return obsidianGuard;
+    }
+
+    public SoulReaper getSoulReaper() {
+        return soulReaper;
+    }
+
+    public ChaosMage getChaosMage() {
+        return chaosMage;
+    }
+
+    public EnderKnight getEnderKnight() {
+        return enderKnight;
+    }
+
+    public VoidStatue getVoidStatue() {
+        return voidStatue;
+    }
 }

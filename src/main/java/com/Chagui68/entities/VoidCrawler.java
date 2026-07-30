@@ -49,7 +49,8 @@ public class VoidCrawler implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     VoidCrawlerInstance inst = entry.getValue();
                     if (inst.spider.isDead() || !inst.spider.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickVoid(inst);
                 }
@@ -79,7 +80,8 @@ public class VoidCrawler implements Listener {
         if (!(spider.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            spider.setTarget(null); return;
+            spider.setTarget(null);
+            return;
         }
 
         Location sLoc = spider.getLocation();
@@ -130,7 +132,7 @@ public class VoidCrawler implements Listener {
                 double r = 3.0;
                 Location pl = sLoc.clone().add(Math.cos(angle) * r, 0.5, Math.sin(angle) * r);
                 sLoc.getWorld().spawnParticle(Particle.DUST, pl, 3, 0.2, 0.2, 0.2, 0,
-                    new Particle.DustOptions(Color.fromRGB(0x8800AA), 1.5f));
+                        new Particle.DustOptions(Color.fromRGB(0x8800AA), 1.5f));
                 sLoc.getWorld().spawnParticle(Particle.WITCH, pl, 2, 0.2, 0.2, 0.2, 0);
             }
             target.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 2));
@@ -144,7 +146,7 @@ public class VoidCrawler implements Listener {
     private Location findFreeSpace(Spider spider) {
         for (int i = 0; i < 10; i++) {
             Location loc = spider.getLocation().add(
-                (random.nextDouble() - 0.5) * 10, 0, (random.nextDouble() - 0.5) * 10);
+                    (random.nextDouble() - 0.5) * 10, 0, (random.nextDouble() - 0.5) * 10);
             loc.setY(loc.getWorld().getHighestBlockYAt(loc));
             if (!loc.getBlock().getType().isSolid() && loc.clone().subtract(0, 1, 0).getBlock().getType().isSolid()) {
                 return loc;
@@ -179,6 +181,9 @@ public class VoidCrawler implements Listener {
         final Spider spider;
         int phaseCooldown = 0;
         int poisonBurstCooldown = 0;
-        VoidCrawlerInstance(Spider s) { this.spider = s; }
+
+        VoidCrawlerInstance(Spider s) {
+            this.spider = s;
+        }
     }
 }

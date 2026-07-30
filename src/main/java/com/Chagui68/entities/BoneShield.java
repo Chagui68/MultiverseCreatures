@@ -51,7 +51,8 @@ public class BoneShield implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     BoneShieldInstance inst = entry.getValue();
                     if (inst.skeleton.isDead() || !inst.skeleton.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickBone(inst);
                 }
@@ -84,15 +85,19 @@ public class BoneShield implements Listener {
             eq.setItemInOffHandDropChance(0);
 
             ItemStack helmet = new ItemStack(Material.BONE_BLOCK);
-            eq.setHelmet(helmet); eq.setHelmetDropChance(0);
+            eq.setHelmet(helmet);
+            eq.setHelmetDropChance(0);
 
             Color boneColor = Color.fromRGB(0xE8E0D0);
             ItemStack chest = coloredLeather(Material.LEATHER_CHESTPLATE, boneColor);
             ItemStack legs = coloredLeather(Material.LEATHER_LEGGINGS, boneColor);
             ItemStack boots = coloredLeather(Material.LEATHER_BOOTS, boneColor);
-            eq.setChestplate(chest); eq.setChestplateDropChance(0);
-            eq.setLeggings(legs); eq.setLeggingsDropChance(0);
-            eq.setBoots(boots); eq.setBootsDropChance(0);
+            eq.setChestplate(chest);
+            eq.setChestplateDropChance(0);
+            eq.setLeggings(legs);
+            eq.setLeggingsDropChance(0);
+            eq.setBoots(boots);
+            eq.setBootsDropChance(0);
         }
         sk.setAI(true);
         active.put(sk.getUniqueId(), new BoneShieldInstance(sk));
@@ -104,7 +109,8 @@ public class BoneShield implements Listener {
         if (!(sk.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            sk.setTarget(null); return;
+            sk.setTarget(null);
+            return;
         }
 
         Location sLoc = sk.getLocation();
@@ -125,7 +131,7 @@ public class BoneShield implements Listener {
                 double z = sLoc.getZ() + Math.sin(angle) * r;
                 Location pl = new Location(sLoc.getWorld(), x, sLoc.getY() + 1 + Math.sin(angle * 2) * 0.5, z);
                 sLoc.getWorld().spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                    new Particle.DustOptions(Color.fromRGB(0xEEEEEE), 1.5f));
+                        new Particle.DustOptions(Color.fromRGB(0xEEEEEE), 1.5f));
             }
         }
 
@@ -134,7 +140,10 @@ public class BoneShield implements Listener {
             if (eq != null && eq.getItemInOffHand().getType() == Material.AIR) {
                 ItemStack shield = new ItemStack(Material.SHIELD);
                 ItemMeta sm = shield.getItemMeta();
-                if (sm != null) { sm.setUnbreakable(true); shield.setItemMeta(sm); }
+                if (sm != null) {
+                    sm.setUnbreakable(true);
+                    shield.setItemMeta(sm);
+                }
                 eq.setItemInOffHand(shield);
             }
         }
@@ -175,7 +184,11 @@ public class BoneShield implements Listener {
     private ItemStack coloredLeather(Material mat, Color color) {
         ItemStack item = new ItemStack(mat);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-        if (meta != null) { meta.setColor(color); meta.setUnbreakable(true); item.setItemMeta(meta); }
+        if (meta != null) {
+            meta.setColor(color);
+            meta.setUnbreakable(true);
+            item.setItemMeta(meta);
+        }
         return item;
     }
 
@@ -183,6 +196,9 @@ public class BoneShield implements Listener {
         final Skeleton skeleton;
         double boneShieldHealth = 30;
         int shieldRecharge = 0;
-        BoneShieldInstance(Skeleton sk) { this.skeleton = sk; }
+
+        BoneShieldInstance(Skeleton sk) {
+            this.skeleton = sk;
+        }
     }
 }

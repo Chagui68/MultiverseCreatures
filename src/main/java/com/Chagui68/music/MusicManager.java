@@ -79,8 +79,10 @@ public class MusicManager {
                             String fileName = p.getFileName().toString();
                             jarSongs.add(fileName);
                             File target = new File(musicDir, fileName);
-                            try { java.nio.file.Files.copy(p, target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING); }
-                            catch (Exception ignored) {}
+                            try {
+                                java.nio.file.Files.copy(p, target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                            } catch (Exception ignored) {
+                            }
                         });
             } else {
                 try (java.nio.file.FileSystem fs = java.nio.file.FileSystems.newFileSystem(path, (ClassLoader) null)) {
@@ -126,6 +128,7 @@ public class MusicManager {
 
         BukkitTask task = new BukkitRunnable() {
             int currentTick = 0;
+
             @Override
             public void run() {
                 if (!player.isOnline()) {

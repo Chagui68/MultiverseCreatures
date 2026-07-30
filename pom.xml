@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>MultiverseCreatures</artifactId>
-    <version>5.7.DEV</version>
+    <version>6.1.DEV</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

@@ -17,8 +17,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public class BossInstance {
-    public enum ShieldState { NORMAL, PLANTED, SLAM_DONE }
-    public enum DefenseState { NONE, STONE_SKIN, REFLECT_BARRIER, ABSORB_SHIELD }
+    public enum ShieldState {NORMAL, PLANTED, SLAM_DONE}
+
+    public enum DefenseState {NONE, STONE_SKIN, REFLECT_BARRIER, ABSORB_SHIELD}
 
     public final ArmorStand stand;
     public BossBar bossBar;

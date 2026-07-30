@@ -3,7 +3,7 @@ package com.Chagui68.listener;
 import com.Chagui68.items.armor.EightHandledWheel;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,10 +20,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EightHandledWheelHandler implements Listener {
 
+    private static final NamespacedKey CHARGES_KEY = new NamespacedKey("multiversecreatures", "msc_wheel_charges");
+
+    // Per-cause immunity windows for each player.
+    //   blockUntil   : the damage of this cause is cancelled (true immunity).
+    //   reTriggerUntil: a new charge cannot be consumed for this cause until this time.
+    private static final class CauseState {
+        long blockUntil;
+        long reTriggerUntil;
+    }
+
     private final Plugin plugin;
-    private final Map<UUID, Integer> charges = new ConcurrentHashMap<>();
-    private final Map<UUID, Long> globalCooldown = new ConcurrentHashMap<>();
-    private final Map<UUID, Map<org.bukkit.event.entity.EntityDamageEvent.DamageCause, Long>> causeCooldowns = new ConcurrentHashMap<>();
+    private final Map<UUID, Map<EntityDamageEvent.DamageCause, CauseState>> playerStates = new ConcurrentHashMap<>();
+    private final Set<UUID> regenActive = ConcurrentHashMap.newKeySet();
 
     public EightHandledWheelHandler(Plugin plugin) {
         this.plugin = plugin;
@@ -36,6 +45,23 @@ public class EightHandledWheelHandler implements Listener {
         return meta.getPersistentDataContainer().has(EightHandledWheel.WHEEL_KEY, PersistentDataType.INTEGER);
     }
 
+    private int getCharges(ItemStack helm) {
+        ItemMeta meta = helm.getItemMeta();
+        if (meta == null) return EightHandledWheel.MAX_CHARGES;
+        return meta.getPersistentDataContainer().getOrDefault(CHARGES_KEY, PersistentDataType.INTEGER, EightHandledWheel.MAX_CHARGES);
+    }
+
+    private void setCharges(ItemStack helm, int charges) {
+        ItemMeta meta = helm.getItemMeta();
+        if (meta == null) return;
+        if (charges >= EightHandledWheel.MAX_CHARGES) {
+            meta.getPersistentDataContainer().remove(CHARGES_KEY);
+        } else {
+            meta.getPersistentDataContainer().set(CHARGES_KEY, PersistentDataType.INTEGER, charges);
+        }
+        helm.setItemMeta(meta);
+    }
+
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player p)) return;
@@ -44,27 +70,41 @@ public class EightHandledWheelHandler implements Listener {
 
         UUID uuid = p.getUniqueId();
         long now = System.currentTimeMillis();
+        EntityDamageEvent.DamageCause cause = event.getCause();
 
-        if (globalCooldown.getOrDefault(uuid, 0L) > now) return;
+        Map<EntityDamageEvent.DamageCause, CauseState> causeMap = playerStates.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>());
+        CauseState state = causeMap.get(cause);
 
-        org.bukkit.event.entity.EntityDamageEvent.DamageCause cause = event.getCause();
-        Map<org.bukkit.event.entity.EntityDamageEvent.DamageCause, Long> causeMap = causeCooldowns.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>());
-        if (causeMap.getOrDefault(cause, 0L) > now) return;
+        // Phase 1: still inside the immunity window for this damage type.
+        // Block ALL incoming damage of this type — not just the first hit.
+        if (state != null && state.blockUntil > now) {
+            event.setCancelled(true);
+            return;
+        }
 
-        int c = charges.getOrDefault(uuid, EightHandledWheel.MAX_CHARGES);
+        // Phase 2: between the end of immunity and the end of the re-trigger cooldown,
+        // damage passes through normally and NO new charge is consumed.
+        if (state != null && state.reTriggerUntil > now) {
+            return;
+        }
+
+        // Phase 3: the cooldown has fully elapsed — a new adaptation can trigger.
+        int c = getCharges(helm);
         if (c <= 0) return;
 
-        charges.put(uuid, c - 1);
-        causeMap.put(cause, now + EightHandledWheel.BLOCK_DURATION_TICKS * 50L);
-        globalCooldown.put(uuid, now + EightHandledWheel.BLOCK_COOLDOWN_MS);
+        setCharges(helm, c - 1);
+
+        CauseState s = state != null ? state : new CauseState();
+        s.blockUntil = now + (EightHandledWheel.BLOCK_DURATION_TICKS * 50L); // ticks -> ms
+        s.reTriggerUntil = now + EightHandledWheel.BLOCK_COOLDOWN_MS;
+        causeMap.put(cause, s);
 
         event.setCancelled(true);
-        p.sendMessage(ChatColor.GRAY + "Wheel adapts to " + cause.name() + " (" + charges.get(uuid) + " charges remain)");
+        p.sendMessage(ChatColor.GRAY + "Wheel adapts to " + cause.name() + " (" + (c - 1) + " charges remain)");
         p.getWorld().playSound(p.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 0.5f, 1.5f);
         p.getWorld().spawnParticle(org.bukkit.Particle.END_ROD, p.getLocation().add(0, 1, 0), 15, 0.3, 0.5, 0.3, 0.05);
 
-        // Regen charges over time
-        if (c == EightHandledWheel.MAX_CHARGES) {
+        if (c - 1 < EightHandledWheel.MAX_CHARGES && regenActive.add(uuid)) {
             startRegen(uuid);
         }
     }
@@ -73,12 +113,28 @@ public class EightHandledWheelHandler implements Listener {
         new org.bukkit.scheduler.BukkitRunnable() {
             @Override
             public void run() {
-                int c = charges.getOrDefault(uuid, 0);
-                if (c >= EightHandledWheel.MAX_CHARGES) {
+                Player p = org.bukkit.Bukkit.getPlayer(uuid);
+                if (p == null || !p.isOnline()) {
+                    playerStates.remove(uuid);
                     cancel();
+                    regenActive.remove(uuid);
                     return;
                 }
-                charges.put(uuid, c + 1);
+                ItemStack helm = p.getInventory().getHelmet();
+                if (!isWheel(helm)) {
+                    playerStates.remove(uuid);
+                    cancel();
+                    regenActive.remove(uuid);
+                    return;
+                }
+                int c = getCharges(helm);
+                if (c >= EightHandledWheel.MAX_CHARGES) {
+                    playerStates.remove(uuid);
+                    cancel();
+                    regenActive.remove(uuid);
+                    return;
+                }
+                setCharges(helm, c + 1);
             }
         }.runTaskTimer(plugin, EightHandledWheel.CHARGE_REGEN_TICKS, EightHandledWheel.CHARGE_REGEN_TICKS);
     }

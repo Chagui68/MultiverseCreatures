@@ -115,9 +115,9 @@ public class BossInvocationManager implements Listener {
         for (int i = 0; i < 5; i++) {
             double a = Math.toRadians(i * 72 - 90);
             pts[i] = new Location(world,
-                origin.getX() + cx + r * Math.cos(a),
-                origin.getY(),
-                origin.getZ() + cz + r * Math.sin(a));
+                    origin.getX() + cx + r * Math.cos(a),
+                    origin.getY(),
+                    origin.getZ() + cz + r * Math.sin(a));
         }
         drawFireLine(world, pts[0], pts[2], 20);
         drawFireLine(world, pts[2], pts[4], 20);

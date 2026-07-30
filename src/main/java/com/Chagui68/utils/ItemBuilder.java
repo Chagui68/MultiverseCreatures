@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Fluent builder for MSC ItemStacks. Eliminates the repetitive
- *   new ItemStack -> getItemMeta -> setDisplayName -> setLore -> PDC.set -> setItemMeta
+ * new ItemStack -> getItemMeta -> setDisplayName -> setLore -> PDC.set -> setItemMeta
  * boilerplate duplicated across the {@code items.*} packages.
  */
 public final class ItemBuilder {

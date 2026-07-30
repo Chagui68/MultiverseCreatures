@@ -19,7 +19,7 @@ public class IceCrown {
         ItemMeta meta = ICE_CROWN.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ChatColor.AQUA + "" + ChatColor.BOLD + "Ice King's Crown");
-            
+
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "A crown of eternal winter...");
             lore.add("");
@@ -31,7 +31,7 @@ public class IceCrown {
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"Gunter, why you gotta be like that?\"");
             lore.add("");
             lore.add(ChatColor.DARK_GRAY + "✦ " + ChatColor.GRAY + "Ooo" + ChatColor.DARK_GRAY + " ✦");
-            
+
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(ICE_CROWN_KEY, PersistentDataType.INTEGER, 1);
             ICE_CROWN.setItemMeta(meta);

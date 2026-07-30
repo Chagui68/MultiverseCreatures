@@ -14,11 +14,11 @@ public class BossInvocationStructure {
 
     static {
         int[][] layout = {
-            {0, 1, 1, 1, 0},
-            {1, 0, 0, 0, 1},
-            {1, 0, 0, 0, 1},
-            {1, 0, 0, 0, 1},
-            {0, 1, 1, 1, 0}
+                {0, 1, 1, 1, 0},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {0, 1, 1, 1, 0}
         };
         for (int x = 0; x < 5; x++) {
             for (int z = 0; z < 5; z++) {
@@ -33,10 +33,10 @@ public class BossInvocationStructure {
         for (var entry : STRUCTURE_BLOCKS.entrySet()) {
             Location rel = entry.getKey();
             Block block = new Location(
-                origin.getWorld(),
-                origin.getBlockX() + rel.getBlockX(),
-                origin.getBlockY() + rel.getBlockY(),
-                origin.getBlockZ() + rel.getBlockZ()
+                    origin.getWorld(),
+                    origin.getBlockX() + rel.getBlockX(),
+                    origin.getBlockY() + rel.getBlockY(),
+                    origin.getBlockZ() + rel.getBlockZ()
             ).getBlock();
             if (block.getType() != Material.RED_CANDLE) return false;
         }
@@ -47,10 +47,10 @@ public class BossInvocationStructure {
         for (var entry : STRUCTURE_BLOCKS.entrySet()) {
             Location rel = entry.getKey();
             Block block = new Location(
-                origin.getWorld(),
-                origin.getBlockX() + rel.getBlockX(),
-                origin.getBlockY() + rel.getBlockY(),
-                origin.getBlockZ() + rel.getBlockZ()
+                    origin.getWorld(),
+                    origin.getBlockX() + rel.getBlockX(),
+                    origin.getBlockY() + rel.getBlockY(),
+                    origin.getBlockZ() + rel.getBlockZ()
             ).getBlock();
             if (block.getType() != Material.RED_CANDLE) return false;
             if (block.getBlockData() instanceof Candle candleData && !candleData.isLit()) return false;
@@ -62,10 +62,10 @@ public class BossInvocationStructure {
         for (var entry : STRUCTURE_BLOCKS.entrySet()) {
             Location rel = entry.getKey();
             Block block = new Location(
-                origin.getWorld(),
-                origin.getBlockX() + rel.getBlockX(),
-                origin.getBlockY() + rel.getBlockY(),
-                origin.getBlockZ() + rel.getBlockZ()
+                    origin.getWorld(),
+                    origin.getBlockX() + rel.getBlockX(),
+                    origin.getBlockY() + rel.getBlockY(),
+                    origin.getBlockZ() + rel.getBlockZ()
             ).getBlock();
             if (block.getType() == Material.RED_CANDLE && block.getBlockData() instanceof Candle candleData && candleData.isLit()) {
                 candleData.setLit(false);

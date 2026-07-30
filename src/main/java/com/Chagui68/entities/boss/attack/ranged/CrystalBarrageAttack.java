@@ -39,7 +39,10 @@ public class CrystalBarrageAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 90) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 90) {
+                    cancel();
+                    return;
+                }
                 if (t < 15) {
                     double phase = (double) t / 15;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-100 * phase), Math.toRadians(20), 0));
@@ -61,7 +64,7 @@ public class CrystalBarrageAttack extends BossAttackBase {
                     p.add(d.clone().multiply(1.4));
                     world.spawnParticle(Particle.END_ROD, p, 3, 0.05, 0.05, 0.05, 0);
                     world.spawnParticle(Particle.DUST, p, 2, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0xAA66FF), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0xAA66FF), 1.5f));
                     for (Player pl : boss.getValidPlayers(world)) {
                         if (pl.getLocation().distanceSquared(p) < 9) {
                             pl.damage(sealDamage * 0.55);

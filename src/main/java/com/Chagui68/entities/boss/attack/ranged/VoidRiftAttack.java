@@ -35,7 +35,10 @@ public class VoidRiftAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 90) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 90) {
+                    cancel();
+                    return;
+                }
                 if (t < 30) {
                     double phase = (double) t / 30;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-90 * phase), Math.toRadians(60), 0));
@@ -49,7 +52,7 @@ public class VoidRiftAttack extends BossAttackBase {
                         Location pl = new Location(world, x, riftLoc.getY() + 0.1, z);
                         world.spawnParticle(Particle.PORTAL, pl, 2, 0.1, 0.1, 0.1, 0.05);
                         world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                            new Particle.DustOptions(Color.fromRGB(0x440066), 1.5f * (float) phase));
+                                new Particle.DustOptions(Color.fromRGB(0x440066), 1.5f * (float) phase));
                     }
                     if (t == 1) world.playSound(riftLoc, Sound.BLOCK_PORTAL_TRIGGER, 1.0f, 0.5f);
                 } else if (t < 75) {
@@ -62,7 +65,7 @@ public class VoidRiftAttack extends BossAttackBase {
                         Location pl = new Location(world, x, riftLoc.getY() + 0.1, z);
                         world.spawnParticle(Particle.PORTAL, pl, 3, 0.1, 0.1, 0.1, 0.08);
                         world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                            new Particle.DustOptions(Color.fromRGB(0x440066), 2.0f));
+                                new Particle.DustOptions(Color.fromRGB(0x440066), 2.0f));
                     }
                     for (Player p : boss.getValidPlayers(world)) {
                         Vector toCenter = riftLoc.toVector().subtract(p.getLocation().toVector());

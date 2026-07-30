@@ -19,7 +19,7 @@ public class WirtsLantern {
         ItemMeta meta = WIRTS_LANTERN.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Wirt's Lantern");
-            
+
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "A lantern that holds a lost soul.");
             lore.add("");
@@ -29,7 +29,7 @@ public class WirtsLantern {
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"The flame knows no winter.\"");
             lore.add("");
             lore.add(ChatColor.DARK_GRAY + "✦ " + ChatColor.GRAY + "Khand" + ChatColor.DARK_GRAY + " ✦");
-            
+
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(WIRTS_LANTERN_KEY, PersistentDataType.INTEGER, 1);
             WIRTS_LANTERN.setItemMeta(meta);

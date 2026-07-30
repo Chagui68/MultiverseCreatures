@@ -33,7 +33,7 @@ public class CinderGreatsword {
             lore.add(ChatColor.WHITE + "Passive Effects:");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Two-handed: cannot pair with off-hand items");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Sets struck foes ablaze (Fire Aspect II)");
-            lore.add(ChatColor.YELLOW +  "  ▸ " + ChatColor.GRAY + "Wielder gains " + ChatColor.GOLD + "Fire Resistance" + ChatColor.GRAY + " while held");
+            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Wielder gains " + ChatColor.GOLD + "Fire Resistance" + ChatColor.GRAY + " while held");
             lore.add("");
             lore.add(ChatColor.AQUA + "Item Ability: " + ChatColor.WHITE + "Cinder Slam " + ChatColor.GRAY + "(Right-Click)");
             lore.add(ChatColor.GRAY + "  Channel flame into the blade and slam");

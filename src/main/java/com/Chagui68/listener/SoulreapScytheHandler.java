@@ -19,6 +19,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +28,7 @@ public class SoulreapScytheHandler implements Listener {
     private final Plugin plugin;
     private final Map<UUID, Integer> soulCounts = new ConcurrentHashMap<>();
     private final Map<UUID, Long> reapEnds = new ConcurrentHashMap<>();
+    private final Set<UUID> inHit = ConcurrentHashMap.newKeySet();
 
     public SoulreapScytheHandler(Plugin plugin) {
         this.plugin = plugin;
@@ -47,35 +49,41 @@ public class SoulreapScytheHandler implements Listener {
         if (!(event.getEntity() instanceof LivingEntity target)) return;
 
         UUID uuid = p.getUniqueId();
-        long now = System.currentTimeMillis();
-        boolean inReap = reapEnds.getOrDefault(uuid, 0L) > now;
+        if (!inHit.add(uuid)) return;
 
-        int hpDrain = inReap ? SoulreapScythe.LIFESTEAL_HIT * 2 : SoulreapScythe.LIFESTEAL_HIT;
-        target.damage(hpDrain, p);
+        try {
+            long now = System.currentTimeMillis();
+            boolean inReap = reapEnds.getOrDefault(uuid, 0L) > now;
 
-        double maxHealth = p.getAttribute(Attribute.MAX_HEALTH).getValue();
-        double newHealth = Math.min(maxHealth, p.getHealth() + hpDrain);
-        p.setHealth(newHealth);
+            int hpDrain = inReap ? SoulreapScythe.LIFESTEAL_HIT * 2 : SoulreapScythe.LIFESTEAL_HIT;
+            target.setHealth(Math.max(0, target.getHealth() - hpDrain));
 
-        soulCounts.merge(uuid, 1, Integer::sum);
+            double maxHealth = p.getAttribute(Attribute.MAX_HEALTH).getValue();
+            double newHealth = Math.min(maxHealth, p.getHealth() + hpDrain);
+            p.setHealth(newHealth);
 
-        if (target.getHealth() <= 0) {
-            soulCounts.merge(uuid, 3, Integer::sum);
-        }
+            soulCounts.merge(uuid, 1, Integer::sum);
 
-        if (inReap) {
-            event.setDamage(event.getDamage() * SoulreapScythe.REAP_DAMAGE_MULTIPLIER);
-            target.getWorld().spawnParticle(Particle.SOUL, target.getLocation().add(0, 1, 0), 5, 0.3, 0.5, 0.3, 0.05);
-        }
+            if (target.getHealth() <= 0) {
+                soulCounts.merge(uuid, 3, Integer::sum);
+            }
 
-        int souls = soulCounts.get(uuid);
-        if (souls >= SoulreapScythe.SOULS_REQUIRED && !inReap) {
-            reapEnds.put(uuid, now + (SoulreapScythe.REAP_DURATION_TICKS * 50L));
-            soulCounts.put(uuid, 0);
-            p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, SoulreapScythe.REAP_DURATION_TICKS, 1, false, false));
-            p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "REAP ACTIVATED!");
-            p.getWorld().spawnParticle(Particle.SOUL, p.getLocation().add(0, 1, 0), 30, 1, 1, 1, 0.1);
-            p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1.5f, 0.5f);
+            if (inReap) {
+                event.setDamage(event.getDamage() * SoulreapScythe.REAP_DAMAGE_MULTIPLIER);
+                target.getWorld().spawnParticle(Particle.SOUL, target.getLocation().add(0, 1, 0), 5, 0.3, 0.5, 0.3, 0.05);
+            }
+
+            int souls = soulCounts.get(uuid);
+            if (souls >= SoulreapScythe.SOULS_REQUIRED && !inReap) {
+                reapEnds.put(uuid, now + (SoulreapScythe.REAP_DURATION_TICKS * 50L));
+                soulCounts.put(uuid, 0);
+                p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, SoulreapScythe.REAP_DURATION_TICKS, 1, false, false));
+                p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "REAP ACTIVATED!");
+                p.getWorld().spawnParticle(Particle.SOUL, p.getLocation().add(0, 1, 0), 30, 1, 1, 1, 0.1);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1.5f, 0.5f);
+            }
+        } finally {
+            inHit.remove(uuid);
         }
     }
 }

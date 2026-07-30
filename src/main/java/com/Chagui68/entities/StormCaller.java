@@ -48,7 +48,8 @@ public class StormCaller implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     StormCallerInstance inst = entry.getValue();
                     if (inst.witch.isDead() || !inst.witch.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickStorm(inst);
                 }
@@ -78,7 +79,8 @@ public class StormCaller implements Listener {
         if (!(witch.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            witch.setTarget(null); return;
+            witch.setTarget(null);
+            return;
         }
 
         Location wLoc = witch.getLocation();
@@ -113,7 +115,7 @@ public class StormCaller implements Listener {
                 double z = tLoc.getZ() + Math.sin(angle) * r;
                 Location pl = new Location(wLoc.getWorld(), x, tLoc.getY() + 5 + Math.sin(angle * 2) * 1, z);
                 wLoc.getWorld().spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                    new Particle.DustOptions(Color.fromRGB(0x666688), 2.5f));
+                        new Particle.DustOptions(Color.fromRGB(0x666688), 2.5f));
                 wLoc.getWorld().spawnParticle(Particle.CLOUD, pl, 2, 0.5, 0.2, 0.5, 0.02);
             }
             for (int i = 0; i < 4; i++) {
@@ -145,6 +147,9 @@ public class StormCaller implements Listener {
         final Witch witch;
         int lightningCooldown = 0;
         int cloudCooldown = 0;
-        StormCallerInstance(Witch w) { this.witch = w; }
+
+        StormCallerInstance(Witch w) {
+            this.witch = w;
+        }
     }
 }

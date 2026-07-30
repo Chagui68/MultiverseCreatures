@@ -35,7 +35,10 @@ public class ChainLightningAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid() || t > 100) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid() || t > 100) {
+                    cancel();
+                    return;
+                }
                 if (t < 25) {
                     double phase = (double) t / 25;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-180 * phase), Math.toRadians(60), 0));

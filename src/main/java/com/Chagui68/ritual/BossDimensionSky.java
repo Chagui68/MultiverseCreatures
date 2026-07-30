@@ -2,6 +2,7 @@ package com.Chagui68.ritual;
 
 import com.Chagui68.MultiverseCreatures;
 import org.bukkit.Bukkit;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -26,7 +27,7 @@ public class BossDimensionSky {
 
             Class<?> resourceKeyClass = Class.forName("net.minecraft.resources.ResourceKey");
             Method lookupOrThrowMethod = registryAccess.getClass()
-                .getMethod("lookupOrThrow", resourceKeyClass);
+                    .getMethod("lookupOrThrow", resourceKeyClass);
             Object biomeRegistry = lookupOrThrowMethod.invoke(registryAccess, biomeResourceKey);
 
             Class<?> biomesClass = Class.forName("net.minecraft.world.level.biome.Biomes");

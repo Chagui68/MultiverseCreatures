@@ -118,7 +118,7 @@ public class DioStandHandler implements Listener {
 
     private boolean isHoldingStand(Player player) {
         return DioStandHead.isDioStandHead(player.getInventory().getItemInMainHand()) ||
-               DioStandHead.isDioStandHead(player.getInventory().getItemInOffHand());
+                DioStandHead.isDioStandHead(player.getInventory().getItemInOffHand());
     }
 
     @EventHandler
@@ -325,8 +325,8 @@ public class DioStandHandler implements Listener {
     public void onStandInteract(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof ArmorStand stand)) return;
         if (stand.getScoreboardTags().contains("MSC_PlayerDioStand") ||
-            stand.getScoreboardTags().contains("MSC_DioStand") ||
-            stand.getScoreboardTags().contains("MSC_DioSword")) {
+                stand.getScoreboardTags().contains("MSC_DioStand") ||
+                stand.getScoreboardTags().contains("MSC_DioSword")) {
             event.setCancelled(true);
         }
     }
@@ -335,8 +335,8 @@ public class DioStandHandler implements Listener {
     public void onStandManipulate(PlayerArmorStandManipulateEvent event) {
         ArmorStand stand = event.getRightClicked();
         if (stand.getScoreboardTags().contains("MSC_PlayerDioStand") ||
-            stand.getScoreboardTags().contains("MSC_DioStand") ||
-            stand.getScoreboardTags().contains("MSC_DioSword")) {
+                stand.getScoreboardTags().contains("MSC_DioStand") ||
+                stand.getScoreboardTags().contains("MSC_DioSword")) {
             event.setCancelled(true);
         }
     }
@@ -345,8 +345,8 @@ public class DioStandHandler implements Listener {
     public void onStandDamage(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof ArmorStand stand)) return;
         if (stand.getScoreboardTags().contains("MSC_PlayerDioStand") ||
-            stand.getScoreboardTags().contains("MSC_DioStand") ||
-            stand.getScoreboardTags().contains("MSC_DioSword")) {
+                stand.getScoreboardTags().contains("MSC_DioStand") ||
+                stand.getScoreboardTags().contains("MSC_DioSword")) {
             event.setCancelled(true);
         }
     }

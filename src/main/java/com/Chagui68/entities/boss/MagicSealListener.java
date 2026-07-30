@@ -41,12 +41,13 @@ public class MagicSealListener {
     public void spawnLargePentagramSeal(Location center, int durationTicks, double radius, Plane plane) {
         final Color red = Color.fromRGB(0xFF1A1A);
         final Color redBright = Color.fromRGB(0xFF3333);
-        final int perLine = Math.max(60, (int)(60 * (radius / 6.0)));
-        final int ringSamples = Math.max(220, (int)(220 * (radius / 6.0)));
+        final int perLine = Math.max(60, (int) (60 * (radius / 6.0)));
+        final int ringSamples = Math.max(220, (int) (220 * (radius / 6.0)));
         final double pentagramR = radius;
         final double circleR = radius * 1.24;
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
                 if (t >= durationTicks) {
@@ -56,7 +57,7 @@ public class MagicSealListener {
                 drawClassicPentagram(center, pentagramR, red, perLine, plane);
                 drawFullCircle(center, circleR, redBright, ringSamples, plane);
                 drawFullCircle(center, circleR, red, ringSamples / 2, plane);
-                spawnRedFlameAura(center, radius * 0.42, (int)(28 * radius / 6.0), plane);
+                spawnRedFlameAura(center, radius * 0.42, (int) (28 * radius / 6.0), plane);
                 t += 5;
             }
         }.runTaskTimer(plugin, 0L, 5L);
@@ -76,6 +77,7 @@ public class MagicSealListener {
         final double cylinderHeight = Math.max(0.5, cy - groundY);
         BukkitRunnable task = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
                 if (t >= durationTicks) {
@@ -92,7 +94,7 @@ public class MagicSealListener {
                     double z = cz + Math.sin(theta) * radius;
                     Location loc = new Location(world, x, groundY, z);
                     world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
-                        new Particle.DustOptions(gold, 1.5f));
+                            new Particle.DustOptions(gold, 1.5f));
                     world.spawnParticle(Particle.END_ROD, loc, 1, 0, 0, 0, 0);
                 }
 
@@ -104,7 +106,7 @@ public class MagicSealListener {
                     double yOff = ((i * 0.3 + phase) % cylinderHeight);
                     Location loc = new Location(world, x, groundY + yOff, z);
                     world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
-                        new Particle.DustOptions(cyan, 1.0f));
+                            new Particle.DustOptions(cyan, 1.0f));
                 }
 
                 // Inner ascending particles from ground to shield
@@ -138,6 +140,7 @@ public class MagicSealListener {
         final double circleR = 7.4;
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
                 if (t >= durationTicks || (stand != null && !stand.isValid())) {
@@ -161,6 +164,7 @@ public class MagicSealListener {
         Location center = stand.getLocation();
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
                 if (t >= durationTicks || !stand.isValid()) {
@@ -192,16 +196,17 @@ public class MagicSealListener {
         final boolean vertical = (plane == Plane.XY || plane == Plane.YZ);
         final double mul = vertical ? 1.6 : 1.0;
         final double rOuter = 7.5 * mul;
-        final double rMid   = 5.0 * mul;
+        final double rMid = 5.0 * mul;
         final double rInner = 2.5 * mul;
-        final double rTri   = 6.0 * mul;
-        final double rStar  = 6.8 * mul;
+        final double rTri = 6.0 * mul;
+        final double rStar = 6.8 * mul;
         final int ringSamples = 200;
-        final int midSamples  = 140;
-        final int triSamples  = 90;
+        final int midSamples = 140;
+        final int triSamples = 90;
         new BukkitRunnable() {
             int t = 0;
             int frame = 0;
+
             @Override
             public void run() {
                 if (t >= durationTicks) {
@@ -210,7 +215,7 @@ public class MagicSealListener {
                 }
                 double rot = frame * 0.04;
                 drawCircle(center, rOuter, Color.AQUA, ringSamples, rot, plane);
-                drawCircle(center, rMid,   Color.WHITE, midSamples, -rot * 1.5, plane);
+                drawCircle(center, rMid, Color.WHITE, midSamples, -rot * 1.5, plane);
                 drawRotatedTriangle(center, rTri, cyanColor, triSamples, rot, plane);
                 drawOuterStarRing(center, rStar, Color.WHITE, 80, rot * 0.7, plane);
                 spawnEndRodSparkles(center, rOuter * 0.4, 18, plane);
@@ -311,14 +316,14 @@ public class MagicSealListener {
             double[] p1 = pts[order[i]];
             double[] p2 = pts[order[i + 1]];
             sampleLine(world, center, plane,
-                       mapTriplePair(p1, center, plane),
-                       mapTriplePair(p2, center, plane),
-                       color, samplesPerEdge);
+                    mapTriplePair(p1, center, plane),
+                    mapTriplePair(p2, center, plane),
+                    color, samplesPerEdge);
         }
         sampleLine(world, center, plane,
-                   mapTriplePair(pts[0], center, plane),
-                   mapTriplePair(pts[2], center, plane),
-                   color, samplesPerEdge);
+                mapTriplePair(pts[0], center, plane),
+                mapTriplePair(pts[2], center, plane),
+                color, samplesPerEdge);
     }
 
     private double[] mapTriplePair(double[] p, Location center, Plane plane) {
@@ -366,7 +371,7 @@ public class MagicSealListener {
             double[] p1 = pts[i];
             double[] p2 = pts[next];
             sampleLine(world, center, plane, mapTriple(p1, center, plane), mapTriple(p2, center, plane),
-                       color, samples / 3);
+                    color, samples / 3);
         }
     }
 
@@ -390,7 +395,7 @@ public class MagicSealListener {
             double[] p1 = pts[i];
             double[] p2 = pts[next];
             sampleLine(world, center, plane, mapTriple(p1, center, plane), mapTriple(p2, center, plane),
-                       color, samples / 3);
+                    color, samples / 3);
         }
     }
 
@@ -402,14 +407,14 @@ public class MagicSealListener {
             double[] outer = angToXZ(a1, radius);
             double[] inner = angToXZ(a2, radius * 0.55);
             sampleLine(world, center, plane,
-                       mapTriple(outer, center, plane),
-                       mapTriple(inner, center, plane),
-                       color, samples / 12);
+                    mapTriple(outer, center, plane),
+                    mapTriple(inner, center, plane),
+                    color, samples / 12);
             double[] outer2 = angToXZ(a2, radius);
             sampleLine(world, center, plane,
-                       mapTriple(inner, center, plane),
-                       mapTriple(outer2, center, plane),
-                       color, samples / 12);
+                    mapTriple(inner, center, plane),
+                    mapTriple(outer2, center, plane),
+                    color, samples / 12);
         }
     }
 
@@ -468,9 +473,13 @@ public class MagicSealListener {
         final double wingReach = 7.0;
         BukkitRunnable task = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (t >= durationTicks) { cancel(); return; }
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
                 double flap = Math.sin(t * 0.08) * 0.5;
                 for (int side = -1; side <= 1; side += 2) {
                     double shoulderX = cx + side * shoulderW * rx;
@@ -496,7 +505,7 @@ public class MagicSealListener {
                             double lz = shoulderZ + (tipWz - shoulderZ) * frac;
                             Location loc = new Location(world, lx, ly, lz);
                             world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(s % 2 == 0 ? gold : white, 1.5f));
+                                    new Particle.DustOptions(s % 2 == 0 ? gold : white, 1.5f));
                             world.spawnParticle(Particle.END_ROD, loc, 1, 0, 0, 0, 0);
                         }
                     }
@@ -519,9 +528,13 @@ public class MagicSealListener {
         final double wingReach = 7.0;
         BukkitRunnable task = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (!stand.isValid() || stand.isDead()) { cancel(); return; }
+                if (!stand.isValid() || stand.isDead()) {
+                    cancel();
+                    return;
+                }
                 Location loc = stand.getLocation();
                 double cx = loc.getX();
                 double cy = loc.getY();
@@ -558,7 +571,7 @@ public class MagicSealListener {
                             double lz = shoulderZ + (tipWz - shoulderZ) * frac;
                             Location pl = new Location(world, lx, ly, lz);
                             world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(s % 2 == 0 ? gold : white, 1.5f));
+                                    new Particle.DustOptions(s % 2 == 0 ? gold : white, 1.5f));
                             world.spawnParticle(Particle.END_ROD, pl, 1, 0, 0, 0, 0);
                         }
                     }
@@ -591,9 +604,13 @@ public class MagicSealListener {
         final double wingReach = 8.0;
         BukkitRunnable task = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (t >= durationTicks) { cancel(); return; }
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
                 double flap = Math.sin(t * 0.06) * 0.6;
                 for (int side = -1; side <= 1; side += 2) {
                     double shoulderX = cx + side * shoulderW * rx;
@@ -619,7 +636,7 @@ public class MagicSealListener {
                             double lz = shoulderZ + (tipWz - shoulderZ) * frac;
                             Location loc = new Location(world, lx, ly, lz);
                             world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(s % 2 == 0 ? red : orange, 1.8f));
+                                    new Particle.DustOptions(s % 2 == 0 ? red : orange, 1.8f));
                             world.spawnParticle(Particle.FLAME, loc, 1, 0, 0, 0, 0);
                         }
                     }
@@ -642,9 +659,13 @@ public class MagicSealListener {
         final double wingReach = 8.0;
         BukkitRunnable task = new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (!stand.isValid() || stand.isDead()) { cancel(); return; }
+                if (!stand.isValid() || stand.isDead()) {
+                    cancel();
+                    return;
+                }
                 Location loc = stand.getLocation();
                 double cx = loc.getX();
                 double cy = loc.getY();
@@ -681,7 +702,7 @@ public class MagicSealListener {
                             double lz = shoulderZ + (tipWz - shoulderZ) * frac;
                             Location pl = new Location(world, lx, ly, lz);
                             world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(s % 2 == 0 ? red : orange, 1.8f));
+                                    new Particle.DustOptions(s % 2 == 0 ? red : orange, 1.8f));
                             world.spawnParticle(Particle.FLAME, pl, 1, 0, 0, 0, 0);
                         }
                     }
@@ -701,9 +722,13 @@ public class MagicSealListener {
         final double radius = 4.0;
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (t >= durationTicks) { cancel(); return; }
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
                 double rot = t * 0.06;
                 drawFullCircle(center, radius, purple, 40, Plane.XZ);
                 drawFullCircle(center, radius * 0.6, darkPurple, 30, Plane.XZ);
@@ -714,7 +739,7 @@ public class MagicSealListener {
                     double[] tp = mapTriplePair(p, center, Plane.XZ);
                     Location loc = new Location(world, tp[0], tp[1], tp[2]);
                     world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
-                        new Particle.DustOptions(i % 2 == 0 ? purple : darkPurple, 1.8f));
+                            new Particle.DustOptions(i % 2 == 0 ? purple : darkPurple, 1.8f));
                     world.spawnParticle(Particle.PORTAL, loc, 1, 0, 0, 0, 0);
                 }
                 world.spawnParticle(Particle.WITCH, center.clone().add(0, 0.5, 0), 2, 0.5, 0.2, 0.5, 0);
@@ -731,9 +756,13 @@ public class MagicSealListener {
         final double radius = 5.0;
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (t >= durationTicks) { cancel(); return; }
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
                 double rot = t * 0.04;
                 drawFullCircle(center, radius, brown, 50, Plane.XZ);
                 drawFullCircle(center, radius * 0.7, orange, 40, Plane.XZ);
@@ -760,9 +789,13 @@ public class MagicSealListener {
         final double radius = 5.0;
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (t >= durationTicks) { cancel(); return; }
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
                 double rot = t * 0.03;
                 drawFullCircle(center, radius, gold, 60, Plane.XZ);
                 drawFullCircle(center, radius * 0.5, white, 40, Plane.XZ);
@@ -795,9 +828,13 @@ public class MagicSealListener {
         final double radius = 4.5;
         new BukkitRunnable() {
             int t = 0;
+
             @Override
             public void run() {
-                if (t >= durationTicks) { cancel(); return; }
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
                 double rot = t * 0.07;
                 drawFullCircle(center, radius, cyan, 45, Plane.XZ);
                 drawFullCircle(center, radius * 0.65, yellow, 35, Plane.XZ);

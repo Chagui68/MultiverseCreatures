@@ -17,7 +17,7 @@ public class MarrowAegis {
 
     public static final double REFLECT_FRACTION = 0.5;
     public static final long RECHARGE_COOLDOWN_MS = 15000L;
-    public static final int EFFECT_DURATION_TICKS = 100;
+    public static final int EFFECT_DURATION_TICKS = 140;
 
     public static final String RECHARGE_KEY = "msc_marrow_aegis_until";
 
@@ -34,7 +34,7 @@ public class MarrowAegis {
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Blocking reflects " + ChatColor.RED + "50% " + ChatColor.GRAY + "of incoming");
             lore.add(ChatColor.GRAY + "    damage as " + ChatColor.DARK_RED + "true damage " + ChatColor.GRAY + "to the attacker");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "On a successful block, grants " + ChatColor.GOLD + "Resistance II");
-            lore.add(ChatColor.GRAY + "    and " + ChatColor.GOLD + "Strength I " + ChatColor.GRAY + "for " + ChatColor.GOLD + "5 seconds");
+            lore.add(ChatColor.GRAY + "    and " + ChatColor.GOLD + "Strength I " + ChatColor.GRAY + "for " + ChatColor.GOLD + "7 seconds");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Effect cooldown: " + ChatColor.GOLD + "15 seconds");
             lore.add("");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"Death's architecture,");

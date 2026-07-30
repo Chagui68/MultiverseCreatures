@@ -53,7 +53,8 @@ public class EnderKnight implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     EnderKnightInstance inst = entry.getValue();
                     if (inst.enderman.isDead() || !inst.enderman.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickEnder(inst);
                 }
@@ -84,7 +85,8 @@ public class EnderKnight implements Listener {
                 meta.setItemName("Ender Blade");
                 sword.setItemMeta(meta);
             }
-            eq.setItemInMainHand(sword); eq.setItemInMainHandDropChance(0);
+            eq.setItemInMainHand(sword);
+            eq.setItemInMainHandDropChance(0);
         }
         em.setAI(true);
         active.put(em.getUniqueId(), new EnderKnightInstance(em));
@@ -96,7 +98,8 @@ public class EnderKnight implements Listener {
         if (!(em.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            em.setTarget(null); return;
+            em.setTarget(null);
+            return;
         }
 
         Location eLoc = em.getLocation();
@@ -159,6 +162,9 @@ public class EnderKnight implements Listener {
         final Enderman enderman;
         int enderPullCooldown = 0;
         int enderRushCooldown = 0;
-        EnderKnightInstance(Enderman em) { this.enderman = em; }
+
+        EnderKnightInstance(Enderman em) {
+            this.enderman = em;
+        }
     }
 }

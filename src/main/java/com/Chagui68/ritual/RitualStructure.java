@@ -3,14 +3,15 @@ package com.Chagui68.ritual;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class RitualStructure {
-    
+
     private static final Map<Location, Material> STRUCTURE_BLOCKS = new HashMap<>();
     private static final Map<Location, Material> CANDLE_LOCATIONS = new HashMap<>();
-    
+
     static {
         Map<String, Material> blockMap = new HashMap<>();
         blockMap.put("0_0_1", Material.POLISHED_BLACKSTONE_STAIRS);
@@ -79,29 +80,29 @@ public class RitualStructure {
         blockMap.put("5_1_2", Material.CANDLE);
         blockMap.put("5_1_3", Material.CANDLE);
         blockMap.put("5_1_4", Material.CANDLE);
-        
+
         for (var entry : blockMap.entrySet()) {
             String[] parts = entry.getKey().split("_");
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
             int z = Integer.parseInt(parts[2]);
             STRUCTURE_BLOCKS.put(new Location(null, x, y, z), entry.getValue());
-            
+
             if (entry.getValue() == Material.CANDLE) {
                 CANDLE_LOCATIONS.put(new Location(null, x, y, z), Material.CANDLE);
             }
         }
     }
-    
+
     public static boolean isStructureComplete(Location origin) {
         for (var entry : STRUCTURE_BLOCKS.entrySet()) {
             Material expected = entry.getValue();
             Location relative = entry.getKey();
             Location blockLoc = new Location(
-                origin.getWorld(),
-                origin.getBlockX() + relative.getBlockX(),
-                origin.getBlockY() + relative.getBlockY(),
-                origin.getBlockZ() + relative.getBlockZ()
+                    origin.getWorld(),
+                    origin.getBlockX() + relative.getBlockX(),
+                    origin.getBlockY() + relative.getBlockY(),
+                    origin.getBlockZ() + relative.getBlockZ()
             );
             Block block = blockLoc.getBlock();
 
@@ -117,22 +118,22 @@ public class RitualStructure {
         }
         return true;
     }
-    
+
     public static boolean areAllCandlesLit(Location origin) {
         for (var entry : CANDLE_LOCATIONS.entrySet()) {
             Location relative = entry.getKey();
             Location blockLoc = new Location(
-                origin.getWorld(),
-                origin.getBlockX() + relative.getBlockX(),
-                origin.getBlockY() + relative.getBlockY(),
-                origin.getBlockZ() + relative.getBlockZ()
+                    origin.getWorld(),
+                    origin.getBlockX() + relative.getBlockX(),
+                    origin.getBlockY() + relative.getBlockY(),
+                    origin.getBlockZ() + relative.getBlockZ()
             );
             Block block = blockLoc.getBlock();
-            
+
             if (block.getType() != Material.CANDLE) {
                 return false;
             }
-            
+
             org.bukkit.block.data.type.Candle candleData = (org.bukkit.block.data.type.Candle) block.getBlockData();
             if (!candleData.isLit()) {
                 return false;
@@ -140,18 +141,18 @@ public class RitualStructure {
         }
         return true;
     }
-    
+
     public static void extinguishAllCandles(Location origin) {
         for (var entry : CANDLE_LOCATIONS.entrySet()) {
             Location relative = entry.getKey();
             Location blockLoc = new Location(
-                origin.getWorld(),
-                origin.getBlockX() + relative.getBlockX(),
-                origin.getBlockY() + relative.getBlockY(),
-                origin.getBlockZ() + relative.getBlockZ()
+                    origin.getWorld(),
+                    origin.getBlockX() + relative.getBlockX(),
+                    origin.getBlockY() + relative.getBlockY(),
+                    origin.getBlockZ() + relative.getBlockZ()
             );
             Block block = blockLoc.getBlock();
-            
+
             if (block.getType() == Material.CANDLE) {
                 org.bukkit.block.data.type.Candle candleData = (org.bukkit.block.data.type.Candle) block.getBlockData();
                 if (candleData.isLit()) {
@@ -161,11 +162,11 @@ public class RitualStructure {
             }
         }
     }
-    
+
     public static Location getCenterLocation(Location origin) {
         return origin.clone().add(3, 0, 3);
     }
-    
+
     public static double getRadius() {
         return 5.0;
     }

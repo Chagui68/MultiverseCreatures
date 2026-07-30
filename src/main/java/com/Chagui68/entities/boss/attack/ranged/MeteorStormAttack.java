@@ -30,7 +30,10 @@ public class MeteorStormAttack extends BossAttackBase {
 
             @Override
             public void run() {
-                if (stand.isDead() || !stand.isValid()) { cancel(); return; }
+                if (stand.isDead() || !stand.isValid()) {
+                    cancel();
+                    return;
+                }
                 if (t < 25) {
                     double phase = (double) t / 25;
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-160 * phase), Math.toRadians(40), Math.toRadians(20 * phase)));
@@ -45,9 +48,13 @@ public class MeteorStormAttack extends BossAttackBase {
                             final Location start = dest.clone().add(0, 18, 0);
                             new BukkitRunnable() {
                                 int ft = 0;
+
                                 @Override
                                 public void run() {
-                                    if (ft > 30) { cancel(); return; }
+                                    if (ft > 30) {
+                                        cancel();
+                                        return;
+                                    }
                                     Location fall = start.clone().subtract(0, ft * 0.6, 0);
                                     world.spawnParticle(Particle.FLAME, fall, 4, 0.4, 0.2, 0.4, 0.02);
                                     world.spawnParticle(Particle.LAVA, fall, 2, 0.3, 0.1, 0.3, 0);

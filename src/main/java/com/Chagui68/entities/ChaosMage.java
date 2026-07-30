@@ -24,9 +24,9 @@ public class ChaosMage implements Listener {
     private static final String TAG = "MSC_ChaosMage";
 
     private static final List<PotionEffectType> DEBUFFS = List.of(
-        PotionEffectType.POISON, PotionEffectType.WITHER, PotionEffectType.SLOWNESS,
-        PotionEffectType.WEAKNESS, PotionEffectType.BLINDNESS, PotionEffectType.HUNGER,
-        PotionEffectType.LEVITATION, PotionEffectType.DARKNESS
+            PotionEffectType.POISON, PotionEffectType.WITHER, PotionEffectType.SLOWNESS,
+            PotionEffectType.WEAKNESS, PotionEffectType.BLINDNESS, PotionEffectType.HUNGER,
+            PotionEffectType.LEVITATION, PotionEffectType.DARKNESS
     );
 
     public ChaosMage(MultiverseCreatures plugin) {
@@ -53,7 +53,8 @@ public class ChaosMage implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     ChaosMageInstance inst = entry.getValue();
                     if (inst.evoker.isDead() || !inst.evoker.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickChaos(inst);
                 }
@@ -83,7 +84,8 @@ public class ChaosMage implements Listener {
         if (!(evoker.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            evoker.setTarget(null); return;
+            evoker.setTarget(null);
+            return;
         }
 
         Location eLoc = evoker.getLocation();
@@ -112,7 +114,7 @@ public class ChaosMage implements Listener {
                         Location pl = eLoc.clone().add(Math.cos(angle) * r, 0.5, Math.sin(angle) * r);
                         eLoc.getWorld().spawnParticle(Particle.FLAME, pl, 5, 0.5, 0.3, 0.5, 0.02);
                         eLoc.getWorld().spawnParticle(Particle.DUST, pl, 2, 0, 0, 0, 0,
-                            new Particle.DustOptions(Color.fromRGB(0xFF4400), 2.0f));
+                                new Particle.DustOptions(Color.fromRGB(0xFF4400), 2.0f));
                     }
                     target.setFireTicks(80);
                     target.damage(8.0);
@@ -176,6 +178,9 @@ public class ChaosMage implements Listener {
         final Evoker evoker;
         int chaosCastCooldown = 0;
         int lastEffect = -1;
-        ChaosMageInstance(Evoker e) { this.evoker = e; }
+
+        ChaosMageInstance(Evoker e) {
+            this.evoker = e;
+        }
     }
 }

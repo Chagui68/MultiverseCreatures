@@ -58,6 +58,15 @@ public class CinderGreatswordHandler implements Listener {
         ItemStack main = p.getInventory().getItemInMainHand();
         if (!isCinder(main)) return;
 
+        // Two-handed: the ability can only be used if the off-hand is empty.
+        ItemStack off = p.getInventory().getItemInOffHand();
+        if (off != null && off.getType() != Material.AIR) {
+            if (event.getAction().isRightClick()) {
+                p.sendMessage(ChatColor.RED + "The Cinder Greatsword requires both hands. Free your off-hand to use Cinder Slam.");
+            }
+            return;
+        }
+
         if (event.getAction().isRightClick()) {
             long now = System.currentTimeMillis();
             if (slamCooldowns.getOrDefault(p.getUniqueId(), 0L) > now) {

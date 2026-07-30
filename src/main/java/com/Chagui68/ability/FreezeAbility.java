@@ -32,6 +32,7 @@ public class FreezeAbility implements Listener {
     public void freezeInArea(Location center, double radius, int durationTicks, String source) {
         new BukkitRunnable() {
             int elapsed = 0;
+
             @Override
             public void run() {
                 if (elapsed >= durationTicks) {
@@ -65,7 +66,7 @@ public class FreezeAbility implements Listener {
         if (frozenPlayers.containsKey(id)) return;
 
         if (DioStandHead.isDioStandHead(player.getInventory().getItemInMainHand()) ||
-            DioStandHead.isDioStandHead(player.getInventory().getItemInOffHand())) {
+                DioStandHead.isDioStandHead(player.getInventory().getItemInOffHand())) {
             return;
         }
 
@@ -102,9 +103,9 @@ public class FreezeAbility implements Listener {
 
         // Allow head rotation, block position change
         if (event.getFrom().getBlockX() != event.getTo().getBlockX() ||
-            event.getFrom().getBlockY() != event.getTo().getBlockY() ||
-            event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
-            
+                event.getFrom().getBlockY() != event.getTo().getBlockY() ||
+                event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
+
             event.setTo(data.originalLocation());
             event.getPlayer().setVelocity(new Vector(0, 0, 0));
         }
@@ -125,5 +126,6 @@ public class FreezeAbility implements Listener {
         removeFreeze(player);
     }
 
-    private record FreezeData(Location originalLocation, String source) {}
+    private record FreezeData(Location originalLocation, String source) {
+    }
 }

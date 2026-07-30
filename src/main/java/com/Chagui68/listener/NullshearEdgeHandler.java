@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +28,7 @@ public class NullshearEdgeHandler implements Listener {
 
     private final Plugin plugin;
     private final Map<UUID, Long> blinkCooldowns = new ConcurrentHashMap<>();
+    private final Set<UUID> inVoidDamage = ConcurrentHashMap.newKeySet();
 
     public NullshearEdgeHandler(Plugin plugin) {
         this.plugin = plugin;
@@ -82,9 +84,13 @@ public class NullshearEdgeHandler implements Listener {
         if (!isNullshear(p.getInventory().getItemInMainHand())) return;
         if (!(event.getEntity() instanceof LivingEntity target)) return;
 
-        // Void damage (ignores armor)
-        double voidDmg = event.getDamage() * NullshearEdge.VOID_FRACTION;
-        target.damage(voidDmg, p);
+        if (!inVoidDamage.add(p.getUniqueId())) return;
+        try {
+            double voidDmg = event.getDamage() * NullshearEdge.VOID_FRACTION;
+            target.setHealth(Math.max(0, target.getHealth() - voidDmg));
+        } finally {
+            inVoidDamage.remove(p.getUniqueId());
+        }
 
         // Darkness chance
         if (p.getWorld().hasStorm() || Math.random() < NullshearEdge.DARKNESS_CHANCE) {

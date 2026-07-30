@@ -36,23 +36,32 @@ public class ChaosForgeHandler implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getHand() != EquipmentSlot.OFF_HAND) return;
         if (!event.getAction().isRightClick()) return;
+        if (event.getHand() == null) return;
 
         Player p = event.getPlayer();
-        ItemStack off = p.getInventory().getItemInOffHand();
-        if (!isForge(off)) return;
 
-        ItemStack main = p.getInventory().getItemInMainHand();
-        if (main == null || main.getType() == Material.AIR) {
-            p.sendMessage(ChatColor.RED + "Hold the item to reforge in your main hand.");
+        ItemStack forgeItem;
+        ItemStack targetItem;
+        if (event.getHand() == EquipmentSlot.OFF_HAND) {
+            forgeItem = p.getInventory().getItemInOffHand();
+            targetItem = p.getInventory().getItemInMainHand();
+        } else {
+            forgeItem = p.getInventory().getItemInMainHand();
+            targetItem = p.getInventory().getItemInOffHand();
+        }
+
+        if (!isForge(forgeItem)) return;
+
+        if (targetItem == null || targetItem.getType() == Material.AIR) {
+            p.sendMessage(ChatColor.RED + "Hold the item to reforge in your other hand.");
             return;
         }
-        if (!main.hasItemMeta()) {
+        if (!targetItem.hasItemMeta()) {
             p.sendMessage(ChatColor.RED + "This item cannot be reforged.");
             return;
         }
-        ItemMeta meta = main.getItemMeta();
+        ItemMeta meta = targetItem.getItemMeta();
         if (meta.getEnchants().isEmpty()) {
             p.sendMessage(ChatColor.RED + "This item has no enchantments to reforge.");
             return;
@@ -62,19 +71,21 @@ public class ChaosForgeHandler implements Listener {
             return;
         }
 
+        event.setCancelled(true);
+
         boolean anyChanged = false;
         for (Map.Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
             Enchantment enc = entry.getKey();
             int lvl = entry.getValue();
-            int newLvl = Math.min(lvl + 1, ChaosForge.MAX_ENCHANT_LEVEL);
-            if (newLvl > lvl) {
+            int newLvl = lvl + 1;
+            if (lvl < 255) {
                 meta.addEnchant(enc, newLvl, true);
                 anyChanged = true;
             }
         }
 
         if (!anyChanged) {
-            p.sendMessage(ChatColor.YELLOW + "All enchantments are already at maximum level (30).");
+            p.sendMessage(ChatColor.YELLOW + "All enchantments are already at maximum level.");
             return;
         }
 
@@ -84,7 +95,7 @@ public class ChaosForgeHandler implements Listener {
         }
 
         meta.getPersistentDataContainer().set(REFORGED_KEY, PersistentDataType.INTEGER, 1);
-        main.setItemMeta(meta);
+        targetItem.setItemMeta(meta);
 
         p.getWorld().playSound(p.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.2f, 0.8f);
         p.getWorld().spawnParticle(Particle.ENCHANT, p.getLocation().add(0, 1, 0), 30, 0.5, 0.5, 0.5, 0.1);

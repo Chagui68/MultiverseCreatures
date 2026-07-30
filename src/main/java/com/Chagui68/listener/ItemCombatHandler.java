@@ -75,7 +75,8 @@ public class ItemCombatHandler implements Listener {
         if (item == null || !item.hasItemMeta()) return;
 
         ItemMeta meta = item.getItemMeta();
-        if (meta == null || !meta.getPersistentDataContainer().has(Excalibur.EXCALIBUR_KEY, PersistentDataType.INTEGER)) return;
+        if (meta == null || !meta.getPersistentDataContainer().has(Excalibur.EXCALIBUR_KEY, PersistentDataType.INTEGER))
+            return;
 
         if (!config.getBoolean("excalibur.solar-flare.enabled", true)) {
             p.sendMessage(ChatColor.RED + "Solar Flare is disabled in config.");
@@ -157,6 +158,7 @@ public class ItemCombatHandler implements Listener {
 
         new BukkitRunnable() {
             int ticks = 0;
+
             @Override
             public void run() {
                 ticks++;

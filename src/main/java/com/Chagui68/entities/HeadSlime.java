@@ -63,13 +63,13 @@ public class HeadSlime implements Listener {
     public static final Set<UUID> immunePlayers = ConcurrentHashMap.newKeySet();
     private static final String TAG = "MSC_HeadSlime";
     private static final Set<String> MSC_ENTITY_TAGS = Set.of(
-        "MSC_SoulReaper", "MSC_BoneShield", "MSC_ObsidianGuard",
-        "MSC_ShadowRogue", "MSC_FlameElemental", "MSC_FrostGolem",
-        "MSC_VoidCrawler", "MSC_StormCaller", "MSC_ChaosMage",
-        "MSC_EnderKnight", "MSC_VenomWitch"
+            "MSC_SoulReaper", "MSC_BoneShield", "MSC_ObsidianGuard",
+            "MSC_ShadowRogue", "MSC_FlameElemental", "MSC_FrostGolem",
+            "MSC_VoidCrawler", "MSC_StormCaller", "MSC_ChaosMage",
+            "MSC_EnderKnight", "MSC_VenomWitch"
     );
     private static final Set<String> MSC_BLACKLIST = Set.of(
-        TAG, "MSC_DioBoss", "MSC_Mahoraga", "MSC_ArmorBossSummoned"
+            TAG, "MSC_DioBoss", "MSC_Mahoraga", "MSC_ArmorBossSummoned"
     );
 
     private String getMscEntityTag(Set<String> tags) {
@@ -267,7 +267,8 @@ public class HeadSlime implements Listener {
         switch (vehicle) {
             case Player player -> tickAttachedPlayer(inst, player);
             case Mob mob -> tickAttachedMob(inst, mob);
-            case null -> {}
+            case null -> {
+            }
             default -> detach(inst, vehicle);
         }
     }
@@ -355,7 +356,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.SOUL, loc, 8, 0.5, 0.5, 0.5, 0.02);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0xAA00AA), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0xAA00AA), 1.5f));
                 }
             }
             case "MSC_BoneShield" -> {
@@ -363,7 +364,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.END_ROD, loc, 6, 0.5, 0.5, 0.5, 0.02);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.WHITE, 1.5f));
+                            new Particle.DustOptions(Color.WHITE, 1.5f));
                 }
             }
             case "MSC_ObsidianGuard" -> {
@@ -371,7 +372,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.CRIT, loc, 8, 0.5, 0.5, 0.5, 0.05);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x444444), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x444444), 1.5f));
                 }
             }
             case "MSC_ShadowRogue" -> {
@@ -380,7 +381,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.WITCH, loc, 4, 0.3, 0.3, 0.3, 0);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x222222), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x222222), 1.5f));
                 }
             }
             case "MSC_FlameElemental" -> {
@@ -388,7 +389,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 20 == 0) {
                     world.spawnParticle(Particle.FLAME, loc, 10, 0.8, 0.8, 0.8, 0.03);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0xFF6600), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0xFF6600), 1.5f));
                 }
             }
             case "MSC_FrostGolem" -> {
@@ -396,7 +397,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.SNOWFLAKE, loc, 6, 0.5, 0.5, 0.5, 0.01);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x88CCFF), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x88CCFF), 1.5f));
                 }
             }
             case "MSC_VoidCrawler" -> {
@@ -404,14 +405,14 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.PORTAL, loc, 8, 0.5, 0.5, 0.5, 0.03);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x440066), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x440066), 1.5f));
                 }
             }
             case "MSC_StormCaller" -> {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.ELECTRIC_SPARK, loc, 10, 0.8, 0.8, 0.8, 0.05);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0xFFFF00), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0xFFFF00), 1.5f));
                 }
             }
             case "MSC_ChaosMage" -> {
@@ -419,7 +420,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.WITCH, loc, 6, 0.5, 0.5, 0.5, 0);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x00FF88), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x00FF88), 1.5f));
                 }
             }
             case "MSC_EnderKnight" -> {
@@ -427,7 +428,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.PORTAL, loc, 6, 0.5, 0.5, 0.5, 0.02);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0xAA00FF), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0xAA00FF), 1.5f));
                 }
             }
             case "MSC_VenomWitch" -> {
@@ -435,7 +436,7 @@ public class HeadSlime implements Listener {
                 if (inst.damageTicks % 30 == 0) {
                     world.spawnParticle(Particle.WITCH, loc, 6, 0.5, 0.5, 0.5, 0);
                     world.spawnParticle(Particle.DUST, loc, 4, 0, 0, 0, 0,
-                        new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.5f));
+                            new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.5f));
                 }
             }
         }

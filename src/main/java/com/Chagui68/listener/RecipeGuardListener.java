@@ -57,7 +57,7 @@ public class RecipeGuardListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         if (isCustomItem(event.getInventory().getFirstItem()) ||
-            isCustomItem(event.getInventory().getSecondItem())) {
+                isCustomItem(event.getInventory().getSecondItem())) {
             event.getInventory().setResult(null);
         }
     }

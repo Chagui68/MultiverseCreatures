@@ -99,7 +99,8 @@ public class ShadowRogue implements Listener {
         if (!(sk.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            sk.setTarget(null); return;
+            sk.setTarget(null);
+            return;
         }
 
         Location skLoc = sk.getLocation();
@@ -153,6 +154,9 @@ public class ShadowRogue implements Listener {
         final Skeleton skeleton;
         int teleportCooldown = 0;
         int backstabCooldown = 0;
-        ShadowRogueInstance(Skeleton sk) { this.skeleton = sk; }
+
+        ShadowRogueInstance(Skeleton sk) {
+            this.skeleton = sk;
+        }
     }
 }

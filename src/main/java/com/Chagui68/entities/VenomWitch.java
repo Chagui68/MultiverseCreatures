@@ -49,7 +49,8 @@ public class VenomWitch implements Listener {
                 for (var entry : new HashMap<>(active).entrySet()) {
                     VenomWitchInstance inst = entry.getValue();
                     if (inst.witch.isDead() || !inst.witch.isValid()) {
-                        active.remove(entry.getKey()); continue;
+                        active.remove(entry.getKey());
+                        continue;
                     }
                     tickVenom(inst);
                 }
@@ -79,7 +80,8 @@ public class VenomWitch implements Listener {
         if (!(witch.getTarget() instanceof Player target)) return;
         if (target.isDead() || !target.isOnline()) return;
         if (target.getGameMode() == GameMode.CREATIVE || target.getGameMode() == GameMode.SPECTATOR) {
-            witch.setTarget(null); return;
+            witch.setTarget(null);
+            return;
         }
 
         Location wLoc = witch.getLocation();
@@ -104,7 +106,7 @@ public class VenomWitch implements Listener {
                 double r = random.nextDouble() * 3;
                 Location pl = cloudLoc.clone().add(Math.cos(angle) * r, random.nextDouble() * 2, Math.sin(angle) * r);
                 wLoc.getWorld().spawnParticle(Particle.DUST, pl, 2, 0, 0, 0, 0,
-                    new Particle.DustOptions(Color.fromRGB(0x66FF00), 1.8f));
+                        new Particle.DustOptions(Color.fromRGB(0x66FF00), 1.8f));
                 wLoc.getWorld().spawnParticle(Particle.WITCH, pl, 1, 0, 0, 0, 0);
             }
             wLoc.getWorld().playSound(wLoc, Sound.ENTITY_WITCH_DRINK, 1.0f, 0.6f);
@@ -138,6 +140,9 @@ public class VenomWitch implements Listener {
         final Witch witch;
         int cloudCooldown = 0;
         int debuffCooldown = 0;
-        VenomWitchInstance(Witch w) { this.witch = w; }
+
+        VenomWitchInstance(Witch w) {
+            this.witch = w;
+        }
     }
 }

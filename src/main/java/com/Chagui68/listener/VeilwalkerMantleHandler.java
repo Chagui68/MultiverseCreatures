@@ -46,6 +46,8 @@ public class VeilwalkerMantleHandler implements Listener {
         ItemStack offhand = p.getInventory().getItemInOffHand();
         if (!isMantle(offhand)) return;
 
+        event.setCancelled(true);
+
         long now = System.currentTimeMillis();
         if (cooldowns.getOrDefault(p.getUniqueId(), 0L) > now) {
             long remaining = (cooldowns.get(p.getUniqueId()) - now) / 1000;
@@ -67,6 +69,9 @@ public class VeilwalkerMantleHandler implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!stealthEnds.containsKey(attacker.getUniqueId())) return;
 
+        ItemStack offhand = attacker.getInventory().getItemInOffHand();
+        if (!isMantle(offhand)) return;
+
         long now = System.currentTimeMillis();
         if (stealthEnds.get(attacker.getUniqueId()) < now) {
             stealthEnds.remove(attacker.getUniqueId());
@@ -75,7 +80,7 @@ public class VeilwalkerMantleHandler implements Listener {
 
         double mult = VeilwalkerMantle.BACKSTAB_DAMAGE_MULTIPLIER;
         event.setDamage(event.getDamage() * mult);
-        attacker.sendMessage(ChatColor.DARK_PURPLE + "Backstab! +" + (int)((mult - 1) * 100) + "% damage.");
+        attacker.sendMessage(ChatColor.DARK_PURPLE + "Backstab! +" + (int) ((mult - 1) * 100) + "% damage.");
 
         stealthEnds.remove(attacker.getUniqueId());
         attacker.removePotionEffect(PotionEffectType.INVISIBILITY);

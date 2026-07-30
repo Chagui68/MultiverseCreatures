@@ -189,7 +189,7 @@ public class ZombieHorseTrap implements Listener {
                 ArmyInstance army = entry.getValue();
                 UUID eid = entity.getUniqueId();
                 if ((army.camel1 != null && army.camel1.getUniqueId().equals(eid)) ||
-                    (army.camel2 != null && army.camel2.getUniqueId().equals(eid))) {
+                        (army.camel2 != null && army.camel2.getUniqueId().equals(eid))) {
                     if (army.camel1 != null && army.camel1.getUniqueId().equals(eid)) {
                         army.camel1Dead = true;
                         if (army.camelZombie1 != null) {
@@ -242,7 +242,8 @@ public class ZombieHorseTrap implements Listener {
 
                 for (Player player : world.getPlayers()) {
                     if (player.isDead()) continue;
-                    if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) continue;
+                    if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
+                        continue;
                     if (player.getLocation().distanceSquared(horse.getLocation()) <= 36) {
                         activateTrap(horse);
                         break;
@@ -672,10 +673,10 @@ public class ZombieHorseTrap implements Listener {
         army.sniperTicks++;
         if (army.sniperTicks % 30 == 0) {
             Arrow arrow = sniper.getWorld().spawnArrow(
-                sniper.getEyeLocation(),
-                direction,
-                (float) arrowSpeed,
-                0
+                    sniper.getEyeLocation(),
+                    direction,
+                    (float) arrowSpeed,
+                    0
             );
             if (arrow != null) {
                 arrow.setDamage(6.0);
@@ -693,10 +694,22 @@ public class ZombieHorseTrap implements Listener {
     private void setArmor(LivingEntity entity, Material helmet, Material chestplate, Material leggings, Material boots) {
         EntityEquipment eq = entity.getEquipment();
         if (eq == null) return;
-        if (helmet != null) { eq.setHelmet(new ItemStack(helmet)); eq.setHelmetDropChance(0); }
-        if (chestplate != null) { eq.setChestplate(new ItemStack(chestplate)); eq.setChestplateDropChance(0); }
-        if (leggings != null) { eq.setLeggings(new ItemStack(leggings)); eq.setLeggingsDropChance(0); }
-        if (boots != null) { eq.setBoots(new ItemStack(boots)); eq.setBootsDropChance(0); }
+        if (helmet != null) {
+            eq.setHelmet(new ItemStack(helmet));
+            eq.setHelmetDropChance(0);
+        }
+        if (chestplate != null) {
+            eq.setChestplate(new ItemStack(chestplate));
+            eq.setChestplateDropChance(0);
+        }
+        if (leggings != null) {
+            eq.setLeggings(new ItemStack(leggings));
+            eq.setLeggingsDropChance(0);
+        }
+        if (boots != null) {
+            eq.setBoots(new ItemStack(boots));
+            eq.setBootsDropChance(0);
+        }
     }
 
     private void setFullLeatherArmorColor(LivingEntity entity, Color color) {

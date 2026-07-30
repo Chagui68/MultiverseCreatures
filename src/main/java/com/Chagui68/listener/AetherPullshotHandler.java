@@ -61,6 +61,7 @@ public class AetherPullshotHandler implements Listener {
 
         new org.bukkit.scheduler.BukkitRunnable() {
             int ticks = 0;
+
             @Override
             public void run() {
                 if (ticks >= AetherPullshot.PULL_DURATION_TICKS) {
