@@ -39,6 +39,12 @@ import com.Chagui68.entities.boss.attack.ranged.ShadowVolleyAttack;
 import com.Chagui68.entities.boss.attack.ranged.SpiritBeamAttack;
 import com.Chagui68.entities.boss.attack.ranged.VoidBeamAttack;
 import com.Chagui68.entities.boss.attack.ranged.VoidRiftAttack;
+import com.Chagui68.entities.boss.attack.defensive.AbsorbShieldAttack;
+import com.Chagui68.entities.boss.attack.defensive.HealingCircleAttack;
+import com.Chagui68.entities.boss.attack.defensive.ReflectBarrierAttack;
+import com.Chagui68.entities.boss.attack.defensive.ShieldSealAttack;
+import com.Chagui68.entities.boss.attack.defensive.StoneSkinAttack;
+import com.Chagui68.entities.boss.attack.defensive.TriangleCallAttack;
 import com.Chagui68.MultiverseCreatures;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -147,6 +153,13 @@ public class ArmorStandBoss implements Listener {
         registerAttack(new VoidRiftAttack(this));
         registerAttack(new ArcaneMissilesAttack(this));
         registerAttack(new SpiritBeamAttack(this));
+        // Defensive
+        registerAttack(new StoneSkinAttack(this));
+        registerAttack(new ReflectBarrierAttack(this));
+        registerAttack(new AbsorbShieldAttack(this));
+        registerAttack(new ShieldSealAttack(this));
+        registerAttack(new HealingCircleAttack(this));
+        registerAttack(new TriangleCallAttack(this));
     }
 
     public void reloadConfig() {
@@ -1796,7 +1809,7 @@ public class ArmorStandBoss implements Listener {
             double z = center.getZ() + baseR * Math.sin(rotAngle);
             Location target = new Location(center.getWorld(), x, center.getY() + hOffset, z);
 
-            float displayYaw = (float) Math.toDegrees(rotAngle) + 180.0f;
+            float displayYaw = (float) Math.toDegrees(rotAngle);
             target.setYaw(displayYaw);
             target.setPitch(0);
             d.teleport(target);
@@ -2254,11 +2267,11 @@ public class ArmorStandBoss implements Listener {
         }, durationTicks + 5);
     }
 
-    private int getShieldPlantInterval() {
+    public int getShieldPlantInterval() {
         return 300 + random.nextInt(100);
     }
 
-    private int getShieldRetrieveDelay(int phase) {
+    public int getShieldRetrieveDelay(int phase) {
         return switch (phase) {
             case 0 -> 80;
             case 1 -> 90;
@@ -2325,10 +2338,11 @@ public class ArmorStandBoss implements Listener {
 
         if (plugin.getMusicManager() == null) return;
 
-        final double MUSIC_RANGE = 60.0;
+        final double MUSIC_RANGE = 100.0;
         List<UUID> currentListeners = new ArrayList<>();
 
         for (Player p : getValidPlayersNear(bossLoc, MUSIC_RANGE * MUSIC_RANGE)) {
+            if (!p.getWorld().equals(bossLoc.getWorld())) continue;
             if (plugin.getMusicManager().isPlaying(p)) continue;
 
             try {
@@ -2556,7 +2570,7 @@ public class ArmorStandBoss implements Listener {
         return closest;
     }
 
-    private int countPlayersInRange(Location center, double radius) {
+    public int countPlayersInRange(Location center, double radius) {
         double radiusSq = radius * radius;
         int count = 0;
         for (Player p : getValidPlayers(center.getWorld())) {
@@ -2578,12 +2592,11 @@ public class ArmorStandBoss implements Listener {
         return nearest;
     }
 
-    private boolean isOnGround(ArmorStand stand) {
+    public boolean isOnGround(ArmorStand stand) {
         return stand.getLocation().subtract(0, 0.1, 0).getBlock().getType().isSolid();
     }
 
-    @EventHandler
-    public void onBossInteract(PlayerInteractEntityEvent event) {
+    public Player findNearestPlayer(Location center, double range) {
         if (!(event.getRightClicked() instanceof ArmorStand stand)) return;
         if (stand.getScoreboardTags().contains(TAG)) {
             event.setCancelled(true);

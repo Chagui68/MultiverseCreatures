@@ -1,5 +1,5 @@
 name: MultiverseCreatures
-version: '6.1.DEV'
+version: '6.5.DEV'
 main: com.Chagui68.MultiverseCreatures
 api-version: '1.21'
 load: STARTUP

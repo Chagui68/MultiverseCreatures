@@ -17,7 +17,6 @@ public class EightHandledWheel {
 
     public static final int MAX_CHARGES = 8;
     public static final int CHARGE_REGEN_TICKS = 200;
-    public static final long BLOCK_COOLDOWN_MS = 15000L;
     public static final int BLOCK_DURATION_TICKS = 160;
 
     public static final String CHARGES_KEY = "msc_wheel_charges";
@@ -42,7 +41,6 @@ public class EightHandledWheel {
             lore.add(ChatColor.AQUA + "Item Ability: " + ChatColor.WHITE + "Adaptation " + ChatColor.GRAY + "(Passive)");
             lore.add(ChatColor.GRAY + "  On receiving damage, consume " + ChatColor.GOLD + "1 charge " + ChatColor.GRAY + "to become");
             lore.add(ChatColor.GRAY + "  immune to that damage type for " + ChatColor.GOLD + "8 seconds" + ChatColor.GRAY + ".");
-            lore.add(ChatColor.GRAY + "  Cannot trigger again for " + ChatColor.GOLD + "15 seconds" + ChatColor.GRAY + ".");
             lore.add(ChatColor.GRAY + "  Multiple types in the same tick each spawn");
             lore.add(ChatColor.GRAY + "  separate immunity effects.");
             lore.add("");

@@ -7,6 +7,7 @@
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/BossInstance.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/ground/ChainGrappleAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/components/EnderFragment.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/defensive/ShieldSealAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/ritual/BossDimensionManager.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/WirtsLanternHandler.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/aerial/DarkOrbAttack.java
@@ -15,6 +16,7 @@
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/aerial/CrossSlashAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/components/StarCore.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/aerial/AirSlamAttack.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/defensive/HealingCircleAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/ritual/BossDimensionSky.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/components/MagmaCore.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/components/StormCrystal.java
@@ -24,7 +26,7 @@
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/misc/WirtsLantern.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/ritual/RitualParticles.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/ability/FreezeAbility.java
-/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/VoidStatue.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/defensive/TriangleCallAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/ChaosMage.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/DioStandHandler.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/armor/ObsidianBastion.java
@@ -59,6 +61,7 @@
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/CinderGreatswordHandler.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/aerial/SonicBoomAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/FlameElemental.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/defensive/AbsorbShieldAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/EightHandledWheelHandler.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/components/HeadSlimeHeart.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/BossDimensionCommandHandler.java
@@ -73,7 +76,9 @@
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/ground/EarthPillarAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/components/VoidEssence.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/weapons/melee/NullshearEdge.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/defensive/ReflectBarrierAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/misc/offhand/MarrowAegis.java
+/home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/defensive/StoneSkinAttack.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/items/armor/EightHandledWheel.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/listener/ItemFoodHandler.java
 /home/chagui68/IdeaProjects/MultiverseCreatures/src/main/java/com/Chagui68/entities/boss/attack/ranged/ShadowVolleyAttack.java

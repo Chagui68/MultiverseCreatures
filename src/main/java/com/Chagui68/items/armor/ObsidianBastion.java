@@ -42,10 +42,6 @@ public class ObsidianBastion {
             lore.add(ChatColor.GRAY + "Forged from obsidian stripped of an");
             lore.add(ChatColor.GRAY + "Obsidian Guard. Heavy. Nigh-unbreakable.");
             lore.add("");
-            lore.add(ChatColor.WHITE + "Enchantments:");
-            lore.add(ChatColor.YELLOW + "  ▸ Protection IV, Blast Protection IV,");
-            lore.add(ChatColor.GRAY + "    Thorns II, Unbreaking III");
-            lore.add("");
             lore.add(ChatColor.AQUA + "Set Bonus (full set):");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "+" + ChatColor.GREEN + "40% Max Health");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Full " + ChatColor.BLUE + "Knockback Resistance");

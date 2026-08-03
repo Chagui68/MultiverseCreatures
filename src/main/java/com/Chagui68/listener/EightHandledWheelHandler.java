@@ -23,11 +23,8 @@ public class EightHandledWheelHandler implements Listener {
     private static final NamespacedKey CHARGES_KEY = new NamespacedKey("multiversecreatures", "msc_wheel_charges");
 
     // Per-cause immunity windows for each player.
-    //   blockUntil   : the damage of this cause is cancelled (true immunity).
-    //   reTriggerUntil: a new charge cannot be consumed for this cause until this time.
     private static final class CauseState {
         long blockUntil;
-        long reTriggerUntil;
     }
 
     private final Plugin plugin;
@@ -82,13 +79,7 @@ public class EightHandledWheelHandler implements Listener {
             return;
         }
 
-        // Phase 2: between the end of immunity and the end of the re-trigger cooldown,
-        // damage passes through normally and NO new charge is consumed.
-        if (state != null && state.reTriggerUntil > now) {
-            return;
-        }
-
-        // Phase 3: the cooldown has fully elapsed — a new adaptation can trigger.
+        // Phase 2: immunity has elapsed — a new adaptation can trigger immediately.
         int c = getCharges(helm);
         if (c <= 0) return;
 
@@ -96,7 +87,6 @@ public class EightHandledWheelHandler implements Listener {
 
         CauseState s = state != null ? state : new CauseState();
         s.blockUntil = now + (EightHandledWheel.BLOCK_DURATION_TICKS * 50L); // ticks -> ms
-        s.reTriggerUntil = now + EightHandledWheel.BLOCK_COOLDOWN_MS;
         causeMap.put(cause, s);
 
         event.setCancelled(true);

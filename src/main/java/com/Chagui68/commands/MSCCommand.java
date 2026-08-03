@@ -287,13 +287,8 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 if (success) sender.sendMessage(GREEN + "Spawned Ender Knight!");
                 else sender.sendMessage(RED + "Failed to spawn Ender Knight.");
             }
-            case "voidstatue", "statue" -> {
-                boolean success = plugin.getVoidStatue().trySpawn(p.getLocation());
-                if (success) sender.sendMessage(GREEN + "Spawned Void Statue!");
-                else sender.sendMessage(RED + "Failed to spawn Void Statue.");
-            }
             default ->
-                    sender.sendMessage(RED + "Unknown entity type. Available: armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight, voidstatue");
+                    sender.sendMessage(RED + "Unknown entity type. Available: armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight");
         }
     }
 
@@ -433,11 +428,8 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         if (args.length < 2) {
             sender.sendMessage(RED + "Usage: /msc attack <attack> [range]");
             sender.sendMessage(YELLOW + "Attacks (ground): groundslam, groundshatter, shieldbash, lancestorm, earthpillar, chaingrapple, warstomp, armorspikes, vortexpull, mirrorimage, doombeam");
-            sender.sendMessage(YELLOW + "Attacks (aerial): starfall, aerialrush, sonicboom, lightningstorm, gravitywell, crossslash, novaburst, darkorb, windcutter, heavenlyjudgment, rainoflances, airslam, hoverbarrage, crossbarrage");
+            sender.sendMessage(YELLOW + "Attacks (aerial): starfall, aerialrush, sonicboom, lightningstorm, gravitywell, crossslash, novaburst, darkorb, windcutter, heavenlyjudgment, rainoflances, airslam, hoverbarrage");
             sender.sendMessage(YELLOW + "Attacks (ranged): lancesnipe, meteorstorm, voidbeam, frostlance, lightningspear, shadowvolley, chainlightning, crystalbarrage, arcaneorb, voidrift, arcanemissiles, spiritbeam");
-            sender.sendMessage(YELLOW + "Mechanics: trianglecall, flyup, land, shieldseal, heal, reset");
-            sender.sendMessage(YELLOW + "Phase transitions: phaserage, phasebarrier, phasestorm, phasedespair");
-            sender.sendMessage(YELLOW + "Defenses: stoneskin, reflectbarrier, absorbshield");
             return;
         }
 
@@ -1304,7 +1296,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(YELLOW + "/msc give <item> [amount] " + WHITE + "- Give custom items");
         sender.sendMessage(YELLOW + "/msc seal <pattern> [plane] " + WHITE + "- Spawn particle seals (pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2; planes: horizontal, vertical-north, vertical-east)");
         sender.sendMessage(YELLOW + "/msc dummy " + WHITE + "- Spawn and pose a test dummy");
-        sender.sendMessage(YELLOW + "/msc attack <attack> [range] " + WHITE + "- Trigger boss attack (all 10 ground + 10 aerial attacks available)");
+        sender.sendMessage(YELLOW + "/msc attack <attack> [range] " + WHITE + "- Trigger a registered boss attack (ground/aerial/ranged)");
         sender.sendMessage(YELLOW + "/msc music <play|stop|list> [name] [loop] " + WHITE + "- Play .nbs music");
         sender.sendMessage(YELLOW + "/msc dimtp <world> " + WHITE + "- Teleport between dimensions");
         sender.sendMessage(YELLOW + "/msc cleanstands " + WHITE + "- Remove all custom plugin armor stands");
@@ -1326,7 +1318,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         } else if (args.length == 2) {
             String subCmd = args[0].toLowerCase();
             if (subCmd.equals("spawn")) {
-                List<String> entities = Arrays.asList("armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank", "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental", "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch", "obsidianguard", "soulreaper", "chaosmage", "enderknight", "voidstatue");
+                List<String> entities = Arrays.asList("armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank", "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental", "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch", "obsidianguard", "soulreaper", "chaosmage", "enderknight");
                 completions.addAll(entities.stream()
                         .filter(e -> e.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
@@ -1349,11 +1341,8 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             } else if (subCmd.equals("attack")) {
                 List<String> attacks = Arrays.asList(
                         "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam",
-                        "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "rainoflances", "airslam", "hoverbarrage", "crossbarrage",
-                        "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift", "arcanemissiles", "spiritbeam",
-                        "trianglecall", "flyup", "land", "shieldseal", "heal", "reset",
-                        "phaserage", "phasebarrier", "phasestorm", "phasedespair",
-                        "stoneskin", "reflectbarrier", "absorbshield"
+                        "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "rainoflances", "airslam", "hoverbarrage",
+                        "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift", "arcanemissiles", "spiritbeam"
                 );
                 completions.addAll(attacks.stream()
                         .filter(a -> a.startsWith(args[1].toLowerCase()))

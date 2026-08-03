@@ -19,7 +19,6 @@ import com.Chagui68.entities.SoulReaper;
 import com.Chagui68.entities.StormCaller;
 import com.Chagui68.entities.VenomWitch;
 import com.Chagui68.entities.VoidCrawler;
-import com.Chagui68.entities.VoidStatue;
 import com.Chagui68.entities.ZombieHorseTrap;
 import com.Chagui68.items.food.HeadSlimeGelatin;
 import com.Chagui68.items.components.HeadSlimeHeart;
@@ -64,7 +63,6 @@ public class MultiverseCreatures extends JavaPlugin {
     private SoulReaper soulReaper;
     private ChaosMage chaosMage;
     private EnderKnight enderKnight;
-    private VoidStatue voidStatue;
 
     @Override
     public void onEnable() {
@@ -93,7 +91,6 @@ public class MultiverseCreatures extends JavaPlugin {
         soulReaper = new SoulReaper(this);
         chaosMage = new ChaosMage(this);
         enderKnight = new EnderKnight(this);
-        voidStatue = new VoidStatue(this);
 
         bossDimensionManager = new BossDimensionManager(this);
 
@@ -268,9 +265,5 @@ public class MultiverseCreatures extends JavaPlugin {
 
     public EnderKnight getEnderKnight() {
         return enderKnight;
-    }
-
-    public VoidStatue getVoidStatue() {
-        return voidStatue;
     }
 }
