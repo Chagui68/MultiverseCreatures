@@ -92,7 +92,7 @@ public class HealingCircleAttack extends BossAttackBase {
                     if (t >= 35) {
                         casting = false;
                         t = 0;
-                        resetBossPose(instance);
+                        boss.resetBossPose(instance);
                         world.playSound(center, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 0.6f);
                         world.spawnParticle(Particle.EXPLOSION, center.clone().add(0, 0.5, 0), 8, 2.0, 0.5, 2.0, 0);
                     }

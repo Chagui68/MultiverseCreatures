@@ -262,7 +262,7 @@ public class ShieldSealAttack extends BossAttackBase {
         instance.shieldSealDisplays.clear();
 
         if (instance.stand != null && instance.stand.isValid()) {
-            org.bukkit.entity.EntityEquipment equip = instance.stand.getEquipment();
+            EntityEquipment equip = instance.stand.getEquipment();
             if (equip != null && instance.shieldSealSavedShield != null
                     && equip.getItemInOffHand().getType() == org.bukkit.Material.AIR) {
                 equip.setItemInOffHand(instance.shieldSealSavedShield);

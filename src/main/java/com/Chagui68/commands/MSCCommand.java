@@ -430,6 +430,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(YELLOW + "Attacks (ground): groundslam, groundshatter, shieldbash, lancestorm, earthpillar, chaingrapple, warstomp, armorspikes, vortexpull, mirrorimage, doombeam");
             sender.sendMessage(YELLOW + "Attacks (aerial): starfall, aerialrush, sonicboom, lightningstorm, gravitywell, crossslash, novaburst, darkorb, windcutter, heavenlyjudgment, rainoflances, airslam, hoverbarrage");
             sender.sendMessage(YELLOW + "Attacks (ranged): lancesnipe, meteorstorm, voidbeam, frostlance, lightningspear, shadowvolley, chainlightning, crystalbarrage, arcaneorb, voidrift, arcanemissiles, spiritbeam");
+            sender.sendMessage(YELLOW + "Attacks (defensive): stoneskin, reflectbarrier, absorbshield, shieldseal, healingcircle, trianglecall");
             return;
         }
 
@@ -1342,7 +1343,8 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 List<String> attacks = Arrays.asList(
                         "groundslam", "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam",
                         "starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment", "rainoflances", "airslam", "hoverbarrage",
-                        "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift", "arcanemissiles", "spiritbeam"
+                        "lancesnipe", "meteorstorm", "voidbeam", "frostlance", "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift", "arcanemissiles", "spiritbeam",
+                        "stoneskin", "reflectbarrier", "absorbshield", "shieldseal", "healingcircle", "trianglecall"
                 );
                 completions.addAll(attacks.stream()
                         .filter(a -> a.startsWith(args[1].toLowerCase()))

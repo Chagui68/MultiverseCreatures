@@ -519,15 +519,15 @@ public class ArmorStandBoss implements Listener {
 
                 if (instance.healingCircleActive || instance.shieldSealActive) {
                     if (instance.shieldSealActive) {
-                        updateShieldMechanic(instance);
+                        attackRegistry.get("groundslam").execute(instance);
                         instance.shieldSealTimer++;
                         if (!instance.triangleCallActive && !instance.hoverBarrageActive
                                 && instance.shieldSealTimer > 40 && instance.shieldSealTimer % 100 == 0) {
-                            startTriangleCall(instance);
+                            attackRegistry.get("trianglecall").execute(instance);
                         }
                     }
                 } else {
-                    updateShieldMechanic(instance);
+                    attackRegistry.get("groundslam").execute(instance);
 
                     if (instance.isFlying) {
                         instance.flyingTimer++;
@@ -562,13 +562,13 @@ public class ArmorStandBoss implements Listener {
 
                             if (healthPct < 0.4 && choice < 25) {
                                 stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.5f);
-                                startHealingCircle(instance);
+                                attackRegistry.get("healingcircle").execute(instance);
                             } else if (choice < 15) {
                                 stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.5f);
                                 flyUp(instance);
                             } else if (choice < 35) {
                                 stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.7f);
-                                startShieldSeal(instance);
+                                attackRegistry.get("shieldseal").execute(instance);
                             } else if (choice < 55) {
                                 stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.5f);
                                 executeRandomGroundAttack(instance);
@@ -586,13 +586,13 @@ public class ArmorStandBoss implements Listener {
                                 int defChoice = random.nextInt(100);
                                 if (defChoice < 35) {
                                     stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.6f);
-                                    stoneSkin(instance);
+                                    attackRegistry.get("stoneskin").execute(instance);
                                 } else if (defChoice < 65) {
                                     stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.6f);
-                                    reflectBarrier(instance);
+                                    attackRegistry.get("reflectbarrier").execute(instance);
                                 } else {
                                     stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.6f);
-                                    absorbShield(instance);
+                                    attackRegistry.get("absorbshield").execute(instance);
                                 }
                                 instance.defenseCooldown = 300 + random.nextInt(300);
                             } else {
@@ -642,82 +642,6 @@ public class ArmorStandBoss implements Listener {
                 }
             }
         }.runTaskTimer(plugin, 0L, 1L);
-    }
-
-    private void equipShield(ArmorStand stand) {
-        ItemStack shield = new ItemStack(Material.SHIELD);
-        ItemMeta shieldMeta = shield.getItemMeta();
-        if (shieldMeta != null) {
-            shieldMeta.setUnbreakable(true);
-            shield.setItemMeta(shieldMeta);
-        }
-        EntityEquipment equip = stand.getEquipment();
-        if (equip.getItemInOffHand().getType() == Material.AIR) {
-            equip.setItemInOffHand(shield);
-        }
-    }
-
-    public void plantShield(BossInstance instance) {
-        ArmorStand stand = instance.stand;
-        if (instance.shieldState != ShieldState.NORMAL) return;
-
-        EntityEquipment equip = stand.getEquipment();
-        ItemStack shieldItem = equip.getItemInOffHand();
-        if (shieldItem == null || shieldItem.getType() == Material.AIR) return;
-
-        equip.setItemInOffHand(null);
-
-        instance.shieldState = ShieldState.PLANTED;
-        instance.shieldTimer = 0;
-
-        if (instance.shieldSealActive) {
-            stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1.0f, 0.7f);
-            stand.getWorld().spawnParticle(Particle.SMOKE, stand.getLocation(), 10, 1.0, 0.5, 1.0, 0.05);
-            return;
-        }
-
-        float yaw = stand.getLocation().getYaw();
-        double yawRadians = Math.toRadians(yaw);
-        double leftX = Math.cos(yawRadians) * 6;
-        double leftZ = Math.sin(yawRadians) * 6;
-        Location plantLoc = stand.getLocation().add(leftX, 10.0, leftZ);
-
-        ItemDisplay holder;
-        try {
-            holder = (ItemDisplay) plantLoc.getWorld().spawnEntity(
-                    plantLoc, EntityType.ITEM_DISPLAY
-            );
-        } catch (Throwable t) {
-            holder = null;
-        }
-        if (holder == null) {
-            equipShield(stand);
-            return;
-        }
-        org.bukkit.util.Transformation transformation = holder.getTransformation();
-        transformation.getScale().set(7.5f);
-        holder.setTransformation(transformation);
-        holder.setBillboard(Display.Billboard.FIXED);
-        holder.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
-        holder.setViewRange(64.0f);
-        holder.setItemStack(shieldItem);
-        holder.setGravity(false);
-        holder.setInvulnerable(true);
-        holder.setPersistent(true);
-        holder.setCustomName("MSC_ShieldHolder");
-        holder.setCustomNameVisible(false);
-        holder.addScoreboardTag(SHIELD_HOLDER_TAG);
-
-        instance.shieldHolder = holder;
-
-        if (plugin.getMagicSealListener() != null) {
-            instance.floatingShieldTask = plugin.getMagicSealListener()
-                    .spawnFloatingShieldSealTask(holder.getLocation(), stand.getLocation().getY(), 60 + 80);
-        }
-
-        plantLoc.getWorld().playSound(plantLoc, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 1.0f, 0.7f);
-        plantLoc.getWorld().spawnParticle(Particle.EXPLOSION, plantLoc, 1, 0, 0, 0, 0);
-        plantLoc.getWorld().spawnParticle(Particle.SMOKE, plantLoc, 15, 0.5, 0.3, 0.5, 0.05);
     }
 
     public void resetBossPose(BossInstance instance) {
@@ -903,208 +827,6 @@ public class ArmorStandBoss implements Listener {
                 resetBossPose(instance);
             }
         }.runTaskLater(plugin, 50L);
-    }
-
-    private void stoneSkin(BossInstance instance) {
-        if (instance.activeDefense != DefenseState.NONE || !isOnGround(instance.stand)) return;
-        instance.activeDefense = DefenseState.STONE_SKIN;
-        instance.defenseTimer = 0;
-        ArmorStand stand = instance.stand;
-        World world = stand.getWorld();
-        Location loc = stand.getLocation();
-
-        world.playSound(loc, Sound.BLOCK_STONE_BREAK, 1.5f, 0.8f);
-        world.playSound(loc, Sound.ENTITY_IRON_GOLEM_HURT, 1.0f, 0.6f);
-        world.spawnParticle(Particle.CRIT, loc.clone().add(0, 5, 0), 40, 2, 5, 2, 0.05);
-        for (int i = 0; i < 20; i++) {
-            double angle = random.nextDouble() * Math.PI * 2;
-            double r = 1 + random.nextDouble() * 3;
-            Location pl = new Location(world, loc.getX() + Math.cos(angle) * r, loc.getY() + random.nextDouble() * 10, loc.getZ() + Math.sin(angle) * r);
-            world.spawnParticle(Particle.BLOCK, pl, 3, 0.2, 0.2, 0.2, 0.05, Material.STONE.createBlockData());
-        }
-
-        stand.setBodyPose(new EulerAngle(0, 0, 0));
-        stand.setRightArmPose(new EulerAngle(Math.toRadians(-20), Math.toRadians(45), Math.toRadians(10)));
-        stand.setLeftArmPose(new EulerAngle(Math.toRadians(-20), Math.toRadians(-45), Math.toRadians(-10)));
-        stand.setHeadPose(new EulerAngle(Math.toRadians(5), 0, 0));
-
-        instance.defenseTask = new BukkitRunnable() {
-            int t = 0;
-
-            @Override
-            public void run() {
-                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.STONE_SKIN) {
-                    cancel();
-                    return;
-                }
-                if (t % 10 == 0) {
-                    world.spawnParticle(Particle.CRIT, stand.getLocation().add(0, 5, 0), 10, 1.5, 4, 1.5, 0.02);
-                    world.spawnParticle(Particle.BLOCK, stand.getLocation().add(0, 1, 0), 5, 1, 1, 1, 0.02, Material.STONE.createBlockData());
-                }
-                t++;
-            }
-        };
-        instance.defenseTask.runTaskTimer(plugin, 0L, 2L);
-    }
-
-    private void reflectBarrier(BossInstance instance) {
-        if (instance.activeDefense != DefenseState.NONE || !isOnGround(instance.stand)) return;
-        instance.activeDefense = DefenseState.REFLECT_BARRIER;
-        instance.defenseTimer = 0;
-        ArmorStand stand = instance.stand;
-        World world = stand.getWorld();
-        Location loc = stand.getLocation();
-
-        world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.5f, 1.2f);
-        world.playSound(loc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 1.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
-        world.spawnParticle(Particle.END_ROD, loc.clone().add(0, 5, 0), 50, 3, 5, 3, 0.05);
-
-        stand.setBodyPose(new EulerAngle(0, 0, 0));
-        stand.setRightArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(45), Math.toRadians(0)));
-        stand.setLeftArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(-45), Math.toRadians(0)));
-        stand.setHeadPose(new EulerAngle(Math.toRadians(-10), 0, 0));
-
-        instance.defenseTask = new BukkitRunnable() {
-            int t = 0;
-
-            @Override
-            public void run() {
-                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.REFLECT_BARRIER) {
-                    cancel();
-                    return;
-                }
-                if (t % 8 == 0) {
-                    world.spawnParticle(Particle.END_ROD, stand.getLocation().add(0, 5, 0), 15, 2.5, 4, 2.5, 0.03);
-                    world.spawnParticle(Particle.DUST, stand.getLocation().add(0, 5, 0), 10, 2, 4, 2, 0,
-                            new Particle.DustOptions(Color.fromRGB(0x88CCFF), 2.5f));
-                }
-                t++;
-            }
-        };
-        instance.defenseTask.runTaskTimer(plugin, 0L, 2L);
-    }
-
-    private void absorbShield(BossInstance instance) {
-        if (instance.activeDefense != DefenseState.NONE || !isOnGround(instance.stand)) return;
-        instance.activeDefense = DefenseState.ABSORB_SHIELD;
-        instance.defenseTimer = 0;
-        instance.absorbShieldHealth = 100.0;
-        ArmorStand stand = instance.stand;
-        World world = stand.getWorld();
-        Location loc = stand.getLocation();
-
-        world.playSound(loc, Sound.ITEM_SHIELD_BLOCK, 2.0f, 1.5f);
-        world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 0.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
-        world.spawnParticle(Particle.EXPLOSION, loc.clone().add(0, 5, 0), 30, 3, 5, 3, 0);
-
-        stand.setBodyPose(new EulerAngle(Math.toRadians(5), 0, 0));
-        stand.setRightArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(30), Math.toRadians(0)));
-        stand.setLeftArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(-30), Math.toRadians(0)));
-        stand.setHeadPose(new EulerAngle(Math.toRadians(5), 0, 0));
-
-        if (plugin.getMagicSealListener() != null) {
-            plugin.getMagicSealListener().spawnCelestialSeal(stand, 300);
-        }
-
-        instance.defenseTask = new BukkitRunnable() {
-            int t = 0;
-
-            @Override
-            public void run() {
-                if (stand.isDead() || !stand.isValid() || instance.activeDefense != DefenseState.ABSORB_SHIELD) {
-                    cancel();
-                    return;
-                }
-                if (t % 5 == 0) {
-                    double healthPct = instance.absorbShieldHealth / 100.0;
-                    Color shieldColor = healthPct > 0.5 ? Color.fromRGB(0x88CCFF) : Color.fromRGB(0xFF6666);
-                    world.spawnParticle(Particle.DUST, stand.getLocation().add(0, 5, 0), 8, 2, 4, 2, 0,
-                            new Particle.DustOptions(shieldColor, 2.0f));
-                    world.spawnParticle(Particle.END_ROD, stand.getLocation().add(0, 5, 0), 5, 1.5, 3, 1.5, 0.02);
-                }
-                t++;
-            }
-        };
-        instance.defenseTask.runTaskTimer(plugin, 0L, 3L);
-    }
-
-    public void retrieveShield(BossInstance instance) {
-        ArmorStand stand = instance.stand;
-        if (instance.floatingShieldTask != null) {
-            instance.floatingShieldTask.cancel();
-            instance.floatingShieldTask = null;
-        }
-        if (instance.shieldHolder != null && instance.shieldHolder.isValid()) {
-            Location holderLoc = instance.shieldHolder.getLocation();
-
-            instance.shieldHolder.getWorld().spawnParticle(
-                    Particle.END_ROD, holderLoc, 20, 0.5, 0.5, 0.5, 0.05
-            );
-            instance.shieldHolder.getWorld().spawnParticle(
-                    Particle.FLAME, holderLoc, 15, 0.3, 0.3, 0.3, 0.03
-            );
-            instance.shieldHolder.getWorld().playSound(
-                    holderLoc, Sound.ENTITY_ENDER_EYE_DEATH, 1.0f, 1.2f
-            );
-
-            instance.shieldHolder.remove();
-        }
-        instance.shieldHolder = null;
-        instance.shieldState = ShieldState.NORMAL;
-
-        equipShield(stand);
-        resetBossPose(instance);
-
-        stand.getWorld().spawnParticle(
-                Particle.END_ROD, stand.getLocation().add(0, 1, 0), 25, 1.0, 1.0, 1.0, 0.1
-        );
-        stand.getWorld().playSound(
-                stand.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.5f, 1.5f
-        );
-    }
-
-    private void updateShieldMechanic(BossInstance instance) {
-        ArmorStand stand = instance.stand;
-        boolean hasPlayer = countPlayersInRange(stand.getLocation(), 100) > 0;
-
-        if (!hasPlayer) {
-            if (instance.shieldState != ShieldState.NORMAL) {
-                retrieveShield(instance);
-            }
-            instance.shieldCooldown = 0;
-            return;
-        }
-
-        switch (instance.shieldState) {
-            case NORMAL -> {
-                if (isOnGround(stand)) {
-                    instance.shieldCooldown++;
-                    if (instance.shieldCooldown >= getShieldPlantInterval()) {
-                        plantShield(instance);
-                        instance.shieldCooldown = 0;
-                    }
-                }
-            }
-            case PLANTED -> {
-                if (isOnGround(stand)) {
-                    instance.shieldTimer++;
-                    int plantDelay = instance.shieldSealActive ? 20 : 60;
-                    if (instance.shieldTimer >= plantDelay) {
-                        attackRegistry.get("groundslam").execute(instance);
-                    }
-                } else {
-                    retrieveShield(instance);
-                }
-            }
-            case SLAM_DONE -> {
-                instance.shieldTimer++;
-                if (instance.shieldTimer >= getShieldRetrieveDelay(instance.currentPhase)) {
-                    retrieveShield(instance);
-                }
-            }
-        }
     }
 
     public void startHoverBarrage(BossInstance instance) {
@@ -1598,382 +1320,7 @@ public class ArmorStandBoss implements Listener {
                 blockBelow.getBlockData());
     }
 
-    private void startShieldSeal(BossInstance instance) {
-        startShieldSeal(instance, true);
-    }
 
-    public void startShieldSeal(BossInstance instance, boolean telegraph) {
-        if (instance.shieldSealActive) return;
-        ArmorStand stand = instance.stand;
-        if (stand.isDead() || !stand.isValid()) return;
-        World world = stand.getWorld();
-
-        if (telegraph) {
-            world.playSound(stand.getLocation(), Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 0.8f);
-        }
-
-        EntityEquipment preEquip = stand.getEquipment();
-        if (preEquip != null && preEquip.getItemInOffHand() != null && preEquip.getItemInOffHand().getType() == Material.SHIELD) {
-            instance.shieldSealSavedShield = preEquip.getItemInOffHand().clone();
-            preEquip.setItemInOffHand(null);
-        } else {
-            instance.shieldSealSavedShield = null;
-        }
-
-        instance.shieldSealActive = true;
-        instance.shieldSealTimer = 0;
-
-        instance.shieldSealTask = new BukkitRunnable() {
-            int t = 0;
-            boolean casting = telegraph;
-            final double SHIELD_RADIUS = 5.5;
-
-            @Override
-            public void run() {
-                if (stand.isDead() || !stand.isValid()) {
-                    removeShieldSeal(instance);
-                    cancel();
-                    return;
-                }
-
-                Location center = stand.getLocation();
-
-                if (casting) {
-                    t++;
-
-                    stand.setRightArmPose(new EulerAngle(Math.toRadians(-110), Math.toRadians(45), Math.toRadians(10)));
-                    stand.setLeftArmPose(new EulerAngle(Math.toRadians(-110), Math.toRadians(-45), Math.toRadians(-10)));
-                    stand.setBodyPose(new EulerAngle(Math.toRadians(15), 0, 0));
-                    stand.setHeadPose(new EulerAngle(Math.toRadians(15), 0, 0));
-
-                    double phase = Math.min(1.0, (double) t / 20);
-                    double r = SHIELD_RADIUS * phase;
-                    for (int phi = 0; phi < 8; phi++) {
-                        double theta = (Math.PI * phi / 7);
-                        for (int a = 0; a < 12; a++) {
-                            double angle = (2 * Math.PI * a / 12) + t * 0.03;
-                            double x = center.getX() + r * Math.sin(theta) * Math.cos(angle);
-                            double y = center.getY() + 6 + r * Math.cos(theta);
-                            double z = center.getZ() + r * Math.sin(theta) * Math.sin(angle);
-                            Location pl = new Location(world, x, y, z);
-                            world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                                    new Particle.DustOptions(Color.fromRGB(0x88CCFF), 1.8f * (float) phase));
-                            world.spawnParticle(Particle.END_ROD, pl, 1, 0, 0, 0, 0);
-                        }
-                    }
-
-                    for (int a = 0; a < 6; a++) {
-                        double angle = (2 * Math.PI * a / 6) + t * 0.05;
-                        double x = center.getX() + Math.cos(angle) * r * 0.8;
-                        double z = center.getZ() + Math.sin(angle) * r * 0.8;
-                        world.spawnParticle(Particle.DUST, new Location(world, x, center.getY() + 6, z), 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(Color.WHITE, 1.5f));
-                    }
-
-                    if (t >= 25) {
-                        casting = false;
-                        t = 0;
-                        world.playSound(center, Sound.ITEM_SHIELD_BLOCK, 1.5f, 1.8f);
-                        world.spawnParticle(Particle.EXPLOSION, center.clone().add(0, 6, 0), 5, 2.0, 1.0, 2.0, 0);
-
-                        spawnShieldDisplays(instance, world, center);
-                    }
-                    return;
-                }
-
-                if (!instance.shieldSealActive) {
-                    removeShieldSeal(instance);
-                    cancel();
-                    return;
-                }
-
-                stand.setRightArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(45), Math.toRadians(10)));
-                stand.setLeftArmPose(new EulerAngle(Math.toRadians(-90), Math.toRadians(-45), Math.toRadians(-10)));
-                stand.setBodyPose(new EulerAngle(Math.toRadians(8), 0, 0));
-                stand.setHeadPose(new EulerAngle(Math.toRadians(8), 0, 0));
-
-                double radius = SHIELD_RADIUS;
-                for (int phi = 0; phi < 6; phi++) {
-                    double theta = (Math.PI * phi / 5);
-                    for (int a = 0; a < 8; a++) {
-                        double angle = (2 * Math.PI * a / 8) + t * 0.02;
-                        double x = center.getX() + radius * Math.sin(theta) * Math.cos(angle);
-                        double y = center.getY() + 6 + radius * Math.cos(theta);
-                        double z = center.getZ() + radius * Math.sin(theta) * Math.sin(angle);
-                        Location pl = new Location(world, x, y, z);
-                        world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(Color.fromRGB(0x88CCFF), 1.5f));
-                        if (t % 3 == 0) {
-                            world.spawnParticle(Particle.END_ROD, pl, 1, 0, 0, 0, 0);
-                        }
-                    }
-                }
-
-                for (int a = 0; a < 4; a++) {
-                    double angle = (2 * Math.PI * a / 4) + t * 0.03;
-                    double x = center.getX() + Math.cos(angle) * radius * 0.9;
-                    double z = center.getZ() + Math.sin(angle) * radius * 0.9;
-                    world.spawnParticle(Particle.WITCH, new Location(world, x, center.getY() + 6, z), 2, 0.3, 0.3, 0.3, 0);
-                }
-
-                updateShieldDisplays(instance, center, t);
-
-                t++;
-                if (t >= 200) {
-                    removeShieldSeal(instance);
-                    cancel();
-                }
-            }
-        };
-        instance.shieldSealTask.runTaskTimer(plugin, 0L, 1L);
-    }
-
-    private void spawnShieldDisplays(BossInstance instance, World world, Location center) {
-        for (ItemDisplay d : instance.shieldSealDisplays) {
-            if (d.isValid()) d.remove();
-        }
-        instance.shieldSealDisplays.clear();
-
-        double[] angles = {0.0, 60.0, 120.0, 180.0, 240.0, 300.0, 30.0, 90.0, 150.0, 210.0, 270.0, 330.0};
-        double baseHeight = 7.0;
-
-        for (int i = 0; i < angles.length; i++) {
-            double angleDeg = angles[i];
-            double hOffset;
-            if (i < 6) {
-                hOffset = baseHeight;
-            } else {
-                double altIndex = i - 6;
-                hOffset = (altIndex % 2 == 0) ? 11.0 : 3.0;
-            }
-
-            Location shieldLoc = center.clone().add(0, hOffset, 0);
-            ItemDisplay holder;
-            try {
-                holder = (ItemDisplay) world.spawnEntity(shieldLoc, EntityType.ITEM_DISPLAY);
-            } catch (Throwable t) {
-                holder = null;
-            }
-            if (holder == null) continue;
-
-            ItemStack shieldItem = new ItemStack(Material.SHIELD);
-            ItemMeta meta = shieldItem.getItemMeta();
-            if (meta != null) {
-                meta.setUnbreakable(true);
-                shieldItem.setItemMeta(meta);
-            }
-
-            try {
-                org.bukkit.util.Transformation transformation = holder.getTransformation();
-                transformation.getScale().set(3.5f, 3.5f, 3.5f);
-                holder.setTransformation(transformation);
-            } catch (Throwable ignored) {
-            }
-
-            holder.setBillboard(Display.Billboard.CENTER);
-            holder.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.HEAD);
-            holder.setViewRange(64.0f);
-            holder.setItemStack(shieldItem);
-            holder.setGravity(false);
-            holder.setInvulnerable(true);
-            holder.setPersistent(true);
-            holder.addScoreboardTag("MSC_ShieldSealOrbit");
-            instance.shieldSealDisplays.add(holder);
-        }
-    }
-
-    private void updateShieldDisplays(BossInstance instance, Location center, int tick) {
-        if (instance.shieldSealDisplays.isEmpty()) return;
-
-        float yaw = center.getYaw();
-        double baseR = 4.5;
-        double rotSpeed = 0.04;
-
-        double[] angles = {0.0, 60.0, 120.0, 180.0, 240.0, 300.0, 30.0, 90.0, 150.0, 210.0, 270.0, 330.0};
-
-        for (int i = 0; i < instance.shieldSealDisplays.size(); i++) {
-            ItemDisplay d = instance.shieldSealDisplays.get(i);
-            if (!d.isValid()) continue;
-
-            double angleDeg = angles[i];
-            double hOffset;
-            if (i < 6) {
-                hOffset = 7.0;
-            } else {
-                double altIndex = i - 6;
-                hOffset = (altIndex % 2 == 0) ? 11.0 : 3.0;
-            }
-
-            double rotAngle = Math.toRadians(yaw + angleDeg + tick * rotSpeed * 360);
-            double x = center.getX() + baseR * Math.cos(rotAngle);
-            double z = center.getZ() + baseR * Math.sin(rotAngle);
-            Location target = new Location(center.getWorld(), x, center.getY() + hOffset, z);
-
-            float displayYaw = (float) Math.toDegrees(rotAngle);
-            target.setYaw(displayYaw);
-            target.setPitch(0);
-            d.teleport(target);
-        }
-    }
-
-    private void removeShieldSeal(BossInstance instance) {
-        instance.shieldSealActive = false;
-        instance.shieldSealTimer = 0;
-        if (instance.shieldSealTask != null) {
-            instance.shieldSealTask.cancel();
-            instance.shieldSealTask = null;
-        }
-        for (ItemDisplay d : instance.shieldSealDisplays) {
-            if (d.isValid()) d.remove();
-        }
-        instance.shieldSealDisplays.clear();
-
-        if (instance.stand != null && instance.stand.isValid()) {
-            EntityEquipment equip = instance.stand.getEquipment();
-            if (equip != null && instance.shieldSealSavedShield != null
-                    && equip.getItemInOffHand().getType() == Material.AIR) {
-                equip.setItemInOffHand(instance.shieldSealSavedShield);
-            }
-            instance.shieldSealSavedShield = null;
-            resetBossPose(instance);
-
-            instance.stand.getWorld().spawnParticle(Particle.EXPLOSION, instance.stand.getLocation().add(0, 6, 0), 8, 2.0, 1.0, 2.0, 0);
-            instance.stand.getWorld().spawnParticle(Particle.CLOUD, instance.stand.getLocation().add(0, 6, 0), 20, 2.5, 1.0, 2.5, 0.1);
-        }
-    }
-
-    private void startHealingCircle(BossInstance instance) {
-        startHealingCircle(instance, true);
-    }
-
-    public void startHealingCircle(BossInstance instance, boolean telegraph) {
-        if (instance.healingCircleActive) return;
-        if (instance.isFlying) return;
-        ArmorStand stand = instance.stand;
-        if (stand.isDead() || !stand.isValid()) return;
-        World world = stand.getWorld();
-
-        if (telegraph) {
-            world.playSound(stand.getLocation(), Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1.0f, 1.2f);
-        }
-
-        double maxHealth = stand.getAttribute(Attribute.MAX_HEALTH) != null
-                ? stand.getAttribute(Attribute.MAX_HEALTH).getValue() : 500.0;
-        double maxHeal = maxHealth * 0.05;
-
-        instance.healingCircleActive = true;
-        instance.healingCircleTimer = 0;
-        instance.healingCircleHealed = 0;
-
-        instance.healingCircleTask = new BukkitRunnable() {
-            int t = 0;
-            boolean casting = telegraph;
-
-            @Override
-            public void run() {
-                if (stand.isDead() || !stand.isValid()) {
-                    removeHealingCircle(instance);
-                    cancel();
-                    return;
-                }
-
-                Location center = stand.getLocation();
-                double radius = 4.0;
-
-                if (casting) {
-                    t++;
-                    double phase = Math.min(1.0, (double) t / 30);
-
-                    stand.setRightArmPose(new EulerAngle(Math.toRadians(-140 * phase), 0, 0));
-                    stand.setLeftArmPose(new EulerAngle(Math.toRadians(-140 * phase), 0, 0));
-                    stand.setHeadPose(new EulerAngle(Math.toRadians(-15 * phase), 0, 0));
-                    stand.setBodyPose(new EulerAngle(Math.toRadians(-5 * phase), 0, 0));
-
-                    int samples = (int) (10 + phase * 25);
-                    for (int i = 0; i < samples; i++) {
-                        double angle = (2 * Math.PI * i / samples) + t * 0.03;
-                        double x = center.getX() + Math.cos(angle) * radius * phase;
-                        double z = center.getZ() + Math.sin(angle) * radius * phase;
-                        double y = center.getY() + 0.1 + Math.sin(t * 0.15 + i * 0.5) * 0.2;
-                        Location pl = new Location(world, x, y, z);
-                        world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                                new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.2f * (float) phase));
-                    }
-
-                    for (int i = 0; i < (int) (2 + phase * 5); i++) {
-                        double angle = random.nextDouble() * Math.PI * 2;
-                        double r = random.nextDouble() * radius * phase;
-                        double x = center.getX() + Math.cos(angle) * r;
-                        double z = center.getZ() + Math.sin(angle) * r;
-                        Location pl = new Location(world, x, center.getY() + 0.3 + random.nextDouble() * 2 * phase, z);
-                        world.spawnParticle(Particle.END_ROD, pl, 1, 0, 0, 0, 0);
-                        world.spawnParticle(Particle.HEART, pl, 1, 0, 0, 0, 0);
-                    }
-
-                    if (t >= 35) {
-                        casting = false;
-                        t = 0;
-                        resetBossPose(instance);
-                        world.playSound(center, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 0.6f);
-                        world.spawnParticle(Particle.EXPLOSION, center.clone().add(0, 0.5, 0), 8, 2.0, 0.5, 2.0, 0);
-                    }
-                    return;
-                }
-
-                t++;
-                int samples = 30;
-                for (int i = 0; i < samples; i++) {
-                    double angle = (2 * Math.PI * i / samples) + (t * 0.02);
-                    double x = center.getX() + Math.cos(angle) * radius;
-                    double z = center.getZ() + Math.sin(angle) * radius;
-                    double y = center.getY() + 0.1 + Math.sin(t * 0.1 + i) * 0.1;
-                    Location pl = new Location(world, x, y, z);
-                    world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
-                            new Particle.DustOptions(Color.fromRGB(0x44FF44), 1.5f));
-                }
-
-                for (int i = 0; i < 5; i++) {
-                    double angle = random.nextDouble() * Math.PI * 2;
-                    double r = random.nextDouble() * radius;
-                    double x = center.getX() + Math.cos(angle) * r;
-                    double z = center.getZ() + Math.sin(angle) * r;
-                    Location pl = new Location(world, x, center.getY() + 0.5 + random.nextDouble() * 2, z);
-                    world.spawnParticle(Particle.END_ROD, pl, 1, 0, 0, 0, 0);
-                    world.spawnParticle(Particle.HEART, pl, 1, 0, 0, 0, 0);
-                }
-
-                if (instance.healingCircleHealed < maxHeal && stand.getHealth() < maxHealth) {
-                    double healAmount = maxHealth * 0.0025;
-                    double remaining = maxHeal - instance.healingCircleHealed;
-                    double toHeal = Math.min(healAmount, remaining);
-                    toHeal = Math.min(toHeal, maxHealth - stand.getHealth());
-                    if (toHeal > 0) {
-                        stand.setHealth(stand.getHealth() + toHeal);
-                        instance.healingCircleHealed += toHeal;
-                        if (instance.bossBar != null) {
-                            instance.bossBar.setProgress(stand.getHealth() / maxHealth);
-                        }
-                    }
-                }
-
-                if (t >= 200) {
-                    removeHealingCircle(instance);
-                    cancel();
-                }
-            }
-        };
-        instance.healingCircleTask.runTaskTimer(plugin, 0L, 1L);
-    }
-
-    private void removeHealingCircle(BossInstance instance) {
-        instance.healingCircleActive = false;
-        instance.healingCircleTimer = 0;
-        instance.healingCircleHealed = 0;
-        if (instance.healingCircleTask != null) {
-            instance.healingCircleTask.cancel();
-            instance.healingCircleTask = null;
-        }
-    }
 
     // ============== NEW GROUND ATTACKS (10) ==============
 
@@ -2090,182 +1437,6 @@ public class ArmorStandBoss implements Listener {
         }
     }
 
-    public void startTriangleCall(BossInstance instance) {
-        if (instance.triangleCallActive) return;
-        instance.triangleCallActive = true;
-
-        ArmorStand stand = instance.stand;
-        World world = stand.getWorld();
-        Location center = stand.getLocation();
-        boolean airMode = !isOnGround(stand);
-        int playerCount = countPlayersInRange(center, 100);
-        int extraSets = playerCount / 3;
-
-        instance.triangleCallTask = new BukkitRunnable() {
-            int tick = 0;
-
-            @Override
-            public void run() {
-                if (stand.isDead() || !stand.isValid() || tick >= 120) {
-                    instance.triangleCallActive = false;
-                    cancel();
-                    return;
-                }
-                if (tick == 8) {
-                    if (airMode) {
-                        spawnAirCall(stand, world, center, extraSets);
-                    } else {
-                        spawnGroundCall(stand, world, center, extraSets);
-                    }
-                }
-                tick++;
-            }
-        };
-        instance.triangleCallTask.runTaskTimer(plugin, 0L, 1L);
-    }
-
-    private void spawnAirCall(ArmorStand stand, World world, Location center, int extraSets) {
-        Vector dir = stand.getLocation().getDirection();
-        Vector right = dir.clone().crossProduct(new Vector(0, 1, 0)).normalize();
-        if (right.lengthSquared() < 0.01) right = new Vector(1, 0, 0);
-
-        int count = 1 + extraSets;
-
-        for (int side = -1; side <= 1; side += 2) {
-            Location sealLoc = center.clone().add(right.clone().multiply(side * 8));
-            spawnTriangleSeal(world, sealLoc, 100, MagicSealListener.Plane.YZ);
-
-            for (int i = 0; i < count; i++) {
-                Location spawnLoc = sealLoc.clone().add(0, 2 + i * 4, 0);
-
-                Ghast ghast = (Ghast) world.spawnEntity(spawnLoc, EntityType.GHAST);
-                if (ghast != null) {
-                    ghast.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "Infernal Ghast");
-                    ghast.setCustomNameVisible(true);
-                    ghast.setPersistent(true);
-                    ghast.setRemoveWhenFarAway(false);
-                    ghast.addScoreboardTag(SUMMON_TAG);
-                    AttributeInstance ghastHealth = ghast.getAttribute(Attribute.MAX_HEALTH);
-                    if (ghastHealth != null) ghastHealth.setBaseValue(20.0);
-                    ghast.setHealth(20.0);
-                    Player near = findNearestPlayer(spawnLoc, 100);
-                    if (near != null) ghast.setTarget(near);
-                }
-
-                Location phantomLoc = sealLoc.clone().add(0, 6 + i * 4, 0);
-                Phantom phantom = (Phantom) world.spawnEntity(phantomLoc, EntityType.PHANTOM);
-                if (phantom != null) {
-                    phantom.setCustomName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Night Stalker");
-                    phantom.setCustomNameVisible(true);
-                    phantom.setPersistent(true);
-                    phantom.setRemoveWhenFarAway(false);
-                    phantom.addScoreboardTag(SUMMON_TAG);
-                    AttributeInstance phantomHealth = phantom.getAttribute(Attribute.MAX_HEALTH);
-                    if (phantomHealth != null) phantomHealth.setBaseValue(30.0);
-                    phantom.setHealth(30.0);
-                    Player near = findNearestPlayer(phantomLoc, 100);
-                    if (near != null) phantom.setTarget(near);
-
-                    WitherSkeleton sniper = (WitherSkeleton) world.spawnEntity(phantomLoc, EntityType.WITHER_SKELETON);
-                    if (sniper != null) {
-                        sniper.setCustomName(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Sniper Skeleton");
-                        sniper.setCustomNameVisible(true);
-                        sniper.setPersistent(true);
-                        sniper.setRemoveWhenFarAway(false);
-                        sniper.addScoreboardTag(SUMMON_TAG);
-                        AttributeInstance sniperHealth = sniper.getAttribute(Attribute.MAX_HEALTH);
-                        if (sniperHealth != null) sniperHealth.setBaseValue(40.0);
-                        sniper.setHealth(40.0);
-                        AttributeInstance followRange = sniper.getAttribute(Attribute.FOLLOW_RANGE);
-                        if (followRange != null) followRange.setBaseValue(40.0);
-                        sniper.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 999999, 0, false, false));
-                        EntityEquipment eq = sniper.getEquipment();
-                        if (eq != null) {
-                            ItemStack bow = new ItemStack(Material.BOW);
-                            ItemMeta bowMeta = bow.getItemMeta();
-                            if (bowMeta != null) {
-                                bowMeta.addEnchant(Enchantment.POWER, 5, true);
-                                bowMeta.addEnchant(Enchantment.INFINITY, 1, true);
-                                bowMeta.setItemName("Sniper Bow");
-                                bow.setItemMeta(bowMeta);
-                            }
-                            eq.setItemInMainHand(bow);
-                            eq.setItemInMainHandDropChance(0);
-                        }
-                        phantom.addPassenger(sniper);
-                    }
-                }
-            }
-        }
-    }
-
-    private void spawnGroundCall(ArmorStand stand, World world, Location center, int extraSets) {
-        Vector dir = stand.getLocation().getDirection();
-        Vector right = dir.clone().crossProduct(new Vector(0, 1, 0)).normalize();
-        if (right.lengthSquared() < 0.01) right = new Vector(1, 0, 0);
-
-        int count = 1 + extraSets;
-        double groundY = center.getY();
-        Location groundCenter = center.clone();
-        groundCenter.setY(groundY);
-
-        for (int side = -1; side <= 1; side += 2) {
-            Location sealLoc = groundCenter.clone().add(right.clone().multiply(side * 5));
-            sealLoc.setY(groundY + 1);
-            spawnTriangleSeal(world, sealLoc, 100, MagicSealListener.Plane.YZ);
-
-            for (int i = 0; i < count; i++) {
-                Location spawnLoc = groundCenter.clone().add(right.clone().multiply(side * (5 + i * 4)));
-                spawnLoc.setY(groundY);
-
-                Ravager ravager = (Ravager) world.spawnEntity(spawnLoc, EntityType.RAVAGER);
-                if (ravager != null) {
-                    ravager.setCustomName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "War Beast");
-                    ravager.setCustomNameVisible(true);
-                    ravager.setPersistent(true);
-                    ravager.setRemoveWhenFarAway(false);
-                    ravager.addScoreboardTag(SUMMON_TAG);
-                    AttributeInstance ravagerHealth = ravager.getAttribute(Attribute.MAX_HEALTH);
-                    if (ravagerHealth != null) ravagerHealth.setBaseValue(300.0);
-                    ravager.setHealth(300.0);
-                    AttributeInstance ravagerDamage = ravager.getAttribute(Attribute.ATTACK_DAMAGE);
-                    if (ravagerDamage != null) ravagerDamage.setBaseValue(24.0);
-                    Player near = findNearestPlayer(spawnLoc, 100);
-                    if (near != null) ravager.setTarget(near);
-
-                    Evoker evoker = (Evoker) world.spawnEntity(spawnLoc, EntityType.EVOKER);
-                    if (evoker != null) {
-                        evoker.setCustomName(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Dark Priest");
-                        evoker.setCustomNameVisible(true);
-                        evoker.setPersistent(true);
-                        evoker.setRemoveWhenFarAway(false);
-                        evoker.addScoreboardTag(SUMMON_TAG);
-                        AttributeInstance evokerHealth = evoker.getAttribute(Attribute.MAX_HEALTH);
-                        if (evokerHealth != null) evokerHealth.setBaseValue(40.0);
-                        evoker.setHealth(40.0);
-                        evoker.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, 0, false, false));
-                        ravager.addPassenger(evoker);
-                    }
-                }
-            }
-        }
-    }
-
-    private void spawnTriangleSeal(World world, Location loc, int durationTicks, MagicSealListener.Plane plane) {
-        MagicSealListener listener = plugin.getMagicSealListener();
-        if (listener == null) return;
-        ArmorStand marker = (ArmorStand) world.spawnEntity(loc, EntityType.ARMOR_STAND);
-        if (marker == null) return;
-        marker.setVisible(false);
-        marker.setGravity(false);
-        marker.setMarker(true);
-        marker.setCustomNameVisible(false);
-        marker.addScoreboardTag("MSC_TriangleSeal");
-        listener.spawnRunicTriangleSeal(marker, durationTicks, plane);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (marker.isValid()) marker.remove();
-        }, durationTicks + 5);
-    }
 
     public int getShieldPlantInterval() {
         return 300 + random.nextInt(100);
@@ -2445,7 +1616,10 @@ public class ArmorStandBoss implements Listener {
                     attackRegistry.get("groundslam").execute(instance);
                 }
             }
-            case "trianglecall", "call" -> startTriangleCall(instance);
+            case "trianglecall", "call" -> {
+                if (instance.triangleCallActive) return false;
+                attackRegistry.get("trianglecall").execute(instance);
+            }
             case "rain", "rainoflances" -> {
                 if (!instance.isFlying) return false;
                 executeAttack("rainoflances", instance, false);
@@ -2464,11 +1638,11 @@ public class ArmorStandBoss implements Listener {
             }
             case "shieldseal", "barrier" -> {
                 if (instance.shieldSealActive || instance.isFlying) return false;
-                startShieldSeal(instance, false);
+                attackRegistry.get("shieldseal").execute(instance);
             }
             case "heal", "healingcircle" -> {
                 if (instance.healingCircleActive || instance.isFlying) return false;
-                startHealingCircle(instance, false);
+                attackRegistry.get("healingcircle").execute(instance);
             }
             // Ground attacks — only while NOT flying
             case "groundshatter", "shieldbash", "lancestorm", "earthpillar", "chaingrapple",
@@ -2499,9 +1673,18 @@ public class ArmorStandBoss implements Listener {
             case "phasestorm" -> phaseTransitionStorm(instance);
             case "phasedespair" -> phaseTransitionDespair(instance);
             // Defensive moves
-            case "stoneskin" -> stoneSkin(instance);
-            case "reflectbarrier" -> reflectBarrier(instance);
-            case "absorbshield" -> absorbShield(instance);
+            case "stoneskin" -> {
+                if (instance.activeDefense != DefenseState.NONE) return false;
+                attackRegistry.get("stoneskin").execute(instance);
+            }
+            case "reflectbarrier" -> {
+                if (instance.activeDefense != DefenseState.NONE) return false;
+                attackRegistry.get("reflectbarrier").execute(instance);
+            }
+            case "absorbshield" -> {
+                if (instance.activeDefense != DefenseState.NONE) return false;
+                attackRegistry.get("absorbshield").execute(instance);
+            }
         }
         return true;
     }
@@ -2596,7 +1779,8 @@ public class ArmorStandBoss implements Listener {
         return stand.getLocation().subtract(0, 0.1, 0).getBlock().getType().isSolid();
     }
 
-    public Player findNearestPlayer(Location center, double range) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBossInteract(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof ArmorStand stand)) return;
         if (stand.getScoreboardTags().contains(TAG)) {
             event.setCancelled(true);
