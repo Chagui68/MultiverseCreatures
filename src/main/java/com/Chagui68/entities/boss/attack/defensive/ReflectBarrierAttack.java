@@ -30,7 +30,8 @@ public class ReflectBarrierAttack extends BossAttackBase {
 
         world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.5f, 1.2f);
         world.playSound(loc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.0f, 1.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1,
+                Color.WHITE);
         world.spawnParticle(Particle.END_ROD, loc.clone().add(0, 5, 0), 50, 3, 5, 3, 0.05);
 
         stand.setBodyPose(new EulerAngle(0, 0, 0));

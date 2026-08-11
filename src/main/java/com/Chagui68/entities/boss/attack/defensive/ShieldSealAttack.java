@@ -203,7 +203,7 @@ public class ShieldSealAttack extends BossAttackBase {
             } catch (Throwable ignored) {
             }
 
-            holder.setBillboard(org.bukkit.entity.Display.Billboard.CENTER);
+            holder.setBillboard(org.bukkit.entity.Display.Billboard.FIXED);
             holder.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.HEAD);
             holder.setViewRange(64.0f);
             holder.setItemStack(shieldItem);
@@ -242,7 +242,7 @@ public class ShieldSealAttack extends BossAttackBase {
             double z = center.getZ() + baseR * Math.sin(rotAngle);
             Location target = new Location(center.getWorld(), x, center.getY() + hOffset, z);
 
-            float displayYaw = (float) Math.toDegrees(rotAngle);
+            float displayYaw = (float) Math.toDegrees(rotAngle) - 90.0f;
             target.setYaw(displayYaw);
             target.setPitch(0);
             d.teleport(target);

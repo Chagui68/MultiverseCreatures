@@ -714,6 +714,39 @@ public class MagicSealListener {
         return task;
     }
 
+    public void spawnInvulnerabilityAura(Location center, int durationTicks) {
+        final World world = center.getWorld();
+        if (world == null) return;
+        final Color gold = Color.fromRGB(0xFFDD00);
+        final Color cyan = Color.fromRGB(0x88CCFF);
+        final double radius = 3.0;
+        new BukkitRunnable() {
+            int t = 0;
+
+            @Override
+            public void run() {
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
+                double rot = t * 0.05;
+                drawCircle(center, radius, gold, 32, rot, Plane.XZ);
+                drawCircle(center, radius * 0.55, Color.WHITE, 24, -rot, Plane.XZ);
+                if (t % 4 == 0) {
+                    for (int i = 0; i < 6; i++) {
+                        double a = (2 * Math.PI * i / 6) + rot;
+                        double[] p = angToXZ(a, radius);
+                        double[] tp = mapTriplePair(p, center, Plane.XZ);
+                        Location loc = new Location(world, tp[0], tp[1], tp[2]);
+                        world.spawnParticle(Particle.END_ROD, loc, 1, 0, 0, 0, 0);
+                    }
+                }
+                world.spawnParticle(Particle.WITCH, center, 1, 0.3, 0.3, 0.3, 0);
+                t += 3;
+            }
+        }.runTaskTimer(plugin, 0L, 3L);
+    }
+
     public void spawnVortexSeal(Location center, int durationTicks) {
         final World world = center.getWorld();
         if (world == null) return;

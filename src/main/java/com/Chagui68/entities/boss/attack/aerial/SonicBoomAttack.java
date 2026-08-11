@@ -27,6 +27,8 @@ public class SonicBoomAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
+        double groundY = boss.getGroundY(center, 40);
+        Location blastLoc = new Location(world, center.getX(), groundY + 1.0, center.getZ());
 
         new BukkitRunnable() {
             int t = 0;
@@ -60,13 +62,13 @@ public class SonicBoomAttack extends BossAttackBase {
                     stand.setBodyPose(new EulerAngle(Math.toRadians(20), 0, 0));
                     stand.setHeadPose(new EulerAngle(Math.toRadians(15), 0, 0));
                     world.playSound(center, Sound.ENTITY_WARDEN_SONIC_BOOM, 3.0f, 0.8f);
-                    world.spawnParticle(Particle.SONIC_BOOM, center, 10, 1, 1, 1, 0);
-                    world.spawnParticle(Particle.EXPLOSION, center, 20, 5, 2, 5, 0);
+                    world.spawnParticle(Particle.SONIC_BOOM, blastLoc, 10, 1, 1, 1, 0);
+                    world.spawnParticle(Particle.EXPLOSION, blastLoc, 20, 5, 2, 5, 0);
                     Vector dir = center.getDirection();
                     if (dir.lengthSquared() < 0.01) dir = new Vector(0, 0, 1);
                     dir.setY(0).normalize();
                     for (Player p : boss.getValidPlayers(world)) {
-                        Vector toPlayer = p.getLocation().toVector().subtract(center.toVector());
+                        Vector toPlayer = p.getLocation().toVector().subtract(blastLoc.toVector());
                         double dist = toPlayer.length();
                         if (dist < 25) {
                             double dot = toPlayer.normalize().dot(dir);
@@ -80,13 +82,13 @@ public class SonicBoomAttack extends BossAttackBase {
                         }
                     }
                     for (double d = 0; d < 25; d += 0.5) {
-                        Location pl = center.clone().add(dir.clone().multiply(d));
+                        Location pl = blastLoc.clone().add(dir.clone().multiply(d));
                         world.spawnParticle(Particle.DUST, pl, 2, 0.2, 0.2, 0.2, 0, new Particle.DustOptions(Color.fromRGB(0xCCFFFF), 2.5f));
                         world.spawnParticle(Particle.SONIC_BOOM, pl, 1, 0.1, 0.1, 0.1, 0);
                     }
                 } else if (t < 40) {
                     for (double d = 0; d < 25; d += 0.5) {
-                        Location pl = center.clone().add(center.getDirection().clone().setY(0).normalize().multiply(d));
+                        Location pl = blastLoc.clone().add(center.getDirection().clone().setY(0).normalize().multiply(d));
                         world.spawnParticle(Particle.DUST, pl, 1, 0.1, 0.1, 0.1, 0, new Particle.DustOptions(Color.fromRGB(0xCCFFFF), 1.5f));
                     }
                 } else {

@@ -170,7 +170,7 @@ public class RainOfLancesAttack extends BossAttackBase {
                         for (Player p : boss.getValidPlayers(world)) {
                             if (p.getLocation().distanceSquared(loc) < 16) {
                                 p.damage(damage);
-                                p.setVelocity(p.getVelocity().add(new Vector(0, 0.3, 0)));
+                                boss.launchPlayer(p, 0.3);
                             }
                         }
 

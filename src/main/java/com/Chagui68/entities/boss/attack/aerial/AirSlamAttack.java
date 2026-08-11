@@ -31,7 +31,12 @@ public class AirSlamAttack extends BossAttackBase {
         World world = stand.getWorld();
 
         instance.aerialAttacksDone.clear();
-        double targetY = Math.max(instance.groundY, stand.getLocation().getY() - 15);
+        double targetY = boss.getGroundY(stand.getLocation(), 80);
+
+        if (instance.flyTask != null) {
+            instance.flyTask.cancel();
+            instance.flyTask = null;
+        }
 
         if (telegraph) {
             world.playSound(stand.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.3f);
@@ -145,7 +150,7 @@ public class AirSlamAttack extends BossAttackBase {
                         double dist = p.getLocation().distance(loc);
                         if (dist <= ATTACK_RADIUS) {
                             p.damage(damage * (1 - dist / ATTACK_RADIUS * 0.5));
-                            p.setVelocity(p.getVelocity().add(new Vector(0, 0.8 + (1 - dist / ATTACK_RADIUS) * 0.5, 0)));
+                            boss.launchPlayer(p, 0.8 + (1 - dist / ATTACK_RADIUS) * 0.5);
                         }
                     }
 

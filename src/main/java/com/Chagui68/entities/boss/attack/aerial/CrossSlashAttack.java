@@ -24,6 +24,7 @@ public class CrossSlashAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
+        double baseY = boss.getGroundY(center, 40) + 0.5;
 
         new BukkitRunnable() {
             int t = 0;
@@ -55,10 +56,10 @@ public class CrossSlashAttack extends BossAttackBase {
                     double sz = 3.0 + (t - 30) * 0.5;
                     for (int d = 0; d < (int) sz; d++) {
                         double h = 0.5 + d * 0.3;
-                        Location p1 = center.clone().add(d * 0.5, -h, 0);
-                        Location p2 = center.clone().add(-d * 0.5, -h, 0);
-                        Location p3 = center.clone().add(0, -h, d * 0.5);
-                        Location p4 = center.clone().add(0, -h, -d * 0.5);
+                        Location p1 = new Location(world, center.getX() + d * 0.5, baseY + h, center.getZ());
+                        Location p2 = new Location(world, center.getX() - d * 0.5, baseY + h, center.getZ());
+                        Location p3 = new Location(world, center.getX(), baseY + h, center.getZ() + d * 0.5);
+                        Location p4 = new Location(world, center.getX(), baseY + h, center.getZ() - d * 0.5);
                         for (Location pl : new Location[]{p1, p2, p3, p4}) {
                             world.spawnParticle(Particle.CRIT, pl, 2, 0.1, 0.1, 0.1, 0.03);
                             world.spawnParticle(Particle.SWEEP_ATTACK, pl, 1, 0, 0, 0, 0);
@@ -70,9 +71,9 @@ public class CrossSlashAttack extends BossAttackBase {
                         Location pLoc = p.getLocation();
                         Vector diff = pLoc.toVector().subtract(center.toVector());
                         diff.setY(0);
-                        if (diff.length() < sz && Math.abs(pLoc.getY() - center.getY()) < 3) {
+                        if (diff.length() < sz && Math.abs(pLoc.getY() - baseY) < 3.5) {
                             p.damage(dmg);
-                            p.setVelocity(new Vector(0, 0.8, 0));
+                            boss.launchPlayer(p, 0.8);
                         }
                     }
                 } else {

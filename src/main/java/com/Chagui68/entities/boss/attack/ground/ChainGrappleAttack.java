@@ -82,13 +82,12 @@ public class ChainGrappleAttack extends BossAttackBase {
                         Player target = boss.detectTarget(stand);
                         if (target != null && target.getLocation().distanceSquared(center) < 16) {
                             target.damage(sealDamage);
-                            target.setVelocity(new Vector(0, 1.5, 0));
+                            boss.launchPlayer(target, 1.5);
                         }
                     } else {
                         boss.resetBossPose(instance);
                         cancel();
                     }
-                    t++;
                 }
                 t++;
             }

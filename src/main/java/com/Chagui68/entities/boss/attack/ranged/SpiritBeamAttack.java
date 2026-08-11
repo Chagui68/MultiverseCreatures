@@ -61,7 +61,8 @@ public class SpiritBeamAttack extends BossAttackBase {
                     if (t % 6 == 0) world.playSound(center, Sound.ENTITY_EVOKER_PREPARE_SUMMON, 0.8f, 0.4f);
                 } else if (t < 90) {
                     if (t == 35) {
-                        world.spawnParticle(Particle.FLASH, center.clone().add(0, 1, 0), 1);
+                        world.spawnParticle(Particle.FLASH, center.clone().add(0, 1, 0), 1,
+                                Color.WHITE);
                         world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 1.5f, 1.5f);
                     }
                     for (Player p : targets) {

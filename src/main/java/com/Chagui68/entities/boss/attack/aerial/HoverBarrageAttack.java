@@ -28,6 +28,11 @@ public class HoverBarrageAttack extends BossAttackBase {
         if (instance.hoverBarrageActive) return;
         instance.hoverBarrageActive = true;
 
+        if (instance.hoverBarrageTask != null) {
+            instance.hoverBarrageTask.cancel();
+            instance.hoverBarrageTask = null;
+        }
+
         ArmorStand stand = instance.stand;
         Location startLoc = stand.getLocation();
         boolean fromAir = instance.isFlying;

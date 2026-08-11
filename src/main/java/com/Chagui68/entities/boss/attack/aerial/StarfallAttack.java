@@ -61,6 +61,7 @@ public class StarfallAttack extends BossAttackBase {
                         double x = center.getX() + Math.cos(angle) * r;
                         double z = center.getZ() + Math.sin(angle) * r;
                         Location start = new Location(world, x, center.getY() + 15 + random.nextDouble() * 10, z);
+                        double startGroundY = boss.getGroundY(start, 60);
                         world.spawnParticle(Particle.EXPLOSION, start, 2, 0.5, 0.5, 0.5, 0);
                         world.playSound(start, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 0.6f, 0.8f);
                         new BukkitRunnable() {
@@ -68,7 +69,7 @@ public class StarfallAttack extends BossAttackBase {
 
                             @Override
                             public void run() {
-                                if (ft > 30) {
+                                if (ft > 45) {
                                     cancel();
                                     return;
                                 }
@@ -76,7 +77,7 @@ public class StarfallAttack extends BossAttackBase {
                                 world.spawnParticle(Particle.FLAME, fall, 5, 0.5, 0.3, 0.5, 0.02);
                                 world.spawnParticle(Particle.DUST, fall, 3, 0, 0, 0, 0,
                                         new Particle.DustOptions(Color.fromRGB(0xFFFFAA), 1.5f));
-                                if (fall.getY() <= center.getY() + 0.5) {
+                                if (fall.getY() <= startGroundY + 0.5) {
                                     world.spawnParticle(Particle.EXPLOSION, fall, 8, 2, 0.5, 2, 0);
                                     world.spawnParticle(Particle.FLAME, fall, 15, 1, 0.3, 1, 0.05);
                                     world.playSound(fall, Sound.ENTITY_GENERIC_EXPLODE, 1.2f, 0.6f);
@@ -84,7 +85,7 @@ public class StarfallAttack extends BossAttackBase {
                                     for (Player p : boss.getValidPlayers(world)) {
                                         if (p.getLocation().distanceSquared(fall) < 25) {
                                             p.damage(dmg);
-                                            p.setVelocity(new Vector(0, 0.6, 0));
+                                            boss.launchPlayer(p, 0.6);
                                         }
                                     }
                                     cancel();

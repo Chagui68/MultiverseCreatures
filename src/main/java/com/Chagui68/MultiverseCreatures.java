@@ -5,6 +5,7 @@ import com.Chagui68.entities.miniboss.Mahoraga;
 import com.Chagui68.entities.boss.ArmorStandBoss;
 import com.Chagui68.entities.boss.MagicSealListener;
 import com.Chagui68.entities.handler.MobHandler;
+import com.Chagui68.entities.Kinger;
 import com.Chagui68.entities.BoneShield;
 import com.Chagui68.entities.ChaosMage;
 import com.Chagui68.entities.CreeperJr;
@@ -20,22 +21,37 @@ import com.Chagui68.entities.StormCaller;
 import com.Chagui68.entities.VenomWitch;
 import com.Chagui68.entities.VoidCrawler;
 import com.Chagui68.entities.ZombieHorseTrap;
-import com.Chagui68.items.food.HeadSlimeGelatin;
-import com.Chagui68.items.components.HeadSlimeHeart;
-import com.Chagui68.items.components.MilitaryComponent;
-import com.Chagui68.items.misc.MilitaryMine;
-import com.Chagui68.items.components.StarCore;
-import com.Chagui68.listener.*;
+import com.Chagui68.items.recipes.RecipeManager;
+import com.Chagui68.listener.armor.EightHandledWheelHandler;
+import com.Chagui68.listener.armor.ObsidianBastionHandler;
+import com.Chagui68.listener.bossdimension.BossDimensionBlockHandler;
+import com.Chagui68.listener.bossdimension.BossDimensionCommandHandler;
+import com.Chagui68.listener.bossdimension.BossInvocationManager;
+import com.Chagui68.listener.combat.ItemCombatHandler;
+import com.Chagui68.listener.CustomItemPlaceHandler;
+import com.Chagui68.listener.dio.DioStandHandler;
+import com.Chagui68.listener.entities.EntitiesIAHandler;
+import com.Chagui68.listener.food.ItemFoodHandler;
+import com.Chagui68.listener.misc.IceCrownHandler;
+import com.Chagui68.listener.misc.MantisClawsHandler;
+import com.Chagui68.listener.misc.MineHandler;
+import com.Chagui68.listener.misc.WirtsLanternHandler;
+import com.Chagui68.listener.offhand.FrostHeartOffhandHandler;
+import com.Chagui68.listener.offhand.MarrowAegisHandler;
+import com.Chagui68.listener.offhand.VeilwalkerMantleHandler;
+import com.Chagui68.listener.recipes.RecipeGuardListener;
+import com.Chagui68.listener.ritual.RitualCandleListener;
+import com.Chagui68.listener.weapons.magic.ChaosForgeHandler;
+import com.Chagui68.listener.weapons.magic.SkyfireTalismanHandler;
+import com.Chagui68.listener.weapons.melee.CinderGreatswordHandler;
+import com.Chagui68.listener.weapons.melee.NullshearEdgeHandler;
+import com.Chagui68.listener.weapons.melee.SoulreapScytheHandler;
+import com.Chagui68.listener.weapons.melee.VenomfangHandler;
+import com.Chagui68.listener.weapons.ranged.AetherPullshotHandler;
 import com.Chagui68.music.MusicManager;
 import com.Chagui68.ritual.BossDimensionManager;
 import com.Chagui68.ritual.RitualManager;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MultiverseCreatures extends JavaPlugin {
@@ -63,12 +79,13 @@ public class MultiverseCreatures extends JavaPlugin {
     private SoulReaper soulReaper;
     private ChaosMage chaosMage;
     private EnderKnight enderKnight;
+    private Kinger kinger;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
 
-        registerRecipes();
+        RecipeManager.registerRecipes();
 
         freezeAbility = new FreezeAbility(this);
         dioBoss = new DioBoss(this);
@@ -91,6 +108,7 @@ public class MultiverseCreatures extends JavaPlugin {
         soulReaper = new SoulReaper(this);
         chaosMage = new ChaosMage(this);
         enderKnight = new EnderKnight(this);
+        kinger = new Kinger(this);
 
         bossDimensionManager = new BossDimensionManager(this);
 
@@ -115,50 +133,23 @@ public class MultiverseCreatures extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RitualCandleListener(this), this);
         getServer().getPluginManager().registerEvents(new BossInvocationManager(this), this);
 
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.CinderGreatswordHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.VeilwalkerMantleHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.SoulreapScytheHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.MarrowAegisHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.ObsidianBastionHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.FrostHeartOffhandHandler(), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.SkyfireTalismanHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.NullshearEdgeHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.EightHandledWheelHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.AetherPullshotHandler(this), this);
-        getServer().getPluginManager().registerEvents(new com.Chagui68.listener.ChaosForgeHandler(), this);
+        getServer().getPluginManager().registerEvents(new CinderGreatswordHandler(this), this);
+        getServer().getPluginManager().registerEvents(new VeilwalkerMantleHandler(this), this);
+        getServer().getPluginManager().registerEvents(new SoulreapScytheHandler(this), this);
+        getServer().getPluginManager().registerEvents(new MarrowAegisHandler(this), this);
+        getServer().getPluginManager().registerEvents(new ObsidianBastionHandler(this), this);
+        getServer().getPluginManager().registerEvents(new FrostHeartOffhandHandler(this), this);
+        getServer().getPluginManager().registerEvents(new SkyfireTalismanHandler(this), this);
+        getServer().getPluginManager().registerEvents(new NullshearEdgeHandler(this), this);
+        getServer().getPluginManager().registerEvents(new EightHandledWheelHandler(this), this);
+        getServer().getPluginManager().registerEvents(new AetherPullshotHandler(this), this);
+        getServer().getPluginManager().registerEvents(new ChaosForgeHandler(), this);
+        getServer().getPluginManager().registerEvents(new VenomfangHandler(), this);
+        getServer().getPluginManager().registerEvents(new CustomItemPlaceHandler(), this);
 
         com.Chagui68.commands.MSCCommand mscCommand = new com.Chagui68.commands.MSCCommand(this, mobHandler);
         getCommand("msc").setExecutor(mscCommand);
         getCommand("msc").setTabCompleter(mscCommand);
-    }
-
-    private void registerRecipes() {
-        NamespacedKey key = new NamespacedKey(this, "star_core");
-        ShapedRecipe recipe = new ShapedRecipe(key, StarCore.STAR_CORE.clone());
-
-        recipe.shape("NBN", "BSB", "NBN");
-
-        recipe.setIngredient('N', Material.NETHERITE_BLOCK);
-        recipe.setIngredient('B', Material.DIAMOND_BLOCK);
-        recipe.setIngredient('S', Material.NETHER_STAR);
-
-        Bukkit.addRecipe(recipe);
-
-        NamespacedKey mineKey = new NamespacedKey(this, "military_mine");
-        ShapedRecipe mineRecipe = new ShapedRecipe(mineKey, MilitaryMine.MILITARY_MINE.clone());
-        mineRecipe.shape("IMI", "MTM", "IMI");
-        mineRecipe.setIngredient('I', Material.IRON_BLOCK);
-        mineRecipe.setIngredient('T', Material.TNT);
-        mineRecipe.setIngredient('M', new RecipeChoice.ExactChoice(MilitaryComponent.MILITARY_COMPONENT.clone()));
-        Bukkit.addRecipe(mineRecipe);
-
-        NamespacedKey gelatinKey = new NamespacedKey(this, "head_slime_gelatin");
-        ShapedRecipe gelatinRecipe = new ShapedRecipe(gelatinKey, HeadSlimeGelatin.HEAD_SLIME_GELATIN.clone());
-        gelatinRecipe.shape("ASA", "SHS", "ASA");
-        gelatinRecipe.setIngredient('A', Material.APPLE);
-        gelatinRecipe.setIngredient('S', Material.SLIME_BALL);
-        gelatinRecipe.setIngredient('H', new RecipeChoice.ExactChoice(HeadSlimeHeart.HEAD_SLIME_HEART.clone()));
-        Bukkit.addRecipe(gelatinRecipe);
     }
 
     @Override
@@ -265,5 +256,9 @@ public class MultiverseCreatures extends JavaPlugin {
 
     public EnderKnight getEnderKnight() {
         return enderKnight;
+    }
+
+    public Kinger getKinger() {
+        return kinger;
     }
 }

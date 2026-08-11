@@ -100,6 +100,7 @@ public class ArmorStandBoss implements Listener {
     private double sealDamage;
     private double hoverBarrageDamage;
     private double aggroRange;
+    private double maxDamagePerHit;
 
     public ArmorStandBoss(MultiverseCreatures plugin) {
         this.plugin = plugin;
@@ -166,6 +167,7 @@ public class ArmorStandBoss implements Listener {
         this.sealDamage = plugin.getConfig().getDouble("armor-stand-boss.seal-damage", 15.0);
         this.hoverBarrageDamage = plugin.getConfig().getDouble("armor-stand-boss.hover-barrage-damage", 12.0);
         this.aggroRange = plugin.getConfig().getDouble("armor-stand-boss.aggro-range", 50.0);
+        this.maxDamagePerHit = plugin.getConfig().getDouble("armor-stand-boss.max-damage-per-hit", 50.0);
     }
 
     public MultiverseCreatures getPlugin() {
@@ -201,6 +203,11 @@ public class ArmorStandBoss implements Listener {
         return result;
     }
 
+    public void launchPlayer(Player p, double y) {
+        if (p.getVelocity().getY() > 0.1) return;
+        p.setVelocity(p.getVelocity().setY(y));
+    }
+
     private void reloadExistingBosses() {
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
@@ -223,7 +230,7 @@ public class ArmorStandBoss implements Listener {
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         if (stand == null) return false;
 
-        double health = plugin.getConfig().getDouble("armor-stand-boss.health", 500.0);
+        double health = plugin.getConfig().getDouble("armor-stand-boss.health", 1000.0);
         AttributeInstance maxHealthAttr = stand.getAttribute(Attribute.MAX_HEALTH);
         if (maxHealthAttr != null) maxHealthAttr.setBaseValue(health);
         stand.setHealth(health);
@@ -434,6 +441,10 @@ public class ArmorStandBoss implements Listener {
         else if (healthPercent > 0.2) newPhase = 3;
         else newPhase = 4;
 
+        if (newPhase < instance.currentPhase) {
+            newPhase = instance.currentPhase;
+        }
+
         if (newPhase != instance.currentPhase) {
             int oldPhase = instance.currentPhase;
             instance.currentPhase = newPhase;
@@ -517,6 +528,41 @@ public class ArmorStandBoss implements Listener {
 
                 updateBossMusic(instance, stand.getLocation());
 
+                if (instance.hoverBarrageActive) {
+                    instance.hoverBarrageTicks++;
+                    if (instance.hoverBarrageTicks > 800) {
+                        if (instance.hoverBarrageTask != null) {
+                            instance.hoverBarrageTask.cancel();
+                            instance.hoverBarrageTask = null;
+                        }
+                        instance.hoverBarrageActive = false;
+                        instance.hoverBarrageTicks = 0;
+                        stand.getWorld().spawnParticle(Particle.CLOUD, stand.getLocation(), 20, 1, 1, 1, 0.1);
+                    }
+                } else {
+                    instance.hoverBarrageTicks = 0;
+                }
+
+                if (instance.flyTask != null) {
+                    double currentY = stand.getLocation().getY();
+                    if (Math.abs(currentY - instance.lastAirY) > 0.001) {
+                        instance.airStuckTicks = 0;
+                        instance.lastAirY = currentY;
+                    } else {
+                        instance.airStuckTicks++;
+                        if (instance.airStuckTicks > 60) {
+                            instance.flyTask.cancel();
+                            instance.flyTask = null;
+                            instance.isFlying = false;
+                            instance.flyingTimer = 0;
+                            instance.airStuckTicks = 0;
+                        }
+                    }
+                } else {
+                    instance.airStuckTicks = 0;
+                    instance.lastAirY = stand.getLocation().getY();
+                }
+
                 if (instance.healingCircleActive || instance.shieldSealActive) {
                     if (instance.shieldSealActive) {
                         attackRegistry.get("groundslam").execute(instance);
@@ -549,10 +595,23 @@ public class ArmorStandBoss implements Listener {
                                 airSlam(instance, true);
                             }
                         }
-                    } else if (instance.shieldState == ShieldState.NORMAL && isOnGround(stand)) {
+                    } else if (!isOnGround(stand)) {
+                        if (instance.flyTask == null && !instance.hoverBarrageActive) {
+                            Location loc = stand.getLocation();
+                            double groundY = getGroundY(loc, 80);
+                            if (loc.getY() - groundY > 0.3) {
+                                loc.setY(Math.max(groundY, loc.getY() - 0.8));
+                                stand.teleport(loc);
+                                stand.getWorld().spawnParticle(Particle.CLOUD, loc, 2, 0.5, 0.1, 0.5, 0.02);
+                            } else {
+                                loc.setY(groundY);
+                                stand.teleport(loc);
+                            }
+                        }
+                    } else if (instance.shieldState == ShieldState.NORMAL) {
                         instance.hoverBarrageCooldown++;
                         instance.groundAttackCooldown++;
-                        if (instance.hoverBarrageCooldown >= 400 + random.nextInt(200)) {
+                        if (instance.hoverBarrageCooldown >= 240 + random.nextInt(120)) {
                             instance.hoverBarrageCooldown = 0;
 
                             double maxHealth = stand.getAttribute(Attribute.MAX_HEALTH) != null
@@ -577,7 +636,7 @@ public class ArmorStandBoss implements Listener {
                             }
                         } else if (instance.defenseCooldown > 0) {
                             instance.defenseCooldown--;
-                        } else if (instance.groundAttackCooldown >= 150 + random.nextInt(100)) {
+                        } else if (instance.groundAttackCooldown >= 60 + random.nextInt(60)) {
                             instance.groundAttackCooldown = 0;
                             double maxHealth = stand.getAttribute(Attribute.MAX_HEALTH) != null
                                     ? stand.getAttribute(Attribute.MAX_HEALTH).getValue() : 500.0;
@@ -627,7 +686,7 @@ public class ArmorStandBoss implements Listener {
                     instance.noPlayerTicks = 0;
                 } else {
                     instance.noPlayerTicks++;
-                    if (instance.noPlayerTicks >= 400) {
+                    if (instance.noPlayerTicks >= 1) {
                         cleanupShield(instance);
                         stopBossMusic(instance, true);
                         if (instance.bossBar != null) {
@@ -703,7 +762,8 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2.0f, 0.3f);
         world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.5f, 0.8f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1,
+                Color.WHITE);
         world.spawnParticle(Particle.EXPLOSION, loc.clone().add(0, 5, 0), 50, 5, 5, 5, 0);
         for (int i = 0; i < 40; i++) {
             double angle = random.nextDouble() * Math.PI * 2;
@@ -723,11 +783,8 @@ public class ArmorStandBoss implements Listener {
         stand.setHeadPose(new EulerAngle(Math.toRadians(-15), 0, 0));
 
         if (plugin.getMagicSealListener() != null) {
-            plugin.getMagicSealListener().spawnCelestialSeal(stand, 100);
+            plugin.getMagicSealListener().spawnInvulnerabilityAura(stand.getLocation().clone().add(0, 7, 0), 100);
         }
-
-        double newHealth = Math.min(stand.getHealth() + 30, stand.getAttribute(Attribute.MAX_HEALTH) != null ? stand.getAttribute(Attribute.MAX_HEALTH).getValue() : 500.0);
-        stand.setHealth(newHealth);
 
         new BukkitRunnable() {
             @Override
@@ -745,7 +802,8 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2.0f, 0.6f);
         world.playSound(loc, Sound.ENTITY_WITHER_SPAWN, 1.5f, 0.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1,
+                Color.WHITE);
 
         for (int i = 0; i < 15; i++) {
             double angle = random.nextDouble() * Math.PI * 2;
@@ -794,7 +852,8 @@ public class ArmorStandBoss implements Listener {
 
         world.playSound(loc, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.3f);
         world.playSound(loc, Sound.ENTITY_ENDER_DRAGON_DEATH, 2.0f, 0.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1,
+                Color.WHITE);
         world.spawnParticle(Particle.EXPLOSION, loc.clone().add(0, 5, 0), 80, 8, 8, 8, 0);
         world.spawnParticle(Particle.SOUL, loc.clone().add(0, 5, 0), 100, 6, 6, 6, 0.1);
         world.spawnParticle(Particle.PORTAL, loc.clone().add(0, 5, 0), 80, 5, 5, 5, 0.05);
@@ -832,6 +891,11 @@ public class ArmorStandBoss implements Listener {
     public void startHoverBarrage(BossInstance instance) {
         if (instance.hoverBarrageActive) return;
         instance.hoverBarrageActive = true;
+
+        if (instance.hoverBarrageTask != null) {
+            instance.hoverBarrageTask.cancel();
+            instance.hoverBarrageTask = null;
+        }
 
         ArmorStand stand = instance.stand;
         Location startLoc = stand.getLocation();
@@ -938,8 +1002,10 @@ public class ArmorStandBoss implements Listener {
                     tick++;
                     if (tick % 2 == 0) {
                         Location loc = stand.getLocation();
+                        double groundY = getGroundY(startLoc, 80);
                         double newY = loc.getY() - 0.5;
-                        if (newY <= startLoc.getY()) {
+                        if (newY <= groundY) {
+                            startLoc.setY(groundY);
                             stand.teleport(startLoc);
                             stand.getWorld().spawnParticle(Particle.CLOUD, startLoc, 20, 1, 0.5, 1, 0.1);
                             stand.getWorld().playSound(startLoc, Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 0.7f);
@@ -968,10 +1034,15 @@ public class ArmorStandBoss implements Listener {
         if (stand.isDead() || !stand.isValid()) return;
         World world = stand.getWorld();
 
-        instance.groundY = stand.getLocation().getY();
+        instance.groundY = getGroundY(stand.getLocation(), 80);
         instance.isFlying = true;
         instance.flyingTimer = 0;
         instance.aerialAttacksDone.clear();
+
+        if (instance.flyTask != null) {
+            instance.flyTask.cancel();
+            instance.flyTask = null;
+        }
 
         double startY = instance.groundY;
         double targetY = startY + FLY_HEIGHT;
@@ -1076,7 +1147,12 @@ public class ArmorStandBoss implements Listener {
         instance.flyingTimer = 0;
         instance.aerialAttacksDone.clear();
 
-        double targetY = instance.groundY;
+        if (instance.flyTask != null) {
+            instance.flyTask.cancel();
+            instance.flyTask = null;
+        }
+
+        double targetY = getGroundY(stand.getLocation(), 80);
 
         instance.flyTask = new BukkitRunnable() {
             int ticks = 0;
@@ -1171,19 +1247,35 @@ public class ArmorStandBoss implements Listener {
         return Math.sqrt(nearest);
     }
 
+    public double getGroundY(Location loc, double maxScan) {
+        for (double dy = 1; dy <= maxScan; dy++) {
+            if (loc.clone().subtract(0, dy, 0).getBlock().getType().isSolid()) {
+                return loc.getY() - dy + 1;
+            }
+        }
+        return loc.getY();
+    }
+
     private enum DistCategory {CLOSE, MEDIUM, FAR}
 
     private void executeRandomAerialAttack(BossInstance instance) {
         ArmorStand stand = instance.stand;
         if (stand.isDead() || !stand.isValid()) return;
 
+        double nearestDist = getNearestPlayerDistance(stand.getLocation());
+        String[] allAerial;
+        if (nearestDist < 15) {
+            allAerial = new String[]{"aerialrush", "crossslash", "novaburst"};
+        } else if (nearestDist < 35) {
+            allAerial = new String[]{"sonicboom", "windcutter", "gravitywell", "darkorb", "aerialrush"};
+        } else {
+            allAerial = new String[]{"starfall", "lightningstorm", "heavenlyjudgment", "darkorb"};
+        }
+
         List<String> available = new ArrayList<>();
-        String[] allAerial = {"starfall", "aerialrush", "sonicboom", "lightningstorm", "gravitywell",
-                "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment"};
         for (String a : allAerial) {
             if (!instance.aerialAttacksDone.contains(a)) available.add(a);
         }
-
         if (available.isEmpty()) {
             available.addAll(Arrays.asList(allAerial));
         }
@@ -1209,6 +1301,10 @@ public class ArmorStandBoss implements Listener {
         if (nearestDist < DIST_CLOSE) {
             choice = closeAttacks[random.nextInt(closeAttacks.length)];
         } else if (nearestDist < DIST_MEDIUM) {
+            if (random.nextInt(100) < 25) {
+                executeRangedAttack(instance);
+                return;
+            }
             choice = mediumAttacks[random.nextInt(mediumAttacks.length)];
         } else {
             if (random.nextInt(100) < 85) {
@@ -1454,6 +1550,10 @@ public class ArmorStandBoss implements Listener {
     }
 
     private void cleanupShield(BossInstance instance) {
+        if (instance.groundSlamTask != null) {
+            instance.groundSlamTask.cancel();
+            instance.groundSlamTask = null;
+        }
         if (instance.wingTask != null) {
             instance.wingTask.cancel();
             instance.wingTask = null;
@@ -1514,7 +1614,12 @@ public class ArmorStandBoss implements Listener {
 
         for (Player p : getValidPlayersNear(bossLoc, MUSIC_RANGE * MUSIC_RANGE)) {
             if (!p.getWorld().equals(bossLoc.getWorld())) continue;
-            if (plugin.getMusicManager().isPlaying(p)) continue;
+            if (plugin.getMusicManager().isPlaying(p)) {
+                if (!instance.bossMusicListeners.contains(p.getUniqueId())) {
+                    currentListeners.add(p.getUniqueId());
+                }
+                continue;
+            }
 
             try {
                 plugin.getMusicManager().play("Undertale-Megalovania", p, true);
@@ -1533,7 +1638,10 @@ public class ArmorStandBoss implements Listener {
             while (it.hasNext()) {
                 UUID id = it.next();
                 Player p = Bukkit.getPlayer(id);
-                if (p == null || !p.isOnline() || !p.getWorld().equals(bossLoc.getWorld())) {
+                if (p == null || !p.isOnline() || !p.getWorld().equals(bossLoc.getWorld()) || p.isDead()) {
+                    if (p != null && p.isOnline()) {
+                        plugin.getMusicManager().stop(p);
+                    }
                     toRemove.add(id);
                     continue;
                 }
@@ -1855,7 +1963,11 @@ public class ArmorStandBoss implements Listener {
                     stand.getWorld().spawnParticle(Particle.CRIT, player.getLocation().add(0, 1, 0), 5, 0.3, 0.3, 0.3, 0.05);
                     player.sendMessage(ChatColor.GRAY + "The Sentinel is invulnerable!");
                 } else {
-                    if (instance.shieldSealActive) damage *= 0.7;
+                    if (instance.shieldSealActive) {
+                        damage *= 0.5;
+                        stand.getWorld().playSound(stand.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.3f);
+                        stand.getWorld().spawnParticle(Particle.END_ROD, stand.getLocation().add(0, 6, 0), 8, 3.0, 3.0, 3.0, 0.02);
+                    }
                     if (instance.healingCircleActive) damage *= 0.8;
 
                     switch (instance.activeDefense) {
@@ -1877,6 +1989,10 @@ public class ArmorStandBoss implements Listener {
                         }
                     }
                 }
+            }
+
+            if (damage > maxDamagePerHit) {
+                damage = maxDamagePerHit;
             }
 
             double newHealth = Math.max(0, stand.getHealth() - damage);
@@ -1904,6 +2020,10 @@ public class ArmorStandBoss implements Listener {
 
         BossInstance instance = activeBosses.remove(stand.getUniqueId());
         if (instance != null) {
+            if (instance.groundSlamTask != null) {
+                instance.groundSlamTask.cancel();
+                instance.groundSlamTask = null;
+            }
             if (instance.wingTask != null) {
                 instance.wingTask.cancel();
                 instance.wingTask = null;

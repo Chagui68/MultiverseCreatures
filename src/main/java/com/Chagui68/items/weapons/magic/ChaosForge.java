@@ -15,7 +15,7 @@ public class ChaosForge {
     public static final NamespacedKey FORGE_KEY = new NamespacedKey("multiversecreatures", "msc_chaos_forge");
     public static final ItemStack CHAOS_FORGE = new ItemStack(Material.ANVIL);
 
-    public static final int MAX_ENCHANT_LEVEL = 30;
+    public static final int MAX_ENCHANT_LEVEL = 254;
     public static final String REFORGED_PDC_KEY = "msc_chaos_reforged";
     public static final String REFORGED_LORE_TAG = ChatColor.DARK_RED + "" + ChatColor.ITALIC + "⟡ Reforged by Chaos ⟡";
 
@@ -29,16 +29,17 @@ public class ChaosForge {
             lore.add(ChatColor.GRAY + "It cannot create — only twist what");
             lore.add(ChatColor.GRAY + "is already written upon an item.");
             lore.add("");
-            lore.add(ChatColor.AQUA + "Item Ability: " + ChatColor.WHITE + "Reforge " + ChatColor.GRAY + "(Right-Click while holding target)");
-            lore.add(ChatColor.GRAY + "  Hold an enchanted item in your main hand and");
-            lore.add(ChatColor.GRAY + "  right-click with the Forge in your off-hand.");
-            lore.add(ChatColor.GRAY + "  Each existing enchantment on the target rises");
-            lore.add(ChatColor.GRAY + "  by " + ChatColor.GOLD + "+1 level " + ChatColor.GRAY + "(cap " + ChatColor.GOLD + "30" + ChatColor.GRAY + ").");
+            lore.add(ChatColor.AQUA + "Item Ability: " + ChatColor.WHITE + "Reforge " + ChatColor.GRAY + "(Right-Click)");
+            lore.add(ChatColor.GRAY + "  Hold the item to reforge in your " + ChatColor.WHITE + "off-hand" + ChatColor.GRAY + " and the");
+            lore.add(ChatColor.WHITE + "  Chaos Forge" + ChatColor.GRAY + " in your main hand, then right-click.");
+            lore.add(ChatColor.GRAY + "  Improves " + ChatColor.GOLD + "1 random enchantment" + ChatColor.GRAY + " by");
+            lore.add(ChatColor.GRAY + "  " + ChatColor.GOLD + "+1 level " + ChatColor.GRAY + "(cap " + ChatColor.GOLD + "254" + ChatColor.GRAY + ").");
             lore.add("");
             lore.add(ChatColor.WHITE + "Restrictions:");
             lore.add(ChatColor.RED + "  ▸ " + ChatColor.GRAY + "Only items with existing enchantments");
-            lore.add(ChatColor.RED + "  ▸ " + ChatColor.GRAY + "Each item can only be reforged once");
-            lore.add(ChatColor.RED + "  ▸ " + ChatColor.GRAY + "Consumes " + ChatColor.LIGHT_PURPLE + "1 Chaos Orb " + ChatColor.GRAY + "from your inventory");
+            lore.add(ChatColor.RED + "  ▸ " + ChatColor.GRAY + "Consumes " + ChatColor.LIGHT_PURPLE + "1 Chaos Orb " + ChatColor.GRAY + "(once per item)");
+            lore.add(ChatColor.RED + "  ▸ " + ChatColor.GRAY + "or " + ChatColor.DARK_PURPLE + "1 Condensed Chaos Orb " + ChatColor.GRAY + "for unlimited reforges");
+            lore.add(ChatColor.RED + "  ▸ " + ChatColor.GRAY + "Requires the item to have been reforged once");
             lore.add("");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"In the orb, all possibilities;");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "in the hand, only one.\"");

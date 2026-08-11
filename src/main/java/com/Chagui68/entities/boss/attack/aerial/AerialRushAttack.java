@@ -214,7 +214,7 @@ public class AerialRushAttack extends BossAttackBase {
                     world.playSound(stand.getLocation(), Sound.ENTITY_WITHER_SPAWN, 2.0f, 0.6f);
                 }
                 double newY = stand.getLocation().getY() - DASH_SPEED;
-                double targetY = instance.groundY + 0.5;
+                double targetY = boss.getGroundY(stand.getLocation(), 80);
                 if (newY <= targetY) {
                     Location loc = stand.getLocation();
                     loc.setY(targetY);
@@ -243,7 +243,8 @@ public class AerialRushAttack extends BossAttackBase {
                 world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 0.5f);
                 world.playSound(loc, Sound.ENTITY_WITHER_DEATH, 1.5f, 0.7f);
                 world.spawnParticle(Particle.EXPLOSION, loc, 25, 3, 1.5, 3, 0);
-                world.spawnParticle(Particle.FLASH, loc, 1);
+                world.spawnParticle(Particle.FLASH, loc, 1,
+                        Color.WHITE);
 
                 double dmg = sealDamage * 1.4;
                 for (Player p : boss.getValidPlayers(world)) {

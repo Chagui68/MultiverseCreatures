@@ -46,11 +46,15 @@ public class BossInstance {
     public int healingCircleTimer = 0;
     public double healingCircleHealed = 0;
     public BukkitRunnable healingCircleTask;
+    public BukkitRunnable groundSlamTask;
     public BukkitRunnable floatingShieldTask;
     public BukkitRunnable wingTask;
     public BukkitRunnable hoverBarrageTask;
     public BukkitRunnable triangleCallTask;
     public BukkitRunnable flyTask;
+    public int hoverBarrageTicks = 0;
+    public int airStuckTicks = 0;
+    public double lastAirY = Double.MAX_VALUE;
     public final Map<UUID, Location> pentagramCenters = new HashMap<>();
     public final Set<UUID> bossMusicListeners = new HashSet<>();
     public int bossMusicTick = 0;

@@ -74,7 +74,7 @@ public class WarStompAttack extends BossAttackBase {
                                     for (Player p : boss.getValidPlayers(world)) {
                                         if (p.getLocation().distance(center) < radius + 1) {
                                             p.damage(8.0 * (1 - r * 0.1));
-                                            p.setVelocity(new Vector(0, 0.5, 0));
+                                            boss.launchPlayer(p, 0.5);
                                             p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 1));
                                         }
                                     }

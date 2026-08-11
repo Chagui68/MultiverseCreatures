@@ -28,8 +28,10 @@ public class NovaBurstAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
+        double groundY = boss.getGroundY(center, 40);
+        Location boomLoc = new Location(world, center.getX(), groundY + 1.0, center.getZ());
         if (plugin.getMagicSealListener() != null) {
-            plugin.getMagicSealListener().spawnLargePentagramSeal(center.clone().add(0, 0.5, 0), 50, 8.0, MagicSealListener.Plane.XZ);
+            plugin.getMagicSealListener().spawnLargePentagramSeal(boomLoc.clone().add(0, 0.5, 0), 50, 8.0, MagicSealListener.Plane.XZ);
         }
 
         new BukkitRunnable() {
@@ -65,15 +67,15 @@ public class NovaBurstAttack extends BossAttackBase {
                     stand.setBodyPose(new EulerAngle(Math.toRadians(-20), 0, 0));
                     stand.setHeadPose(new EulerAngle(Math.toRadians(-30), 0, 0));
                     world.playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 3.0f, 0.4f);
-                    world.spawnParticle(Particle.EXPLOSION, center, 30, 6, 3, 6, 0);
-                    world.spawnParticle(Particle.FLAME, center, 80, 4, 2, 4, 0.08);
-                    world.spawnParticle(Particle.CLOUD, center, 60, 5, 2, 5, 0.15);
+                    world.spawnParticle(Particle.EXPLOSION, boomLoc, 30, 6, 3, 6, 0);
+                    world.spawnParticle(Particle.FLAME, boomLoc, 80, 4, 2, 4, 0.08);
+                    world.spawnParticle(Particle.CLOUD, boomLoc, 60, 5, 2, 5, 0.15);
                     double dmg = sealDamage;
                     for (Player p : boss.getValidPlayers(world)) {
-                        double dist = p.getLocation().distance(center);
+                        double dist = p.getLocation().distance(boomLoc);
                         if (dist < 20) {
                             p.damage(dmg * (1 - dist / 20 * 0.6));
-                            p.setVelocity(new Vector(0, 1.0 + (1 - dist / 20) * 0.5, 0));
+                            boss.launchPlayer(p, 1.0 + (1 - dist / 20) * 0.5);
                             p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
                         }
                     }
@@ -83,8 +85,8 @@ public class NovaBurstAttack extends BossAttackBase {
                         double r = random.nextDouble() * 8;
                         double x = center.getX() + Math.cos(angle) * r;
                         double z = center.getZ() + Math.sin(angle) * r;
-                        world.spawnParticle(Particle.FLAME, new Location(world, x, center.getY() + random.nextDouble() * 4, z), 2, 0.2, 0.2, 0.2, 0.02);
-                        world.spawnParticle(Particle.SMOKE, new Location(world, x, center.getY() + random.nextDouble() * 3, z), 1, 0.3, 0.3, 0.3, 0.03);
+                        world.spawnParticle(Particle.FLAME, new Location(world, x, boomLoc.getY() + random.nextDouble() * 4, z), 2, 0.2, 0.2, 0.2, 0.02);
+                        world.spawnParticle(Particle.SMOKE, new Location(world, x, boomLoc.getY() + random.nextDouble() * 3, z), 1, 0.3, 0.3, 0.3, 0.03);
                     }
                 } else {
                     boss.resetBossPose(instance);

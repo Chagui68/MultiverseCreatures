@@ -27,8 +27,10 @@ public class GravityWellAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
+        double groundY = boss.getGroundY(center, 40);
+        Location wellLoc = new Location(world, center.getX(), groundY, center.getZ());
         if (plugin.getMagicSealListener() != null) {
-            plugin.getMagicSealListener().spawnVortexSeal(center.clone().add(0, 0.5, 0), 100);
+            plugin.getMagicSealListener().spawnVortexSeal(wellLoc.clone().add(0, 0.5, 0), 100);
         }
 
         new BukkitRunnable() {
@@ -50,7 +52,7 @@ public class GravityWellAttack extends BossAttackBase {
                         double angle = (2 * Math.PI * a / 20) + phase * Math.PI * 2;
                         double x = center.getX() + Math.cos(angle) * r;
                         double z = center.getZ() + Math.sin(angle) * r;
-                        double y = center.getY() + Math.abs(Math.sin(angle * 3)) * 3;
+                        double y = wellLoc.getY() + Math.abs(Math.sin(angle * 3)) * 3;
                         Location pl = new Location(world, x, y, z);
                         world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
                                 new Particle.DustOptions(Color.fromRGB(0x4400AA), 2.0f * (float) phase));
@@ -67,14 +69,15 @@ public class GravityWellAttack extends BossAttackBase {
                         double angle = (2 * Math.PI * a / 30) + (t - 30) * 0.05;
                         double x = center.getX() + Math.cos(angle) * r;
                         double z = center.getZ() + Math.sin(angle) * r;
-                        double y = center.getY() + Math.abs(Math.sin(angle * 2 + t * 0.1)) * 4;
+                        double y = wellLoc.getY() + Math.abs(Math.sin(angle * 2 + t * 0.1)) * 4;
                         Location pl = new Location(world, x, y, z);
                         world.spawnParticle(Particle.DUST, pl, 1, 0, 0, 0, 0,
                                 new Particle.DustOptions(Color.fromRGB(0x4400AA), 1.8f));
                         world.spawnParticle(Particle.PORTAL, pl, 1, 0, 0, 0, 0);
                     }
                     for (Player p : boss.getValidPlayers(world)) {
-                        Vector toCenter = center.toVector().subtract(p.getLocation().toVector());
+                        Vector toCenter = wellLoc.toVector().subtract(p.getLocation().toVector());
+                        toCenter.setY(0);
                         double dist = toCenter.length();
                         if (dist < 10 && dist > 2) {
                             p.setVelocity(p.getVelocity().add(toCenter.normalize().multiply(0.2)));

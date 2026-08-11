@@ -21,6 +21,9 @@ Drop sources — for each component, the mob and chance:
 | **Head Slime Heart** `§a§lHead Slime Heart` (SLIME_BALL) | Head Slime | always (100%) | Slime Kingdom |
 | **Military Component** `§a§lMilitary Component` (GUNPOWDER) | each ZombieHorseTrap unit | 30% (`zombie-horse-trap.military-component-drop-chance`) | Military |
 | **Star Core** `§e§lStar Core` (NETHER_STAR) | special / "from a superior entity" | — | Multiverse |
+| **Wheel Core** `§6§lWheel Core` (MUSIC_DISC_OTHERSIDE) | crafted from **Wheel Essence** + Diamond Block + Nether Star | — | Multiverse (JJK) |
+| **Reaper Core** `§0§lReaper Core` (WITHER_ROSE) | crafted from **Reaper Essence** + Soul Sand + Nether Star | — | Multiverse |
+| **Refined Netherite** `§8§lRefined Netherite` (NETHERITE_INGOT) | crafted from **9 Netherite Scrap** | — | Multiverse |
 
 Each component is just a `msc_<name>` tagged ingredient — it does **nothing on its own**, but it's required to craft the corresponding legendary item.
 
@@ -35,7 +38,7 @@ Ender Knight ─► Ender Fragment ─► Aether Pullshot (trident)
 Frost Golem ─► Frost Heart ─────► Frost Heart (off-hand)
 Flame Elemental ─► Magma Core ──► Cinder Greatsword
 Storm Caller ─► Storm Crystal ──► Skyfire Talisman
-Venom Witch ─► Venom Gland ─────► (future)
+Venom Witch ─► Venom Gland ─────► Venomfang (dagger)
 Void Crawler ─► Void Essence ───► Nullshear Edge
 Soul Reaper ─► Reaper Essence ──► Soulreap Scythe
 Bone Shield ─► Reinforced Bone ─► Marrow Aegis (shield)
@@ -44,6 +47,9 @@ Obsidian Guard ─► Obsidian Shard► Obsidian Bastion (4-piece set)
 Head Slime ─► Head Slime Heart ─► Head Slime Gelatin (food)
 ZombieHorseTrap ─► Military Comp► Military Mine (camouflaged TNT)
 Superior entity ─► Star Core ───► Excalibur (and beyond...)
+Mahoraga ─► Wheel Essence ─► Wheel Core ─► Eight-Handled Wheel (helmet)
+Soul Reaper ─► Reaper Essence ─► Reaper Core ─► Soulreap Scythe
+Obsidian Guard ─► Obsidian Shard + Refined Netherite (9 Scrap) ─► Obsidian Bastion
 ```
 
 ---
@@ -68,6 +74,9 @@ You can hand yourself any component directly for testing:
 /msc give headslimeheart    (alias: heart)
 /msc give militarycomponent (alias: component)
 /msc give starcore          (alias: star)
+/msc give wheelcore
+/msc give reapercore
+/msc give refinednetherite
 ```
 
 See [Commands](./Commands.md) for the full reference.

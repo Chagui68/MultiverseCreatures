@@ -25,6 +25,7 @@ public class WindCutterAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
+        double baseY = boss.getGroundY(center, 40) + 1.0;
 
         new BukkitRunnable() {
             int t = 0;
@@ -54,7 +55,7 @@ public class WindCutterAttack extends BossAttackBase {
                     stand.setHeadPose(new EulerAngle(Math.toRadians(10), 0, 0));
                     for (int a = 0; a < 6; a++) {
                         double angle = (2 * Math.PI * a / 6);
-                        Location start = center.clone().add(Math.cos(angle) * 3, 0, Math.sin(angle) * 3);
+                        Location start = new Location(world, center.getX() + Math.cos(angle) * 3, baseY, center.getZ() + Math.sin(angle) * 3);
                         world.playSound(start, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.4f, 0.9f);
                         new BukkitRunnable() {
                             int ft = 0;

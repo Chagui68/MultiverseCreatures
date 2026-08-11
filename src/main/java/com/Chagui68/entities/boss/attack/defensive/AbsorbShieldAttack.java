@@ -32,7 +32,8 @@ public class AbsorbShieldAttack extends BossAttackBase {
 
         world.playSound(loc, Sound.ITEM_SHIELD_BLOCK, 2.0f, 1.5f);
         world.playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 0.5f);
-        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1);
+        world.spawnParticle(Particle.FLASH, loc.clone().add(0, 5, 0), 1,
+                Color.WHITE);
         world.spawnParticle(Particle.EXPLOSION, loc.clone().add(0, 5, 0), 30, 3, 5, 3, 0);
 
         stand.setBodyPose(new EulerAngle(Math.toRadians(5), 0, 0));

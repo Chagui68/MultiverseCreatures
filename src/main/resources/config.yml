@@ -280,10 +280,32 @@ void-crawler:
 ### Armor Stand Boss
 armor-stand-boss:
   enabled: true
-  health: 500.0
+  health: 1000.0
+  max-damage-per-hit: 50.0
   aggro-range: 50.0
   seal-damage: 15.0
   hover-barrage-damage: 12.0
+
+### Kinger
+kinger:
+  enabled: true
+  health: 120.0
+  aggro-range: 25.0
+  move-speed: 0.32
+  melee-range: 3.0
+  melee-damage: 8.0
+  melee-radius: 3.5
+  melee-cooldown-ticks: 25
+  melee-anim-ticks: 12
+  ranged-range: 30.0
+  ranged-damage: 6.0
+  ranged-cooldown-ticks: 45
+  ranged-anim-ticks: 20
+  death-messages:
+    - "&d%player% was checked by the King"
+    - "&d%player% was knocked off the board by Kinger"
+    - "&d%player% lost the game to Kinger"
+    - "&d%player% was outplayed by the chess piece"
 
 ### Commands
 commands:

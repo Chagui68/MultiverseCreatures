@@ -27,8 +27,9 @@ public class LightningStormAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
+        double groundY = boss.getGroundY(center, 40);
         if (plugin.getMagicSealListener() != null) {
-            plugin.getMagicSealListener().spawnStormSeal(center.clone().add(0, 0.5, 0), 80);
+            plugin.getMagicSealListener().spawnStormSeal(new Location(world, center.getX(), groundY + 0.5, center.getZ()), 80);
         }
 
         new BukkitRunnable() {
@@ -64,7 +65,7 @@ public class LightningStormAttack extends BossAttackBase {
                         double r = 3 + random.nextDouble() * 12;
                         double x = center.getX() + Math.cos(angle) * r;
                         double z = center.getZ() + Math.sin(angle) * r;
-                        Location strikeLoc = new Location(world, x, center.getY(), z);
+                        Location strikeLoc = new Location(world, x, boss.getGroundY(new Location(world, x, center.getY(), z), 40), z);
                         world.strikeLightningEffect(strikeLoc);
                         world.spawnParticle(Particle.FLAME, strikeLoc, 20, 1, 0.5, 1, 0.05);
                         world.playSound(strikeLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 0.8f);
@@ -72,7 +73,7 @@ public class LightningStormAttack extends BossAttackBase {
                         for (Player p : boss.getValidPlayers(world)) {
                             if (p.getLocation().distanceSquared(strikeLoc) < 16) {
                                 p.damage(dmg);
-                                p.setVelocity(new Vector(0, 0.4, 0));
+                                boss.launchPlayer(p, 0.4);
                                 p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 2));
                             }
                         }

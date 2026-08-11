@@ -66,7 +66,7 @@ public class MeteorStormAttack extends BossAttackBase {
                                             if (p.getLocation().distanceSquared(fall) < 16) {
                                                 p.damage(dmg);
                                                 p.setFireTicks(60);
-                                                p.setVelocity(new Vector(0, 0.5, 0));
+                                                boss.launchPlayer(p, 0.5);
                                             }
                                         }
                                         cancel();

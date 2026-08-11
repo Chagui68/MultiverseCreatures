@@ -27,8 +27,9 @@ public class HeavenlyJudgmentAttack extends BossAttackBase {
         ArmorStand stand = instance.stand;
         World world = stand.getWorld();
         Location center = stand.getLocation();
+        double groundY = boss.getGroundY(center, 40);
         if (plugin.getMagicSealListener() != null) {
-            plugin.getMagicSealListener().spawnDivineSeal(center.clone().add(0, 0.5, 0), 80);
+            plugin.getMagicSealListener().spawnDivineSeal(new Location(world, center.getX(), groundY + 0.5, center.getZ()), 80);
         }
 
         new BukkitRunnable() {
@@ -70,7 +71,8 @@ public class HeavenlyJudgmentAttack extends BossAttackBase {
                     stand.setLeftArmPose(new EulerAngle(Math.toRadians(-180), Math.toRadians(-45), Math.toRadians(-30)));
                     world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 2.0f, 0.6f);
                     world.spawnParticle(Particle.EXPLOSION, center, 50, 8, 5, 8, 0);
-                    world.spawnParticle(Particle.FLASH, center, 1);
+                    world.spawnParticle(Particle.FLASH, center, 1,
+                            Color.WHITE);
                 } else if (t < 60) {
                     stand.setRightArmPose(new EulerAngle(Math.toRadians(-180), Math.toRadians(45), Math.toRadians(30)));
                     stand.setLeftArmPose(new EulerAngle(Math.toRadians(-180), Math.toRadians(-45), Math.toRadians(-30)));
@@ -78,8 +80,8 @@ public class HeavenlyJudgmentAttack extends BossAttackBase {
                     stand.setHeadPose(new EulerAngle(Math.toRadians(-45), 0, 0));
                     for (Player p : boss.getValidPlayers(world)) {
                         Location pLoc = p.getLocation();
-                        for (int y = 0; y < 20; y++) {
-                            Location beam = new Location(world, pLoc.getX(), center.getY() + 10 - y * 0.5, pLoc.getZ());
+                        for (int y = 0; y < 25; y++) {
+                            Location beam = new Location(world, pLoc.getX(), pLoc.getY() + 24 - y, pLoc.getZ());
                             world.spawnParticle(Particle.DUST, beam, 1, 0, 0, 0, 0,
                                     new Particle.DustOptions(Color.fromRGB(0xFFDD00), 2.0f));
                             world.spawnParticle(Particle.FLAME, beam, 1, 0, 0, 0, 0);

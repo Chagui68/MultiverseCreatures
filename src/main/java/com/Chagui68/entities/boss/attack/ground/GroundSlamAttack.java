@@ -30,6 +30,7 @@ public class GroundSlamAttack extends BossAttackBase {
     @Override
     public void execute(BossInstance instance) {
         if (instance.isFlying) return;
+        if (instance.groundSlamTask != null) return;
         ArmorStand stand = instance.stand;
         if (instance.shieldState != BossInstance.ShieldState.NORMAL) return;
 
@@ -38,13 +39,14 @@ public class GroundSlamAttack extends BossAttackBase {
         instance.shieldCooldown = 0;
         instance.shieldTimer = 0;
 
-        new BukkitRunnable() {
+        BukkitRunnable task = new BukkitRunnable() {
             int phase = 0;
             int tick = 0;
 
             @Override
             public void run() {
                 if (stand.isDead() || !stand.isValid()) {
+                    instance.groundSlamTask = null;
                     cancel();
                     return;
                 }
@@ -54,6 +56,7 @@ public class GroundSlamAttack extends BossAttackBase {
                 switch (phase) {
                     case 0 -> {
                         if (!boss.isOnGround(stand)) {
+                            instance.groundSlamTask = null;
                             cancel();
                             return;
                         }
@@ -67,6 +70,7 @@ public class GroundSlamAttack extends BossAttackBase {
                     case 1 -> {
                         if (!boss.isOnGround(stand)) {
                             retrieveShield(instance, center, world);
+                            instance.groundSlamTask = null;
                             cancel();
                             return;
                         }
@@ -82,12 +86,15 @@ public class GroundSlamAttack extends BossAttackBase {
                         tick++;
                         if (tick >= boss.getShieldRetrieveDelay(instance.currentPhase)) {
                             retrieveShield(instance, center, world);
+                            instance.groundSlamTask = null;
                             cancel();
                         }
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 1L);
+        };
+        instance.groundSlamTask = task;
+        task.runTaskTimer(plugin, 0L, 1L);
     }
 
     private void plantShield(BossInstance instance, Location center, World world) {

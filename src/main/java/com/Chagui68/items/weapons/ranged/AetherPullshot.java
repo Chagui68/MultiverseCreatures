@@ -42,9 +42,6 @@ public class AetherPullshot {
             lore.add(ChatColor.GRAY + "  and " + ChatColor.RED + "10 damage " + ChatColor.GRAY + "if pulled all the way in.");
             lore.add(ChatColor.GRAY + "  Cooldown: " + ChatColor.GOLD + "30 seconds");
             lore.add("");
-            lore.add(ChatColor.WHITE + "Passive Effect:");
-            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Loyalty III — always returns when thrown");
-            lore.add("");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "\"A leash not of rope,");
             lore.add(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + "but of distance denied.\"");
             lore.add("");

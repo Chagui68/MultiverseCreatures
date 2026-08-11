@@ -65,7 +65,7 @@ public class DoomBeamAttack extends BossAttackBase {
                     }
                     if (t == 1) world.playSound(center, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1.5f, 0.4f);
                     if (t % 5 == 0) world.playSound(center, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.3f);
-                } else if (t < 60) {
+                } else if (t == 40) {
                     Player target = boss.detectTarget(stand);
                     if (target != null) {
                         Vector dir = target.getLocation().toVector().subtract(center.toVector());

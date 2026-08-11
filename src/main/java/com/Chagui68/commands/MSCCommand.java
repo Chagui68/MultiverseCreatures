@@ -2,20 +2,30 @@ package com.Chagui68.commands;
 
 import com.Chagui68.items.armor.EightHandledWheel;
 import com.Chagui68.items.armor.ObsidianBastion;
+import com.Chagui68.items.components.ChaosCore;
+import com.Chagui68.items.components.ChaosFragment;
 import com.Chagui68.items.components.ChaosOrb;
+import com.Chagui68.items.components.ChaosPowder;
+import com.Chagui68.items.components.CondensedChaosOrb;
 import com.Chagui68.items.components.EnderFragment;
 import com.Chagui68.items.components.FrostHeart;
 import com.Chagui68.items.components.HeadSlimeHeart;
 import com.Chagui68.items.components.MagmaCore;
 import com.Chagui68.items.components.MilitaryComponent;
 import com.Chagui68.items.components.ObsidianShard;
+import com.Chagui68.items.components.ReaperCore;
 import com.Chagui68.items.components.ReaperEssence;
+import com.Chagui68.items.components.RefinedNetherite;
 import com.Chagui68.items.components.ReinforcedBone;
+import com.Chagui68.items.components.ReinforcedBoneBlock;
+import com.Chagui68.items.components.EnderCore;
 import com.Chagui68.items.components.ShadowCloak;
 import com.Chagui68.items.components.StarCore;
 import com.Chagui68.items.components.StormCrystal;
+import com.Chagui68.items.components.SwordMold;
 import com.Chagui68.items.components.VenomGland;
 import com.Chagui68.items.components.VoidEssence;
+import com.Chagui68.items.components.WheelCore;
 import com.Chagui68.items.components.WheelEssence;
 import com.Chagui68.items.dio.DioStandHead;
 import com.Chagui68.items.food.HeadSlimeGelatin;
@@ -33,6 +43,7 @@ import com.Chagui68.items.weapons.melee.CinderGreatsword;
 import com.Chagui68.items.weapons.melee.Excalibur;
 import com.Chagui68.items.weapons.melee.NullshearEdge;
 import com.Chagui68.items.weapons.melee.SoulreapScythe;
+import com.Chagui68.items.weapons.melee.Venomfang;
 import com.Chagui68.items.weapons.ranged.AetherPullshot;
 import com.Chagui68.entities.miniboss.Mahoraga;
 import com.Chagui68.entities.boss.MagicSealListener;
@@ -71,6 +82,13 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
     private final MobHandler mobHandler;
     private final Map<UUID, ArmorStand> playerDummies = new HashMap<>();
     private final Map<UUID, BukkitRunnable> dummyWingTasks = new HashMap<>();
+
+    private static final List<String> SPAWNABLE_ENTITIES = Arrays.asList(
+            "armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank",
+            "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental",
+            "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch",
+            "obsidianguard", "soulreaper", "chaosmage", "enderknight", "kinger"
+    );
 
     public MSCCommand(MultiverseCreatures plugin, MobHandler mobHandler) {
         this.plugin = plugin;
@@ -132,7 +150,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(RED + "Usage: /msc spawn <shaggy>");
+            sendSpawnHelp(sender);
             return;
         }
 
@@ -287,8 +305,12 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 if (success) sender.sendMessage(GREEN + "Spawned Ender Knight!");
                 else sender.sendMessage(RED + "Failed to spawn Ender Knight.");
             }
-            default ->
-                    sender.sendMessage(RED + "Unknown entity type. Available: armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight");
+            case "kinger" -> {
+                boolean success = plugin.getKinger().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Kinger!");
+                else sender.sendMessage(RED + "Failed to spawn Kinger.");
+            }
+            default -> sendSpawnHelp(sender);
         }
     }
 
@@ -299,8 +321,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(RED + "Usage: /msc give <item> [amount]");
-            sender.sendMessage(YELLOW + "Available items: scoobycookie, excalibur, icecrown, wirtslantern, starcore, diostand, mantisclaws, militarycomponent, militarymine, headslimeheart, headslimegelatin, aetherpullshot, chaosforge, cindergreatsword, nullshearedge, soulreapscythe, skyfiretalisman, eighthandledwheel, obsidianbastionhelmet, obsidianbastionchestplate, obsidianbastionleggings, obsidianbastionboots, frostheartoffhand, marrowaegis, veilwalkermantle, chaosorb, enderfragment, frostheart, magmacore, obsidianshard, reaperessence, reinforcedbone, shadowcloak, stormcrystal, venomgland, voidessence, wheelessence");
+            sendGiveHelp(sender);
             return;
         }
 
@@ -327,6 +348,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "icecrown", "crown" -> IceCrown.ICE_CROWN.clone();
             case "wirtslantern", "lantern" -> WirtsLantern.WIRTS_LANTERN.clone();
             case "starcore", "star" -> StarCore.STAR_CORE.clone();
+            case "swordmold", "mold" -> SwordMold.SWORD_MOLD.clone();
             case "diostand", "dio" -> DioStandHead.getHead();
             case "mantisclaws", "claws" -> MantisClaws.MANTIS_CLAWS_ITEM.clone();
             case "militarycomponent", "component" -> MilitaryComponent.MILITARY_COMPONENT.clone();
@@ -339,6 +361,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "cindergreatsword", "greatsword" -> CinderGreatsword.CINDER_GREATSWORD.clone();
             case "nullshearedge", "nullshear" -> NullshearEdge.NULLSHEAR_EDGE.clone();
             case "soulreapscythe", "scythe" -> SoulreapScythe.SOULREAP_SCYTHE.clone();
+            case "venomfang", "dagger" -> Venomfang.VENOMFANG.clone();
             case "skyfiretalisman", "talisman" -> SkyfireTalisman.SKYFIRE_TALISMAN.clone();
             // Armor
             case "eighthandledwheel", "wheel" -> EightHandledWheel.EIGHT_HANDLED_WHEEL.clone();
@@ -352,22 +375,32 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "veilwalkermantle", "mantle" -> VeilwalkerMantle.VEILWALKER_MANTLE.clone();
             // Components / ingredients
             case "chaosorb" -> ChaosOrb.CHAOS_ORB.clone();
+            case "chaospowder" -> ChaosPowder.CHAOS_POWDER.clone();
+            case "chaosfragment" -> ChaosFragment.CHAOS_FRAGMENT.clone();
+            case "chaoscore" -> ChaosCore.CHAOS_CORE.clone();
+            case "condensedchaosorb", "condensed" -> CondensedChaosOrb.CONDENSED_CHAOS_ORB.clone();
             case "enderfragment", "ender" -> EnderFragment.ENDER_FRAGMENT.clone();
             case "frostheart", "frost" -> FrostHeart.FROST_HEART.clone();
             case "magmacore", "magma" -> MagmaCore.MAGMA_CORE.clone();
             case "obsidianshard", "shard" -> ObsidianShard.OBSIDIAN_SHARD.clone();
             case "reaperessence", "reaper" -> ReaperEssence.REAPER_ESSENCE.clone();
             case "reinforcedbone", "bone" -> ReinforcedBone.REINFORCED_BONE.clone();
+            case "reinforcedboneblock" -> ReinforcedBoneBlock.REINFORCED_BONE_BLOCK.clone();
+            case "endercore" -> EnderCore.ENDER_CORE.clone();
             case "shadowcloak", "cloak" -> ShadowCloak.SHADOW_CLOAK.clone();
             case "stormcrystal", "storm" -> StormCrystal.STORM_CRYSTAL.clone();
             case "venomgland", "venom" -> VenomGland.VENOM_GLAND.clone();
             case "voidessence", "void" -> VoidEssence.VOID_ESSENCE.clone();
             case "wheelessence", "whelessence" -> WheelEssence.WHEEL_ESSENCE.clone();
+            // Intermediate components
+            case "wheelcore" -> WheelCore.WHEEL_CORE.clone();
+            case "reapercore" -> ReaperCore.REAPER_CORE.clone();
+            case "refinednetherite" -> RefinedNetherite.REFINED_NETHERITE.clone();
             default -> null;
         };
 
         if (item == null) {
-            sender.sendMessage(RED + "Unknown item. Available: scoobycookie, excalibur, icecrown, wirtslantern, starcore, diostand, mantisclaws, militarycomponent, militarymine, headslimeheart, headslimegelatin, aetherpullshot, chaosforge, cindergreatsword, nullshearedge, soulreapscythe, skyfiretalisman, eighthandledwheel, obsidianbastionhelmet, obsidianbastionchestplate, obsidianbastionleggings, obsidianbastionboots, frostheartoffhand, marrowaegis, veilwalkermantle, chaosorb, enderfragment, frostheart, magmacore, obsidianshard, reaperessence, reinforcedbone, shadowcloak, stormcrystal, venomgland, voidessence, wheelessence");
+            sendGiveHelp(sender);
             return;
         }
 
@@ -426,11 +459,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             return;
         }
         if (args.length < 2) {
-            sender.sendMessage(RED + "Usage: /msc attack <attack> [range]");
-            sender.sendMessage(YELLOW + "Attacks (ground): groundslam, groundshatter, shieldbash, lancestorm, earthpillar, chaingrapple, warstomp, armorspikes, vortexpull, mirrorimage, doombeam");
-            sender.sendMessage(YELLOW + "Attacks (aerial): starfall, aerialrush, sonicboom, lightningstorm, gravitywell, crossslash, novaburst, darkorb, windcutter, heavenlyjudgment, rainoflances, airslam, hoverbarrage");
-            sender.sendMessage(YELLOW + "Attacks (ranged): lancesnipe, meteorstorm, voidbeam, frostlance, lightningspear, shadowvolley, chainlightning, crystalbarrage, arcaneorb, voidrift, arcanemissiles, spiritbeam");
-            sender.sendMessage(YELLOW + "Attacks (defensive): stoneskin, reflectbarrier, absorbshield, shieldseal, healingcircle, trianglecall");
+            sendAttackHelp(player);
             return;
         }
 
@@ -483,9 +512,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(RED + "Usage: /msc seal <pattern> [plane]");
-            sender.sendMessage(YELLOW + "Patterns: pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2, vortex, quake, divine, storm");
-            sender.sendMessage(YELLOW + "Planes: horizontal (default), vertical-north, vertical-east");
+            sendSealHelp(player);
             return;
         }
 
@@ -561,8 +588,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 listener.spawnStormSeal(center, 120);
                 sender.sendMessage(GOLD + "Spawned Storm Seal for 6 seconds.");
             }
-            default ->
-                    sender.sendMessage(RED + "Unknown seal. Use: pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2, vortex, quake, divine, storm");
+            default -> sendSealHelp(player);
         }
     }
 
@@ -1291,16 +1317,119 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         });
     }
 
+    private void sendLine(CommandSender sender, String msg) {
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+    }
+
+    private void sendMenuHeader(CommandSender sender, String title) {
+        sendLine(sender, "");
+        sendLine(sender, "&8&m" + "-".repeat(40));
+        sendLine(sender, " &6&l★ &e&l" + title + " &6&l★");
+        sendLine(sender, "&8&m" + "-".repeat(40));
+    }
+
+    private void sendMenuFooter(CommandSender sender) {
+        sendLine(sender, "&8&m" + "-".repeat(40));
+    }
+
+    private void sendCommandEntry(CommandSender sender, String command, String description) {
+        sendLine(sender, " &e&l" + command);
+        sendLine(sender, "    &7" + description);
+    }
+
+    private void sendCategory(CommandSender sender, String label, List<String> items) {
+        sendLine(sender, " &6&l" + label + "&8:");
+        StringBuilder line = new StringBuilder("   &7");
+        int width = 3;
+        for (int i = 0; i < items.size(); i++) {
+            String item = items.get(i);
+            int add = item.length() + 2;
+            if (i > 0 && width + add > 52) {
+                sendLine(sender, line.toString());
+                line.setLength(0);
+                line.append("   &7");
+                width = 3;
+            }
+            if (i > 0) line.append("&8·");
+            line.append("&f").append(item);
+            width += add;
+        }
+        sendLine(sender, line.toString());
+    }
+
+    private void sendItemList(CommandSender sender, String label, List<String> items) {
+        sendLine(sender, " &6&l" + label + "&8:");
+        for (String item : items) {
+            sendLine(sender, "   &e• &f" + item);
+        }
+    }
+
+    private void sendSpawnHelp(CommandSender sender) {
+        sendMenuHeader(sender, "MSC SPAWN");
+        sendLine(sender, " &7Usage: &e/msc spawn <type>");
+        sendLine(sender, "");
+        sendCategory(sender, "Entities", SPAWNABLE_ENTITIES);
+        sendMenuFooter(sender);
+    }
+
+    private void sendGiveHelp(CommandSender sender) {
+        sendMenuHeader(sender, "MSC GIVE");
+        sendLine(sender, " &7Usage: &e/msc give <item> [amount]");
+        sendLine(sender, "");
+        sendItemList(sender, "Food", Arrays.asList("scoobycookie"));
+        sendItemList(sender, "Weapons", Arrays.asList("excalibur", "aetherpullshot", "chaosforge",
+                "cindergreatsword", "nullshearedge", "soulreapscythe", "venomfang", "skyfiretalisman"));
+        sendItemList(sender, "Armor", Arrays.asList("eighthandledwheel", "obsidianbastionhelmet",
+                "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots"));
+        sendItemList(sender, "Equipables", Arrays.asList("diostand", "icecrown", "wirtslantern", "mantisclaws",
+                "militarymine", "frostheartoffhand", "marrowaegis", "veilwalkermantle"));
+        sendItemList(sender, "Components", Arrays.asList("starcore", "militarycomponent", "headslimeheart",
+                "headslimegelatin", "chaosorb", "chaospowder", "chaosfragment", "chaoscore", "condensedchaosorb",
+                "enderfragment", "frostheart", "magmacore", "obsidianshard",
+                "reaperessence", "reinforcedbone", "shadowcloak", "stormcrystal", "venomgland", "voidessence",
+                "wheelessence", "wheelcore", "reapercore", "refinednetherite", "swordmold",
+                "reinforcedboneblock", "endercore"));
+        sendMenuFooter(sender);
+    }
+
+    private void sendSealHelp(CommandSender sender) {
+        sendMenuHeader(sender, "MSC SEAL");
+        sendLine(sender, " &7Usage: &e/msc seal <pattern> [plane]");
+        sendLine(sender, "");
+        sendCategory(sender, "Patterns", Arrays.asList("pentagram", "triangle", "celestial", "circle",
+                "ring", "star", "floating", "wings", "wings2", "vortex", "quake", "divine", "storm"));
+        sendCategory(sender, "Planes", Arrays.asList("horizontal (default)", "vertical-north", "vertical-east"));
+        sendMenuFooter(sender);
+    }
+
+    private void sendAttackHelp(CommandSender sender) {
+        sendMenuHeader(sender, "MSC ATTACK");
+        sendLine(sender, " &7Usage: &e/msc attack <attack> [range]");
+        sendLine(sender, "");
+        sendCategory(sender, "Ground", Arrays.asList("groundslam", "groundshatter", "shieldbash", "lancestorm",
+                "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam"));
+        sendCategory(sender, "Aerial", Arrays.asList("starfall", "aerialrush", "sonicboom", "lightningstorm",
+                "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment",
+                "rainoflances", "airslam", "hoverbarrage"));
+        sendCategory(sender, "Ranged", Arrays.asList("lancesnipe", "meteorstorm", "voidbeam", "frostlance",
+                "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift",
+                "arcanemissiles", "spiritbeam"));
+        sendCategory(sender, "Defensive", Arrays.asList("stoneskin", "reflectbarrier", "absorbshield",
+                "shieldseal", "healingcircle", "trianglecall"));
+        sendMenuFooter(sender);
+    }
+
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(GOLD + "--- MultiverseCreatures Commands ---");
-        sender.sendMessage(YELLOW + "/msc spawn <type> " + WHITE + "- Spawn custom mobs (armorstand, merchant, dio, creeperjr, headslime, zombietrap, tank, duelist, lancer, camel, sniper, mahoraga, shadowrogue, flameelemental, frostgolem, voidcrawler, stormcaller, boneshield, venomwitch, obsidianguard, soulreaper, chaosmage, enderknight)");
-        sender.sendMessage(YELLOW + "/msc give <item> [amount] " + WHITE + "- Give custom items");
-        sender.sendMessage(YELLOW + "/msc seal <pattern> [plane] " + WHITE + "- Spawn particle seals (pentagram, triangle, celestial, circle, ring, star, floating, wings, wings2; planes: horizontal, vertical-north, vertical-east)");
-        sender.sendMessage(YELLOW + "/msc dummy " + WHITE + "- Spawn and pose a test dummy");
-        sender.sendMessage(YELLOW + "/msc attack <attack> [range] " + WHITE + "- Trigger a registered boss attack (ground/aerial/ranged)");
-        sender.sendMessage(YELLOW + "/msc music <play|stop|list> [name] [loop] " + WHITE + "- Play .nbs music");
-        sender.sendMessage(YELLOW + "/msc dimtp <world> " + WHITE + "- Teleport between dimensions");
-        sender.sendMessage(YELLOW + "/msc cleanstands " + WHITE + "- Remove all custom plugin armor stands");
+        sendMenuHeader(sender, "MULTIVERSE CREATURES");
+        sendCommandEntry(sender, "/msc spawn <type>", "Spawn custom mobs. Use /msc spawn alone to list them.");
+        sendCommandEntry(sender, "/msc give <item> [amount]", "Give custom items. Use /msc give alone to list them.");
+        sendCommandEntry(sender, "/msc seal <pattern> [plane]", "Spawn particle seals & battle effects.");
+        sendCommandEntry(sender, "/msc attack <attack> [range]", "Trigger a registered boss attack on the nearest boss.");
+        sendCommandEntry(sender, "/msc dummy", "Spawn and pose a test armor stand.");
+        sendCommandEntry(sender, "/msc music <play|stop|list> [name] [loop]", "Play .nbs music files.");
+        sendCommandEntry(sender, "/msc dimtp <world>", "Teleport between dimensions.");
+        sendCommandEntry(sender, "/msc cleanstands", "Remove all custom plugin armor stands.");
+        sendMenuFooter(sender);
     }
 
     @Override
@@ -1319,7 +1448,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         } else if (args.length == 2) {
             String subCmd = args[0].toLowerCase();
             if (subCmd.equals("spawn")) {
-                List<String> entities = Arrays.asList("armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank", "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental", "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch", "obsidianguard", "soulreaper", "chaosmage", "enderknight");
+                List<String> entities = SPAWNABLE_ENTITIES;
                 completions.addAll(entities.stream()
                         .filter(e -> e.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
@@ -1329,7 +1458,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                         "aetherpullshot", "chaosforge", "cindergreatsword", "nullshearedge", "soulreapscythe", "skyfiretalisman",
                         "eighthandledwheel", "obsidianbastionhelmet", "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots",
                         "frostheartoffhand", "marrowaegis", "veilwalkermantle",
-                        "chaosorb", "enderfragment", "frostheart", "magmacore", "obsidianshard", "reaperessence", "reinforcedbone", "shadowcloak", "stormcrystal", "venomgland", "voidessence", "wheelessence"
+                        "chaosorb", "chaospowder", "chaosfragment", "chaoscore", "condensedchaosorb", "enderfragment", "frostheart", "magmacore", "obsidianshard", "reaperessence", "reinforcedbone", "reinforcedboneblock", "endercore", "swordmold", "shadowcloak", "stormcrystal", "venomgland", "voidessence", "wheelessence"
                 );
                 completions.addAll(items.stream()
                         .filter(i -> i.startsWith(args[1].toLowerCase()))
@@ -1358,6 +1487,14 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 List<String> actions = Arrays.asList("spawn", "remove", "set", "wings", "wings2", "nowings", "animate", "rightarm", "leftarm", "body", "head", "rightleg", "leftleg");
                 completions.addAll(actions.stream()
                         .filter(a -> a.startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList()));
+            } else if (subCmd.equals("dimtp")) {
+                List<String> worlds = new ArrayList<>();
+                for (World w : Bukkit.getWorlds()) {
+                    worlds.add(w.getName());
+                }
+                completions.addAll(worlds.stream()
+                        .filter(w -> w.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
             }
         } else if (args.length == 3) {

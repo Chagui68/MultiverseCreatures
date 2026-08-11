@@ -71,7 +71,7 @@ public class GroundShatterAttack extends BossAttackBase {
                                     for (Player p : boss.getValidPlayers(world)) {
                                         if (p.getLocation().distance(center) < radius + 1.5) {
                                             p.damage(damage * (1 - r * 0.1));
-                                            p.setVelocity(p.getVelocity().add(new Vector(0, 0.6, 0)));
+                                            boss.launchPlayer(p, 0.6);
                                         }
                                     }
                                 }

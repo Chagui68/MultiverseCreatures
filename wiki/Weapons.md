@@ -95,6 +95,25 @@ A curved void-steel scythe humming with the lament of the unreaped.
 
 ---
 
+### Venomfang
+
+> "One drop can dissolve a man's resolve..."
+
+A dagger distilled from the corrosive venom of a Venom Witch.
+
+| Stat | Value |
+|---|---|
+| Material | IRON_SWORD |
+| Passive | Each strike applies **Poison I** (5 s) and **Wither I** (4 s) |
+| Particles / Sound | ITEM_SLIME, ENTITY_SPIDER_AMBIENT |
+| Unbreakable | Yes |
+
+- **Give:** `/msc give venomfang` (alias `dagger`)
+- **Craft:** from **Venom Gland** (dropped by Venom Witch) + Iron Ingot + Stick
+- **Theme:** Multiverse (Venom Witch chain via Venom Gland)
+
+---
+
 ## 🏹 Ranged
 
 ### Aether Pullshot

@@ -38,7 +38,7 @@ public class HealingCircleAttack extends BossAttackBase {
 
         double maxHealth = stand.getAttribute(Attribute.MAX_HEALTH) != null
                 ? stand.getAttribute(Attribute.MAX_HEALTH).getValue() : 500.0;
-        double maxHeal = maxHealth * 0.05;
+        double maxHeal = maxHealth * 0.03;
 
         instance.healingCircleActive = true;
         instance.healingCircleTimer = 0;
@@ -123,9 +123,9 @@ public class HealingCircleAttack extends BossAttackBase {
 
                 double maxHealth = stand.getAttribute(Attribute.MAX_HEALTH) != null
                         ? stand.getAttribute(Attribute.MAX_HEALTH).getValue() : 500.0;
-                double maxHeal = maxHealth * 0.05;
+                double maxHeal = maxHealth * 0.03;
                 if (instance.healingCircleHealed < maxHeal && stand.getHealth() < maxHealth) {
-                    double healAmount = maxHealth * 0.0025;
+                    double healAmount = maxHealth * 0.0015;
                     double remaining = maxHeal - instance.healingCircleHealed;
                     double toHeal = Math.min(healAmount, remaining);
                     toHeal = Math.min(toHeal, maxHealth - stand.getHealth());
@@ -159,6 +159,6 @@ public class HealingCircleAttack extends BossAttackBase {
 
     @Override
     public String getName() {
-        return "heal";
+        return "healingcircle";
     }
 }
