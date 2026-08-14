@@ -2,7 +2,7 @@
 
 The **Ritual Dimension** (world `boss_dimension`) is a private, boss-only world where the **Obsidian Sentinel** is fought. It is a void world: a bedrock floor with 5 layers of crying obsidian, an eternal red sky, no weather, no daylight cycle and no natural mob spawning. The dimension is generated automatically the first time a player enters it.
 
-> The dimension is heavily restricted on purpose: players cannot place or break blocks, and almost all commands are blocked (`/say`, `/me`, `/help`, `/?` and `/dimtp` still work). Admins bypass these restrictions with the `msc.admin.bypass` permission.
+> The dimension is heavily restricted on purpose: players cannot place or break blocks, and almost all commands are blocked (only `/say`, `/me`, `/help` and `/?` work — even `/msc dimtp` is blocked inside). Admins bypass these restrictions with the `msc.admin.bypass` permission.
 
 ---
 
@@ -13,17 +13,25 @@ To enter the dimension you must build and light the **Ritual Structure** in the 
 ### Layout (7×7, ground level)
 
 ```
-S S S S S S S        S = polished blackstone stairs (border)
-S X X X X X S        X = chiseled polished blackstone
-S X O C O X S        O = crying obsidian
-S X C X C X S        C = cracked polished blackstone bricks
-S X O C O X S        X = chiseled polished blackstone
-S X X X X X S        center block: obsidian
-S S S S S S S
+. S S S S S .        S = polished blackstone stairs (border)
+S S C K C S S        C = chiseled polished blackstone
+S C O B O C S        O = crying obsidian
+S K B X B K S        B = polished blackstone bricks
+S C O B O C S        K = cracked polished blackstone bricks
+S S C K C S S        X = obsidian (center)
+. S S S S S .
 ```
 
 - The **center block** must be **obsidian**.
-- On the **second layer** (1 block above the ground), place **12 candles** in a ring around the inside of the border, one at the middle of each edge (3 per edge, 12 total).
+- On the **second layer** (1 block above the ground), place **12 candles** in a ring around the inside of the border:
+
+```
+. . c c c . .        candles (c) on layer y+1:
+. c . . . c .        3 on the top edge (z=1, x=2-4)
+. c . . . c .        2 on each side (x=1 and x=5, z=2-4)
+. c . . . c .        3 on the bottom edge (z=5, x=2-4)
+. . c c c . .
+```
 
 ### Activation
 
@@ -43,11 +51,11 @@ Once inside the dimension, the **Obsidian Sentinel** must be invoked manually.
 ### Layout (5×5, red candle ring)
 
 ```
-R _ R R R _ R        (ring of 12 red candles, empty inside)
-R _ _ _ _ R          center: empty — drop the Echo Shard here
-R _ _ _ _ R
-R _ _ _ _ R
-R R R R R R
+_ R R R _        (ring of 12 red candles — 3 per edge — empty inside)
+R _ _ _ R        center: empty — drop the Echo Shard here
+R _ _ _ R
+R _ _ _ R
+_ R R R _
 ```
 
 1. Place **12 red candles** in a 5×5 ring (the corners and edges of a square, leaving the center empty).
@@ -62,8 +70,13 @@ R R R R R R
 
 ## 🚪 Leaving
 
-- Use `/dimtp` (works inside the dimension) to teleport to another world.
-- If the plugin is disabled/reloaded with players inside, everyone is sent back to the overworld spawn automatically.
+There is no teleport command available inside the dimension — the only way out is the **same ritual used to enter**:
+
+1. Build the **Ritual Structure** (the 7×7 polished blackstone layout with 12 white candles described above) inside the dimension.
+2. Light **all 12 candles**.
+3. After ~5 seconds, players standing inside the circle are teleported back to the **overworld spawn**.
+
+> If the plugin is disabled/reloaded with players inside, everyone is sent back to the overworld spawn automatically.
 
 ---
 
