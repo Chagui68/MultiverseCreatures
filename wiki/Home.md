@@ -2,7 +2,7 @@
 
 Welcome to the **MultiverseCreatures** wiki! This is the complete documentation for the plugin. Start here for an overview, then explore the dedicated pages for bosses, creatures, items, and configuration.
 
-> **Quick links:** [Bosses](./Bosses.md) · [Creatures](./Creatures.md) · [Weapons](./Weapons.md) · [Armor & Relics](./Armor-and-Relics.md) · [Items](./Items.md) · [Components](./Components.md) · [Music](./Music.md) · [Commands](./Commands.md) · [Architecture](./Architecture.md) · [Installation](./Installation.md)
+> **Quick links:** [Bosses](./Bosses.md) · [Creatures](./Creatures.md) · [Weapons](./Weapons.md) · [Armor & Relics](./Armor-and-Relics.md) · [Items](./Items.md) · [Components](./Components.md) · [Music](./Music.md) · [Ritual Dimension](./Ritual-Dimension.md) · [Commands](./Commands.md) · [Architecture](./Architecture.md) · [Installation](./Installation.md)
 
 ---
 
@@ -51,6 +51,7 @@ Every vanilla mob spawn has a configurable chance to be replaced by an MSC count
 ## 📚 Pages
 
 - [Bosses](./Bosses.md) — The Obsidian Sentinel, Dio Brando, Mahoraga
+- [Ritual Dimension](./Ritual-Dimension.md) — The private boss world: how to enter and invoke the Sentinel
 - [Creatures](./Creatures.md) — All natural-spawn replacement mobs + ZombieHorseTrap army
 - [Weapons](./Weapons.md) — Excalibur, Cinder Greatsword, Nullshear Edge, Soulreap Scythe, Aether Pullshot, Skyfire Talisman, Chaos Forge
 - [Armor and Relics](./Armor-and-Relics.md) — Eight-Handled Wheel, Obsidian Bastion, off-hand relics
