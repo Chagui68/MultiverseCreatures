@@ -319,7 +319,7 @@ grimoire:
 ### Kinger
 kinger:
   enabled: true
-  spawn-on-armorstand-chance: 1.0
+  spawn-on-armorstand-chance: 0.01
   health: 120.0
   aggro-range: 25.0
   move-speed: 0.32

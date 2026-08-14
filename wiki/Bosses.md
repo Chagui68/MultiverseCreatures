@@ -143,7 +143,7 @@ A living chess king: an invisible 2.0-scale ArmorStand dressed in a 15-piece Ite
 | Ranged range / damage | `kinger.ranged-range` (30) · `kinger.ranged-damage` (6) |
 | Cooldowns | melee 25 ticks · ranged 45 ticks |
 | Spawn | `/msc spawn kinger` — **or** place an ArmorStand |
-| ArmorStand replacement | `kinger.spawn-on-armorstand-chance` (1.0 = every placed ArmorStand becomes Kinger; set to 0 to disable) — respects `kinger.enabled` |
+| ArmorStand replacement | `kinger.spawn-on-armorstand-chance` (0.01 = 1% of placed ArmorStands become Kinger; set to 0 to disable) — respects `kinger.enabled` |
 
 ### AI behaviour
 
