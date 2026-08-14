@@ -50,6 +50,7 @@ public class MobHandler implements Listener {
     private double soulReaperChance;
     private double chaosMageChance;
     private double enderKnightChance;
+    private double discTraderChance;
 
     public MobHandler(MultiverseCreatures plugin) {
         this.plugin = plugin;
@@ -74,6 +75,7 @@ public class MobHandler implements Listener {
         soulReaperChance = config.getDouble("soul-reaper.spawn-chance", 0.05) * spawnRateMultiplier;
         chaosMageChance = config.getDouble("chaos-mage.spawn-chance", 0.06) * spawnRateMultiplier;
         enderKnightChance = config.getDouble("ender-knight.spawn-chance", 0.04) * spawnRateMultiplier;
+        discTraderChance = config.getDouble("disc-trader.spawn-chance", 0.05) * spawnRateMultiplier;
     }
 
     @EventHandler
@@ -101,6 +103,7 @@ public class MobHandler implements Listener {
             case WITHER_SKELETON -> handleWitherSkeletonSpawn(event, loc);
             case EVOKER -> handleEvokerSpawn(event, loc);
             case ENDERMAN -> handleEndermanSpawn(event, loc);
+            case VILLAGER -> handleVillagerSpawn(event, loc);
         }
     }
 
@@ -214,6 +217,13 @@ public class MobHandler implements Listener {
         if (random.nextDouble() < enderKnightChance) {
             event.setCancelled(true);
             plugin.getEnderKnight().trySpawn(loc);
+        }
+    }
+
+    private void handleVillagerSpawn(CreatureSpawnEvent event, Location loc) {
+        if (random.nextDouble() < discTraderChance) {
+            event.setCancelled(true);
+            plugin.getDiscTrader().trySpawn(loc);
         }
     }
 

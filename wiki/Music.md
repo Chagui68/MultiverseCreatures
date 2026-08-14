@@ -12,7 +12,7 @@ Every bundled song has a matching **music disc**. Discs behave exactly like vani
 
 Get a disc with `/msc music disc <song>` or buy them from the **Disc Trader**:
 
-- A **librarian villager** named `Disc Trader`, spawnable with `/msc spawn disctrader`.
+- A **librarian villager** named `Disc Trader`, spawnable with `/msc spawn disctrader` or found naturally: **5%** of naturally spawned villagers become one (`disc-trader.spawn-chance` in `config.yml`, default `0.05`, scaled by `general.spawn-rate-multiplier`).
 - Sells **one disc per loaded song** (16 emeralds each) through the standard villager trading GUI.
 
 ## 📻 Bundled songs

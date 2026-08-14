@@ -254,6 +254,9 @@ chaos-mage:
 ender-knight:
   enabled: true
   spawn-chance: 0.04
+disc-trader:
+  enabled: true
+  spawn-chance: 0.05
 flame-elemental:
   enabled: true
   spawn-chance: 0.1
