@@ -7,6 +7,15 @@ general:
   # Global multiplier applied to every entity spawn-chance (0.5 = half the spawns)
   spawn-rate-multiplier: 0.5
 
+### Crafting Recipes
+recipes:
+  enabled: true
+  # Registers recipes a few ticks after startup instead of during plugin enable.
+  # Required on servers with EquivalencyTech (EMC): it indexes every registered
+  # recipe at enable and our custom items share material types with vanilla
+  # ingredients, causing an exponential EMC graph walk that hangs startup.
+  deferred-registration: true
+
 ### Wandering Trader (Multiverse Merchant)
 merchant:
   enabled: true

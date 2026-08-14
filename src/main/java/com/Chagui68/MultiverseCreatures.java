@@ -91,7 +91,13 @@ public class MultiverseCreatures extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        RecipeManager.registerRecipes();
+        if (getConfig().getBoolean("recipes.enabled", true)) {
+            if (getConfig().getBoolean("recipes.deferred-registration", true)) {
+                getServer().getScheduler().runTaskLater(this, RecipeManager::registerRecipes, 40L);
+            } else {
+                RecipeManager.registerRecipes();
+            }
+        }
 
         freezeAbility = new FreezeAbility(this);
         dioBoss = new DioBoss(this);
