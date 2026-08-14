@@ -2,7 +2,7 @@
 
 Welcome to the **MultiverseCreatures** wiki! This is the complete documentation for the plugin. Start here for an overview, then explore the dedicated pages for bosses, creatures, items, and configuration.
 
-> **Quick links:** [Bosses](./Bosses.md) · [Creatures](./Creatures.md) · [Weapons](./Weapons.md) · [Armor & Relics](./Armor-and-Relics.md) · [Items](./Items.md) · [Components](./Components.md) · [Commands](./Commands.md) · [Architecture](./Architecture.md) · [Installation](./Installation.md)
+> **Quick links:** [Bosses](./Bosses.md) · [Creatures](./Creatures.md) · [Weapons](./Weapons.md) · [Armor & Relics](./Armor-and-Relics.md) · [Items](./Items.md) · [Components](./Components.md) · [Music](./Music.md) · [Commands](./Commands.md) · [Architecture](./Architecture.md) · [Installation](./Installation.md)
 
 ---
 
@@ -11,7 +11,7 @@ Welcome to the **MultiverseCreatures** wiki! This is the complete documentation 
 A Paper/Purpur/Spigot **1.21+** plugin that adds:
 
 - 1 final boss with 5 phases and 33 attacks
-- 2 minibosses (Dio, Mahoraga)
+- 3 minibosses (Dio, Mahoraga, Kinger)
 - 14 themed creatures that replace natural spawns
 - 1 rare Full-Moon military army trap
 - 1 Wandering Trader replacement with custom trades
@@ -56,6 +56,8 @@ Every vanilla mob spawn has a configurable chance to be replaced by an MSC count
 - [Armor and Relics](./Armor-and-Relics.md) — Eight-Handled Wheel, Obsidian Bastion, off-hand relics
 - [Items](./Items.md) — Ice King's Crown, Mantis Claws, Wirt's Lantern, Dio's Stand Head, Military Mine, Scooby Cookie, Head Slime Gelatin
 - [Components](./Components.md) — All 16 crafting drops and what mob provides each
+- [Music](./Music.md) — Bundled NBS songs, jukebox discs and the Disc Trader, song credits
+- [Recipes](./Recipes.md) — Every custom crafting recipe (shapes, ingredients, tiers)
 - [Commands](./Commands.md) — Full `/msc` reference (spawn, give, seal, dummy, attack, music, dimtp, cleanstands)
 - [Architecture](./Architecture.md) — Code structure, conventions, and how to extend the project
 - [Installation](./Installation.md) — Step-by-step install, requirements, troubleshooting

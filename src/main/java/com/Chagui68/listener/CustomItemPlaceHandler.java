@@ -1,5 +1,6 @@
 package com.Chagui68.listener;
 
+import com.Chagui68.items.misc.MilitaryMine;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class CustomItemPlaceHandler implements Listener {
 
@@ -17,7 +19,7 @@ public class CustomItemPlaceHandler implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (isCustomItem(event.getItemInHand())) {
+        if (isCustomItem(event.getItemInHand()) && !isMilitaryMine(event.getItemInHand())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(ChatColor.RED + "This custom item cannot be placed.");
         }
@@ -35,6 +37,12 @@ public class CustomItemPlaceHandler implements Listener {
             event.setCancelled(true);
             player.sendMessage(ChatColor.RED + "This custom item cannot be placed.");
         }
+    }
+
+    private boolean isMilitaryMine(ItemStack item) {
+        return item != null && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer()
+                .has(MilitaryMine.MINE_KEY, PersistentDataType.INTEGER);
     }
 
     private boolean isCustomItem(ItemStack item) {

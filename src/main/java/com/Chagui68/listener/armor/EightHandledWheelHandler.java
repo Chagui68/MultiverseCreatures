@@ -30,6 +30,7 @@ public class EightHandledWheelHandler implements Listener {
     private final Plugin plugin;
     private final Map<UUID, Map<EntityDamageEvent.DamageCause, CauseState>> playerStates = new ConcurrentHashMap<>();
     private final Set<UUID> regenActive = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, Long> lastNoChargeNotice = new ConcurrentHashMap<>();
 
     public EightHandledWheelHandler(Plugin plugin) {
         this.plugin = plugin;
@@ -64,6 +65,10 @@ public class EightHandledWheelHandler implements Listener {
         if (!(event.getEntity() instanceof Player p)) return;
         ItemStack helm = p.getInventory().getHelmet();
         if (!isWheel(helm)) return;
+        // Ignore zeroed events (e.g. Dio's melee zeroes the original attack and
+        // deals the real damage through a second event) so a charge is only
+        // consumed once per actual hit.
+        if (event.getDamage() <= 0) return;
 
         UUID uuid = p.getUniqueId();
         long now = System.currentTimeMillis();
@@ -81,20 +86,28 @@ public class EightHandledWheelHandler implements Listener {
 
         // Phase 2: immunity has elapsed — a new adaptation can trigger immediately.
         int c = getCharges(helm);
-        if (c <= 0) return;
+        if (c > 0) {
+            setCharges(helm, c - 1);
 
-        setCharges(helm, c - 1);
+            CauseState s = state != null ? state : new CauseState();
+            s.blockUntil = now + (EightHandledWheel.BLOCK_DURATION_TICKS * 50L); // ticks -> ms
+            causeMap.put(cause, s);
 
-        CauseState s = state != null ? state : new CauseState();
-        s.blockUntil = now + (EightHandledWheel.BLOCK_DURATION_TICKS * 50L); // ticks -> ms
-        causeMap.put(cause, s);
+            event.setCancelled(true);
+            p.sendMessage(ChatColor.GRAY + "Wheel adapts to " + cause.name() + " (" + (c - 1) + " charges remain)");
+            p.getWorld().playSound(p.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 0.5f, 1.5f);
+            p.getWorld().spawnParticle(org.bukkit.Particle.END_ROD, p.getLocation().add(0, 1, 0), 15, 0.3, 0.5, 0.3, 0.05);
+        } else {
+            long lastNotice = lastNoChargeNotice.getOrDefault(uuid, 0L);
+            if (now - lastNotice > 3000) {
+                p.sendMessage(ChatColor.RED + "The Wheel has no charges left to adapt!");
+                lastNoChargeNotice.put(uuid, now);
+            }
+        }
 
-        event.setCancelled(true);
-        p.sendMessage(ChatColor.GRAY + "Wheel adapts to " + cause.name() + " (" + (c - 1) + " charges remain)");
-        p.getWorld().playSound(p.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 0.5f, 1.5f);
-        p.getWorld().spawnParticle(org.bukkit.Particle.END_ROD, p.getLocation().add(0, 1, 0), 15, 0.3, 0.5, 0.3, 0.05);
-
-        if (c - 1 < EightHandledWheel.MAX_CHARGES && regenActive.add(uuid)) {
+        // Always keep regenerating while below max, so the wheel can never get
+        // stuck at 0 charges (e.g. after re-equipping it).
+        if (c < EightHandledWheel.MAX_CHARGES && regenActive.add(uuid)) {
             startRegen(uuid);
         }
     }

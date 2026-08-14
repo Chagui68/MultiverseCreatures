@@ -132,10 +132,10 @@ creeper-jr:
 
 ## 4. Custom music
 
-Drop any `.nbs` file into `plugins/MultiverseCreatures/music/`. The plugin ships with `Undertale-Megalovania.nbs` (used as the Obsidian Sentinel boss theme). You can:
+Drop any `.nbs` file into `plugins/MultiverseCreatures/music/`. The plugin ships with 12 songs (including `Undertale-Megalovania.nbs`, used as the Obsidian Sentinel boss theme). You can:
 
 - Replace the boss theme by replacing `Undertale-Megalovania.nbs`.
-- Add new songs and play them on demand with `/msc music play <song> [loop]`.
+- Get the jukebox disc of any song with `/msc music disc <song>` or from the **Disc Trader** villager (`/msc spawn disctrader`). Discs work in a jukebox like vanilla discs — see [Music](./Music.md) for the full song list and credits.
 
 Use **NBS format 5+**, single-instrument survival note-block samples work best for realistic in-world playback.
 

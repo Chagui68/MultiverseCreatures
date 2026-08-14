@@ -3,6 +3,7 @@ package com.Chagui68.entities.boss;
 import com.Chagui68.MultiverseCreatures;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
@@ -194,15 +195,15 @@ public class MagicSealListener {
 
     public void spawnCelestialSeal(Location center, int durationTicks, Plane plane) {
         final boolean vertical = (plane == Plane.XY || plane == Plane.YZ);
-        final double mul = vertical ? 1.6 : 1.0;
-        final double rOuter = 7.5 * mul;
-        final double rMid = 5.0 * mul;
-        final double rInner = 2.5 * mul;
-        final double rTri = 6.0 * mul;
-        final double rStar = 6.8 * mul;
-        final int ringSamples = 200;
-        final int midSamples = 140;
-        final int triSamples = 90;
+        final double mul = vertical ? 1.3 : 1.0;
+        final double rOuter = 3.0 * mul;
+        final double rMid = 2.0 * mul;
+        final double rStar = 2.5 * mul;
+        final double rTri = 1.4 * mul;
+        final int ringSamples = 120;
+        final int midSamples = 80;
+        final int starSamples = 60;
+        final int triSamples = 30;
         new BukkitRunnable() {
             int t = 0;
             int frame = 0;
@@ -215,10 +216,10 @@ public class MagicSealListener {
                 }
                 double rot = frame * 0.04;
                 drawCircle(center, rOuter, Color.AQUA, ringSamples, rot, plane);
+                drawOuterStarRing(center, rStar, Color.WHITE, starSamples, rot * 0.7, plane);
                 drawCircle(center, rMid, Color.WHITE, midSamples, -rot * 1.5, plane);
                 drawRotatedTriangle(center, rTri, cyanColor, triSamples, rot, plane);
-                drawOuterStarRing(center, rStar, Color.WHITE, 80, rot * 0.7, plane);
-                spawnEndRodSparkles(center, rOuter * 0.4, 18, plane);
+                spawnEndRodSparkles(center, rOuter * 0.35, 12, plane);
                 t += 5;
                 frame++;
             }
@@ -715,33 +716,39 @@ public class MagicSealListener {
     }
 
     public void spawnInvulnerabilityAura(Location center, int durationTicks) {
+        spawnInvulnerabilityAura(center, durationTicks, null);
+    }
+
+    public void spawnInvulnerabilityAura(Location center, int durationTicks, Player follow) {
         final World world = center.getWorld();
         if (world == null) return;
         final Color gold = Color.fromRGB(0xFFDD00);
         final Color cyan = Color.fromRGB(0x88CCFF);
-        final double radius = 3.0;
+        final double radius = 3.5;
         new BukkitRunnable() {
             int t = 0;
 
             @Override
             public void run() {
-                if (t >= durationTicks) {
+                if (t >= durationTicks || (follow != null && !follow.isOnline())) {
                     cancel();
                     return;
                 }
+                Location c = follow != null ? follow.getLocation().clone().add(0, 0.2, 0) : center;
                 double rot = t * 0.05;
-                drawCircle(center, radius, gold, 32, rot, Plane.XZ);
-                drawCircle(center, radius * 0.55, Color.WHITE, 24, -rot, Plane.XZ);
+                drawCircle(c, radius, gold, 48, rot, Plane.XZ);
+                drawCircle(c.clone().add(0, 0.9, 0), 2.6, Color.WHITE, 40, -rot, Plane.XZ);
+                drawCircle(c.clone().add(0, 1.1, 0), 1.8, cyan, 32, rot * 1.5, Plane.XY);
                 if (t % 4 == 0) {
                     for (int i = 0; i < 6; i++) {
                         double a = (2 * Math.PI * i / 6) + rot;
                         double[] p = angToXZ(a, radius);
-                        double[] tp = mapTriplePair(p, center, Plane.XZ);
+                        double[] tp = mapTriplePair(p, c, Plane.XZ);
                         Location loc = new Location(world, tp[0], tp[1], tp[2]);
                         world.spawnParticle(Particle.END_ROD, loc, 1, 0, 0, 0, 0);
                     }
                 }
-                world.spawnParticle(Particle.WITCH, center, 1, 0.3, 0.3, 0.3, 0);
+                world.spawnParticle(Particle.WITCH, c.clone().add(0, 1.0, 0), 1, 0.3, 0.3, 0.3, 0);
                 t += 3;
             }
         }.runTaskTimer(plugin, 0L, 3L);
@@ -883,6 +890,165 @@ public class MagicSealListener {
                 t += 4;
             }
         }.runTaskTimer(plugin, 0L, 4L);
+    }
+
+    public void spawnFlamingPentagram(Location center, int durationTicks, float yaw) {
+        final World world = center.getWorld();
+        if (world == null) return;
+        final Color flameOrange = Color.fromRGB(0xFF6600);
+        final Color flameRed = Color.fromRGB(0xFF1A1A);
+        final double radius = 3.0;
+        final double cosYaw = Math.cos(Math.toRadians(-yaw));
+        final double sinYaw = Math.sin(Math.toRadians(-yaw));
+        new BukkitRunnable() {
+            int t = 0;
+
+            @Override
+            public void run() {
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
+                double rotation = t * 0.02;
+                // Shift up by one radius so the lowest point touches the ground
+                // instead of sinking into the floor.
+                for (int v = 0; v < 5; v++) {
+                    double a1 = rotation + v * 2 * Math.PI / 5 - Math.PI / 2;
+                    double a2 = rotation + (v + 2) % 5 * 2 * Math.PI / 5 - Math.PI / 2;
+                    double x1 = Math.cos(a1) * radius;
+                    double y1 = Math.sin(a1) * radius + radius;
+                    double x2 = Math.cos(a2) * radius;
+                    double y2 = Math.sin(a2) * radius + radius;
+                    for (int i = 0; i <= 24; i++) {
+                        double f = i / 24.0;
+                        double x = x1 + (x2 - x1) * f;
+                        double y = y1 + (y2 - y1) * f;
+                        Location loc = new Location(world, center.getX() + x * cosYaw, center.getY() + y, center.getZ() + x * sinYaw);
+                        world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
+                                new Particle.DustOptions(i % 2 == 0 ? flameOrange : flameRed, 1.8f));
+                        world.spawnParticle(Particle.FLAME, loc, 1, 0.02, 0.02, 0.02, 0);
+                    }
+                }
+                world.spawnParticle(Particle.FLAME, center.clone().add(0, 0.5, 0), 6, 0.8, 0.2, 0.8, 0.03);
+                t += 3;
+            }
+        }.runTaskTimer(plugin, 0L, 3L);
+    }
+
+    public void spawnLanceRain(Location center, int durationTicks, double radius) {
+        final World world = center.getWorld();
+        if (world == null) return;
+        final Random random = new Random();
+        final Color runeGold = Color.fromRGB(0xFFDD00);
+        final double topY = center.getY() + 14.0;
+        BukkitRunnable task = new BukkitRunnable() {
+            int t = 0;
+
+            @Override
+            public void run() {
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
+                if (t % 8 == 0) {
+                    drawTriangle(center, radius, runeGold, 40, Plane.XZ);
+                    drawFullCircle(center, radius, runeGold, 50, Plane.XZ);
+                }
+                for (int i = 0; i < 6; i++) {
+                    double a = random.nextDouble() * 2 * Math.PI;
+                    double r = random.nextDouble() * radius;
+                    double x = center.getX() + Math.cos(a) * r;
+                    double z = center.getZ() + Math.sin(a) * r;
+                    for (int s = 0; s < 7; s++) {
+                        Location loc = new Location(world, x, topY - s * 2.0, z);
+                        world.spawnParticle(Particle.END_ROD, loc, 1, 0, 0, 0, 0);
+                        world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
+                                new Particle.DustOptions(runeGold, 1.4f));
+                    }
+                    Location impact = new Location(world, x, center.getY(), z);
+                    world.spawnParticle(Particle.CRIT, impact, 4, 0.2, 0.2, 0.2, 0.1);
+                    world.spawnParticle(Particle.FLASH, impact, 1, 0, 0, 0, 0, Color.WHITE);
+                }
+                if (t >= durationTicks - 4) {
+                    Location burst = center.clone().add(0, 1, 0);
+                    world.spawnParticle(Particle.CRIT, burst, 30, radius, 2.0, radius, 0.3);
+                    world.spawnParticle(Particle.END_ROD, burst, 20, radius, 2.0, radius, 0.1);
+                }
+                t += 2;
+            }
+        };
+        task.runTaskTimer(plugin, 0L, 2L);
+        Bukkit.getScheduler().runTaskLater(plugin, task::cancel, durationTicks + 10L);
+    }
+
+    public void spawnExecutionerCross(Location center, int durationTicks) {
+        final World world = center.getWorld();
+        if (world == null) return;
+        final Color red = Color.fromRGB(0xFF2020);
+        final Color bright = Color.fromRGB(0xFFB0B0);
+        final Color darkRed = Color.fromRGB(0x550000);
+        final double height = 7.0;
+        final double size = 2.4;
+        final double cx = center.getX();
+        final double cy = center.getY() + height;
+        final double cz = center.getZ();
+        BukkitRunnable task = new BukkitRunnable() {
+            int t = 0;
+
+            @Override
+            public void run() {
+                if (t >= durationTicks) {
+                    cancel();
+                    return;
+                }
+                double progress = (double) t / durationTicks;
+                double rot = progress * Math.PI;
+                double s = size * (1.0 + 0.08 * Math.sin(t * 0.12));
+                Color main = progress > 0.7 ? bright : red;
+                double cos = Math.cos(rot);
+                double sin = Math.sin(rot);
+                for (int i = 0; i <= 26; i++) {
+                    double f = i / 26.0;
+                    for (int d = 0; d < 2; d++) {
+                        double lx = -s + 2 * s * f;
+                        double ly = d == 0 ? (s - 2 * s * f) : -(s - 2 * s * f);
+                        double rx = lx * cos - ly * sin;
+                        double ry = lx * sin + ly * cos;
+                        Location loc = new Location(world, cx + rx, cy + ry, cz);
+                        world.spawnParticle(Particle.DUST, loc, 1, 0, 0, 0, 0,
+                                new Particle.DustOptions(i % 2 == 0 ? main : darkRed, 1.9f));
+                        world.spawnParticle(Particle.END_ROD, loc, 1, 0, 0, 0, 0);
+                    }
+                }
+                for (int i = 0; i <= 10; i++) {
+                    double a = 2 * Math.PI * i / 10;
+                    Location knot = new Location(world, cx + Math.cos(a) * 0.45, cy + Math.sin(a) * 0.45, cz);
+                    world.spawnParticle(Particle.DUST, knot, 1, 0, 0, 0, 0,
+                            new Particle.DustOptions(darkRed, 1.6f));
+                }
+                for (int i = 0; i <= 6; i++) {
+                    Location rope = new Location(world, cx, cy - 0.45 - i * 0.35, cz);
+                    world.spawnParticle(Particle.DUST, rope, 1, 0, 0, 0, 0,
+                            new Particle.DustOptions(darkRed, 1.4f));
+                }
+                for (int d = 0; d < 2; d++) {
+                    for (int e = 0; e < 2; e++) {
+                        double ly = d == 0 ? s : -s;
+                        double lx = e == 0 ? -s : s;
+                        double rx = lx * cos - ly * sin;
+                        double ry = lx * sin + ly * cos;
+                        Location tip = new Location(world, cx + rx, cy + ry, cz);
+                        world.spawnParticle(Particle.FLAME, tip, 2, 0.1, 0.1, 0.1, 0.01);
+                        world.spawnParticle(Particle.DUST, tip, 1, 0, 0, 0, 0,
+                                new Particle.DustOptions(bright, 2.2f));
+                    }
+                }
+                world.spawnParticle(Particle.WITCH, new Location(world, cx, cy + 0.5, cz), 2, 0.4, 0.3, 0.4, 0.02);
+                t += 2;
+            }
+        };
+        task.runTaskTimer(plugin, 0L, 2L);
+        Bukkit.getScheduler().runTaskLater(plugin, task::cancel, durationTicks + 10L);
     }
 
     private void sampleLine(World world, Location center, Plane plane,

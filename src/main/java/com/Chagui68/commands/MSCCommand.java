@@ -6,17 +6,23 @@ import com.Chagui68.items.components.ChaosCore;
 import com.Chagui68.items.components.ChaosFragment;
 import com.Chagui68.items.components.ChaosOrb;
 import com.Chagui68.items.components.ChaosPowder;
+import com.Chagui68.items.components.CompressedGoldBlock;
 import com.Chagui68.items.components.CondensedChaosOrb;
 import com.Chagui68.items.components.EnderFragment;
 import com.Chagui68.items.components.FrostHeart;
 import com.Chagui68.items.components.HeadSlimeHeart;
 import com.Chagui68.items.components.MagmaCore;
+import com.Chagui68.items.components.MoltenNetherite;
+import com.Chagui68.items.components.MoltenWheelCore;
+import com.Chagui68.items.components.MultiversalCore;
 import com.Chagui68.items.components.MilitaryComponent;
 import com.Chagui68.items.components.ObsidianShard;
 import com.Chagui68.items.components.ReaperCore;
 import com.Chagui68.items.components.ReaperEssence;
 import com.Chagui68.items.components.RefinedNetherite;
+import com.Chagui68.items.components.RefinedWheelCore;
 import com.Chagui68.items.components.ReinforcedBone;
+import com.Chagui68.items.components.SentinelCore;
 import com.Chagui68.items.components.ReinforcedBoneBlock;
 import com.Chagui68.items.components.EnderCore;
 import com.Chagui68.items.components.ShadowCloak;
@@ -38,6 +44,7 @@ import com.Chagui68.items.misc.offhand.FrostHeartOffhand;
 import com.Chagui68.items.misc.offhand.MarrowAegis;
 import com.Chagui68.items.misc.offhand.VeilwalkerMantle;
 import com.Chagui68.items.weapons.magic.ChaosForge;
+import com.Chagui68.items.weapons.magic.SentinelGrimoire;
 import com.Chagui68.items.weapons.magic.SkyfireTalisman;
 import com.Chagui68.items.weapons.melee.CinderGreatsword;
 import com.Chagui68.items.weapons.melee.Excalibur;
@@ -45,6 +52,7 @@ import com.Chagui68.items.weapons.melee.NullshearEdge;
 import com.Chagui68.items.weapons.melee.SoulreapScythe;
 import com.Chagui68.items.weapons.melee.Venomfang;
 import com.Chagui68.items.weapons.ranged.AetherPullshot;
+import com.Chagui68.music.MusicDisc;
 import com.Chagui68.entities.miniboss.Mahoraga;
 import com.Chagui68.entities.boss.MagicSealListener;
 import org.bukkit.*;
@@ -87,7 +95,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             "armorstand", "merchant", "dio", "creeperjr", "headslime", "zombietrap", "tank",
             "duelist", "lancer", "camel", "sniper", "mahoraga", "shadowrogue", "flameelemental",
             "frostgolem", "voidcrawler", "stormcaller", "boneshield", "venomwitch",
-            "obsidianguard", "soulreaper", "chaosmage", "enderknight", "kinger"
+            "obsidianguard", "soulreaper", "chaosmage", "enderknight", "kinger", "disctrader"
     );
 
     public MSCCommand(MultiverseCreatures plugin, MobHandler mobHandler) {
@@ -150,12 +158,21 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            sendSpawnHelp(sender);
+            sendSpawnHelp(sender, 1);
             return;
         }
 
         Player p = (Player) sender;
         String type = args[1].toLowerCase();
+
+        if (type.equals("help")) {
+            sendSpawnHelp(sender, parseHelpPage(args, 2, sender));
+            return;
+        }
+        if (type.matches("\\d+")) {
+            sendSpawnHelp(sender, Integer.parseInt(type));
+            return;
+        }
 
         switch (type) {
             case "merchant" -> {
@@ -310,7 +327,12 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 if (success) sender.sendMessage(GREEN + "Spawned Kinger!");
                 else sender.sendMessage(RED + "Failed to spawn Kinger.");
             }
-            default -> sendSpawnHelp(sender);
+            case "disctrader" -> {
+                boolean success = plugin.getDiscTrader().trySpawn(p.getLocation());
+                if (success) sender.sendMessage(GREEN + "Spawned Disc Trader!");
+                else sender.sendMessage(RED + "Failed to spawn Disc Trader.");
+            }
+            default -> sendSpawnHelp(sender, 1);
         }
     }
 
@@ -321,13 +343,22 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            sendGiveHelp(sender);
+            sendGiveHelp(sender, 1);
             return;
         }
 
         Player target = (Player) sender;
         String itemName = args[1].toLowerCase();
         int amount = 1;
+
+        if (itemName.equals("help")) {
+            sendGiveHelp(sender, parseHelpPage(args, 2, sender));
+            return;
+        }
+        if (itemName.matches("\\d+")) {
+            sendGiveHelp(sender, Integer.parseInt(itemName));
+            return;
+        }
 
         if (args.length >= 3) {
             try {
@@ -363,6 +394,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "soulreapscythe", "scythe" -> SoulreapScythe.SOULREAP_SCYTHE.clone();
             case "venomfang", "dagger" -> Venomfang.VENOMFANG.clone();
             case "skyfiretalisman", "talisman" -> SkyfireTalisman.SKYFIRE_TALISMAN.clone();
+            case "sentinelgrimoire", "grimoire" -> SentinelGrimoire.GRIMOIRE.clone();
             // Armor
             case "eighthandledwheel", "wheel" -> EightHandledWheel.EIGHT_HANDLED_WHEEL.clone();
             case "obsidianbastionhelmet", "bastionhelmet" -> ObsidianBastion.HELMET.clone();
@@ -396,11 +428,17 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "wheelcore" -> WheelCore.WHEEL_CORE.clone();
             case "reapercore" -> ReaperCore.REAPER_CORE.clone();
             case "refinednetherite" -> RefinedNetherite.REFINED_NETHERITE.clone();
+            case "sentinelcore", "sentinel" -> SentinelCore.SENTINEL_CORE.clone();
+            case "multiversalcore", "multiverse" -> MultiversalCore.MULTIVERSAL_CORE.clone();
+            case "compressedgoldblock", "goldblock" -> CompressedGoldBlock.COMPRESSED_GOLD_BLOCK.clone();
+            case "moltenwheelcore", "moltenwheel" -> MoltenWheelCore.MOLTEN_WHEEL_CORE.clone();
+            case "moltennetherite", "molten" -> MoltenNetherite.MOLTEN_NETHERITE.clone();
+            case "refinedwheelcore", "refinedwheel" -> RefinedWheelCore.REFINED_WHEEL_CORE.clone();
             default -> null;
         };
 
         if (item == null) {
-            sendGiveHelp(sender);
+            sendGiveHelp(sender, 1);
             return;
         }
 
@@ -415,13 +453,14 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             return;
         }
         if (args.length < 2) {
-            sender.sendMessage(RED + "Usage: /msc music <play|stop|list> [name] [loop]");
+            sendMusicHelp(player);
             return;
         }
 
         var music = plugin.getMusicManager();
 
         switch (args[1].toLowerCase()) {
+            case "help" -> sendMusicHelp(player);
             case "play" -> {
                 if (args.length < 3) {
                     player.sendMessage(RED + "Usage: /msc music play <name> [loop]");
@@ -449,7 +488,16 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-            default -> player.sendMessage(RED + "Usage: /msc music <play|stop|list>");
+            case "disc" -> {
+                if (args.length < 3) {
+                    player.sendMessage(RED + "Usage: /msc music disc <name>");
+                    return;
+                }
+                ItemStack disc = MusicDisc.create(args[2], music);
+                player.getInventory().addItem(disc);
+                player.sendMessage(GREEN + "Received music disc: " + GOLD + music.getSongTitle(args[2]));
+            }
+            default -> sendMusicHelp(player);
         }
     }
 
@@ -459,11 +507,19 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             return;
         }
         if (args.length < 2) {
-            sendAttackHelp(player);
+            sendAttackHelp(player, 1);
             return;
         }
 
         String attackName = args[1].toLowerCase();
+        if (attackName.equals("help")) {
+            sendAttackHelp(player, parseHelpPage(args, 2, sender));
+            return;
+        }
+        if (attackName.matches("\\d+")) {
+            sendAttackHelp(player, Integer.parseInt(attackName));
+            return;
+        }
         double range = 100;
         if (args.length >= 3) {
             try {
@@ -512,11 +568,19 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            sendSealHelp(player);
+            sendSealHelp(player, 1);
             return;
         }
 
         String type = args[1].toLowerCase();
+        if (type.equals("help")) {
+            sendSealHelp(player, parseHelpPage(args, 2, sender));
+            return;
+        }
+        if (type.matches("\\d+")) {
+            sendSealHelp(player, Integer.parseInt(type));
+            return;
+        }
         final MagicSealListener.Plane plane;
         if (args.length >= 3) {
             switch (args[2].toLowerCase()) {
@@ -588,7 +652,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                 listener.spawnStormSeal(center, 120);
                 sender.sendMessage(GOLD + "Spawned Storm Seal for 6 seconds.");
             }
-            default -> sendSealHelp(player);
+            default -> sendSealHelp(player, 1);
         }
     }
 
@@ -710,7 +774,12 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            sendDummyHelp(player);
+            sendDummyHelp(player, 1);
+            return;
+        }
+
+        if (args[1].equalsIgnoreCase("help")) {
+            sendDummyHelp(player, parseHelpPage(args, 2, sender));
             return;
         }
 
@@ -726,23 +795,6 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             case "animate" -> dummyAnimate(player, args);
             default -> dummyAdjustPose(player, args);
         }
-    }
-
-    private void sendDummyHelp(Player player) {
-        player.sendMessage(GOLD + "--- Dummy ArmorStand Commands ---");
-        player.sendMessage(YELLOW + "/msc dummy spawn " + WHITE + "- Spawn a dummy armor stand (same scale/gear as boss)");
-        player.sendMessage(YELLOW + "/msc dummy remove " + WHITE + "- Remove your dummy");
-        player.sendMessage(YELLOW + "/msc dummy <part> <axis> <degrees> " + WHITE + "- Adjust pose incrementally");
-        player.sendMessage(YELLOW + "   " + GRAY + "Parts: rightarm, leftarm, body, head, rightleg, leftleg");
-        player.sendMessage(YELLOW + "   " + GRAY + "Axes: x (pitch), y (yaw), z (roll)");
-        player.sendMessage(YELLOW + "   " + GRAY + "Example: /msc dummy rightarm x 10  (adds 10° pitch)");
-        player.sendMessage(YELLOW + "/msc dummy set <part> <x> <y> <z> " + WHITE + "- Set exact pose in degrees");
-        player.sendMessage(YELLOW + "   " + GRAY + "Example: /msc dummy set rightarm -75 0 -15");
-        player.sendMessage(YELLOW + "/msc dummy wings " + WHITE + "- Add wing seal (gold) to your dummy");
-        player.sendMessage(YELLOW + "/msc dummy wings2 " + WHITE + "- Add wing seal 2 (red) to your dummy");
-        player.sendMessage(YELLOW + "/msc dummy nowings " + WHITE + "- Remove wing effects from your dummy");
-        player.sendMessage(YELLOW + "/msc dummy animate <anim> " + WHITE + "- Play a movement animation on your dummy");
-        player.sendMessage(YELLOW + "   " + GRAY + "Animations: flyup, land, airslam, shieldseal, healingcircle, rain, pentagram, triangle");
     }
 
     private void spawnDummy(Player player) {
@@ -1292,8 +1344,8 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(RED + "Only players can use this command.");
             return;
         }
-        if (args.length < 2) {
-            sender.sendMessage(RED + "Usage: /msc dimtp <world>");
+        if (args.length < 2 || args[1].equalsIgnoreCase("help")) {
+            sendDimtpHelp(player);
             return;
         }
         String worldName = args[1];
@@ -1337,86 +1389,148 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         sendLine(sender, "    &7" + description);
     }
 
-    private void sendCategory(CommandSender sender, String label, List<String> items) {
-        sendLine(sender, " &6&l" + label + "&8:");
-        StringBuilder line = new StringBuilder("   &7");
-        int width = 3;
-        for (int i = 0; i < items.size(); i++) {
-            String item = items.get(i);
-            int add = item.length() + 2;
-            if (i > 0 && width + add > 52) {
-                sendLine(sender, line.toString());
-                line.setLength(0);
-                line.append("   &7");
-                width = 3;
-            }
-            if (i > 0) line.append("&8·");
-            line.append("&f").append(item);
-            width += add;
-        }
-        sendLine(sender, line.toString());
-    }
+    private static final int HELP_LINES_PER_PAGE = 12;
 
-    private void sendItemList(CommandSender sender, String label, List<String> items) {
-        sendLine(sender, " &6&l" + label + "&8:");
-        for (String item : items) {
-            sendLine(sender, "   &e• &f" + item);
+    private void sendPaginatedMenu(CommandSender sender, String title, String usage, List<String> lines, int page, String navCommand) {
+        int totalPages = Math.max(1, (int) Math.ceil(lines.size() / (double) HELP_LINES_PER_PAGE));
+        page = Math.max(1, Math.min(page, totalPages));
+        sendMenuHeader(sender, title);
+        if (usage != null) {
+            sendLine(sender, " &7Usage: &e" + usage);
+            sendLine(sender, "");
         }
-    }
-
-    private void sendSpawnHelp(CommandSender sender) {
-        sendMenuHeader(sender, "MSC SPAWN");
-        sendLine(sender, " &7Usage: &e/msc spawn <type>");
-        sendLine(sender, "");
-        sendCategory(sender, "Entities", SPAWNABLE_ENTITIES);
+        int start = (page - 1) * HELP_LINES_PER_PAGE;
+        for (int i = start; i < Math.min(lines.size(), start + HELP_LINES_PER_PAGE); i++) {
+            sendLine(sender, lines.get(i));
+        }
         sendMenuFooter(sender);
+        if (totalPages > 1) {
+            String next = page < totalPages ? " &8· &7Use &e/msc " + navCommand + " help " + (page + 1) : "";
+            sendLine(sender, " &7Page &e" + page + "&7/&e" + totalPages + next);
+        }
     }
 
-    private void sendGiveHelp(CommandSender sender) {
-        sendMenuHeader(sender, "MSC GIVE");
-        sendLine(sender, " &7Usage: &e/msc give <item> [amount]");
-        sendLine(sender, "");
-        sendItemList(sender, "Food", Arrays.asList("scoobycookie"));
-        sendItemList(sender, "Weapons", Arrays.asList("excalibur", "aetherpullshot", "chaosforge",
-                "cindergreatsword", "nullshearedge", "soulreapscythe", "venomfang", "skyfiretalisman"));
-        sendItemList(sender, "Armor", Arrays.asList("eighthandledwheel", "obsidianbastionhelmet",
-                "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots"));
-        sendItemList(sender, "Equipables", Arrays.asList("diostand", "icecrown", "wirtslantern", "mantisclaws",
-                "militarymine", "frostheartoffhand", "marrowaegis", "veilwalkermantle"));
-        sendItemList(sender, "Components", Arrays.asList("starcore", "militarycomponent", "headslimeheart",
+    private int parseHelpPage(String[] args, int index, CommandSender sender) {
+        if (args.length > index) {
+            try {
+                int page = Integer.parseInt(args[index]);
+                if (page >= 1) {
+                    return page;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            sender.sendMessage(RED + "Invalid page. Use a number >= 1.");
+        }
+        return 1;
+    }
+
+    private List<String> categoryLines(String label, List<String> items) {
+        List<String> lines = new ArrayList<>();
+        lines.add(" &6&l" + label + "&8:");
+        for (String item : items) {
+            lines.add("   &e• &f" + item);
+        }
+        return lines;
+    }
+
+    private void sendSpawnHelp(CommandSender sender, int page) {
+        List<String> lines = new ArrayList<>();
+        lines.addAll(categoryLines("Entities", SPAWNABLE_ENTITIES));
+        sendPaginatedMenu(sender, "MSC SPAWN", "/msc spawn <type>", lines, page, "spawn");
+    }
+
+    private void sendGiveHelp(CommandSender sender, int page) {
+        List<String> lines = new ArrayList<>();
+        lines.addAll(categoryLines("Food", Arrays.asList("scoobycookie")));
+        lines.addAll(categoryLines("Weapons", Arrays.asList("excalibur", "aetherpullshot", "chaosforge",
+                "cindergreatsword", "nullshearedge", "soulreapscythe", "venomfang", "skyfiretalisman",
+                "sentinelgrimoire")));
+        lines.addAll(categoryLines("Armor", Arrays.asList("eighthandledwheel", "obsidianbastionhelmet",
+                "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots")));
+        lines.addAll(categoryLines("Equipables", Arrays.asList("diostand", "icecrown", "wirtslantern", "mantisclaws",
+                "militarymine", "frostheartoffhand", "marrowaegis", "veilwalkermantle")));
+        lines.addAll(categoryLines("Components", Arrays.asList("starcore", "militarycomponent", "headslimeheart",
                 "headslimegelatin", "chaosorb", "chaospowder", "chaosfragment", "chaoscore", "condensedchaosorb",
                 "enderfragment", "frostheart", "magmacore", "obsidianshard",
                 "reaperessence", "reinforcedbone", "shadowcloak", "stormcrystal", "venomgland", "voidessence",
                 "wheelessence", "wheelcore", "reapercore", "refinednetherite", "swordmold",
-                "reinforcedboneblock", "endercore"));
-        sendMenuFooter(sender);
+                "reinforcedboneblock", "endercore", "sentinelcore", "multiversalcore", "compressedgoldblock",
+                "moltenwheelcore", "moltennetherite", "refinedwheelcore")));
+        sendPaginatedMenu(sender, "MSC GIVE", "/msc give <item> [amount]", lines, page, "give");
     }
 
-    private void sendSealHelp(CommandSender sender) {
-        sendMenuHeader(sender, "MSC SEAL");
-        sendLine(sender, " &7Usage: &e/msc seal <pattern> [plane]");
-        sendLine(sender, "");
-        sendCategory(sender, "Patterns", Arrays.asList("pentagram", "triangle", "celestial", "circle",
-                "ring", "star", "floating", "wings", "wings2", "vortex", "quake", "divine", "storm"));
-        sendCategory(sender, "Planes", Arrays.asList("horizontal (default)", "vertical-north", "vertical-east"));
-        sendMenuFooter(sender);
+    private void sendSealHelp(CommandSender sender, int page) {
+        List<String> lines = new ArrayList<>();
+        lines.addAll(categoryLines("Patterns", Arrays.asList("pentagram", "triangle", "celestial", "circle",
+                "ring", "star", "floating", "wings", "wings2", "vortex", "quake", "divine", "storm")));
+        lines.addAll(categoryLines("Planes", Arrays.asList("horizontal (default)", "vertical-north", "vertical-east")));
+        sendPaginatedMenu(sender, "MSC SEAL", "/msc seal <pattern> [plane]", lines, page, "seal");
     }
 
-    private void sendAttackHelp(CommandSender sender) {
-        sendMenuHeader(sender, "MSC ATTACK");
-        sendLine(sender, " &7Usage: &e/msc attack <attack> [range]");
-        sendLine(sender, "");
-        sendCategory(sender, "Ground", Arrays.asList("groundslam", "groundshatter", "shieldbash", "lancestorm",
-                "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam"));
-        sendCategory(sender, "Aerial", Arrays.asList("starfall", "aerialrush", "sonicboom", "lightningstorm",
+    private void sendAttackHelp(CommandSender sender, int page) {
+        List<String> lines = new ArrayList<>();
+        lines.addAll(categoryLines("Ground", Arrays.asList("groundslam", "groundshatter", "shieldbash", "lancestorm",
+                "earthpillar", "chaingrapple", "warstomp", "armorspikes", "vortexpull", "mirrorimage", "doombeam")));
+        lines.addAll(categoryLines("Aerial", Arrays.asList("starfall", "aerialrush", "sonicboom", "lightningstorm",
                 "gravitywell", "crossslash", "novaburst", "darkorb", "windcutter", "heavenlyjudgment",
-                "rainoflances", "airslam", "hoverbarrage"));
-        sendCategory(sender, "Ranged", Arrays.asList("lancesnipe", "meteorstorm", "voidbeam", "frostlance",
+                "rainoflances", "airslam", "hoverbarrage")));
+        lines.addAll(categoryLines("Ranged", Arrays.asList("lancesnipe", "meteorstorm", "voidbeam", "frostlance",
                 "lightningspear", "shadowvolley", "chainlightning", "crystalbarrage", "arcaneorb", "voidrift",
-                "arcanemissiles", "spiritbeam"));
-        sendCategory(sender, "Defensive", Arrays.asList("stoneskin", "reflectbarrier", "absorbshield",
-                "shieldseal", "healingcircle", "trianglecall"));
+                "arcanemissiles", "spiritbeam")));
+        lines.addAll(categoryLines("Defensive", Arrays.asList("stoneskin", "reflectbarrier", "absorbshield",
+                "shieldseal", "healingcircle", "trianglecall")));
+        sendPaginatedMenu(sender, "MSC ATTACK", "/msc attack <attack> [range]", lines, page, "attack");
+    }
+
+    private void sendDummyHelp(Player player, int page) {
+        List<String> lines = new ArrayList<>();
+        lines.add(" &e&l/msc dummy spawn");
+        lines.add("    &7Spawn a dummy armor stand (same scale/gear as boss)");
+        lines.add(" &e&l/msc dummy remove");
+        lines.add("    &7Remove your dummy");
+        lines.add(" &e&l/msc dummy <part> <axis> <degrees>");
+        lines.add("    &7Adjust pose incrementally");
+        lines.add("    &7Parts: rightarm, leftarm, body, head, rightleg, leftleg");
+        lines.add("    &7Axes: x (pitch), y (yaw), z (roll)  ·  Ex: /msc dummy rightarm x 10");
+        lines.add(" &e&l/msc dummy set <part> <x> <y> <z>");
+        lines.add("    &7Set exact pose in degrees  ·  Ex: /msc dummy set rightarm -75 0 -15");
+        lines.add(" &e&l/msc dummy wings|wings2|nowings");
+        lines.add("    &7Add gold/red wing seal or remove wing effects");
+        lines.add(" &e&l/msc dummy animate <anim>");
+        lines.add("    &7Animations: flyup, land, airslam, shieldseal, healingcircle, rain, pentagram, triangle");
+        sendPaginatedMenu(player, "MSC DUMMY", "/msc dummy <action> [args]", lines, page, "dummy");
+    }
+
+    private void sendMusicHelp(CommandSender sender) {
+        sendMenuHeader(sender, "MSC MUSIC");
+        sendLine(sender, " &7Usage: &e/msc music <play|stop|list|disc> [name] [loop]");
+        sendLine(sender, "");
+        sendLine(sender, " &6&lActions&8:");
+        sendLine(sender, "   &e• &fplay <name> [loop]");
+        sendLine(sender, "      &7Play a song from plugins/MultiverseCreatures/music/ (.nbs)");
+        sendLine(sender, "   &e• &fstop");
+        sendLine(sender, "      &7Stop the song currently playing");
+        sendLine(sender, "   &e• &flist");
+        sendLine(sender, "      &7List all available songs");
+        sendLine(sender, "   &e• &fdisc <name>");
+        sendLine(sender, "      &7Get the jukebox music disc of a song");
         sendMenuFooter(sender);
+    }
+
+    private void sendDimtpHelp(Player player) {
+        sendMenuHeader(player, "MSC DIMTP");
+        sendLine(player, " &7Usage: &e/msc dimtp <world>");
+        sendLine(player, "");
+        sendLine(player, " &6&lInfo&8:");
+        sendLine(player, "   &e• &fworld");
+        sendLine(player, "      &7Teleport to a loaded dimension, keeping coordinates");
+        StringBuilder worlds = new StringBuilder();
+        for (World w : Bukkit.getWorlds()) {
+            if (worlds.length() > 0) worlds.append("&8, &f");
+            worlds.append(w.getName());
+        }
+        sendLine(player, "      &7Worlds: &f" + worlds);
+        sendMenuFooter(player);
     }
 
     private void sendHelp(CommandSender sender) {
@@ -1426,9 +1540,11 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
         sendCommandEntry(sender, "/msc seal <pattern> [plane]", "Spawn particle seals & battle effects.");
         sendCommandEntry(sender, "/msc attack <attack> [range]", "Trigger a registered boss attack on the nearest boss.");
         sendCommandEntry(sender, "/msc dummy", "Spawn and pose a test armor stand.");
-        sendCommandEntry(sender, "/msc music <play|stop|list> [name] [loop]", "Play .nbs music files.");
+        sendCommandEntry(sender, "/msc music <play|stop|list|disc> [name] [loop]", "Play .nbs music files or get a jukebox disc.");
         sendCommandEntry(sender, "/msc dimtp <world>", "Teleport between dimensions.");
         sendCommandEntry(sender, "/msc cleanstands", "Remove all custom plugin armor stands.");
+        sendLine(sender, "");
+        sendLine(sender, " &7&oTip: &e/msc <spawn|give|seal|attack|dummy> help [page]");
         sendMenuFooter(sender);
     }
 
@@ -1447,6 +1563,9 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                     .collect(Collectors.toList()));
         } else if (args.length == 2) {
             String subCmd = args[0].toLowerCase();
+            if (args[1].toLowerCase().startsWith("help")) {
+                completions.add("help");
+            }
             if (subCmd.equals("spawn")) {
                 List<String> entities = SPAWNABLE_ENTITIES;
                 completions.addAll(entities.stream()
@@ -1455,16 +1574,17 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             } else if (subCmd.equals("give")) {
                 List<String> items = Arrays.asList(
                         "scoobycookie", "excalibur", "icecrown", "wirtslantern", "starcore", "diostand", "mantisclaws", "militarycomponent", "militarymine", "headslimeheart", "headslimegelatin",
-                        "aetherpullshot", "chaosforge", "cindergreatsword", "nullshearedge", "soulreapscythe", "skyfiretalisman",
+                        "aetherpullshot", "chaosforge", "cindergreatsword", "nullshearedge", "soulreapscythe", "skyfiretalisman", "sentinelgrimoire", "venomfang",
                         "eighthandledwheel", "obsidianbastionhelmet", "obsidianbastionchestplate", "obsidianbastionleggings", "obsidianbastionboots",
                         "frostheartoffhand", "marrowaegis", "veilwalkermantle",
-                        "chaosorb", "chaospowder", "chaosfragment", "chaoscore", "condensedchaosorb", "enderfragment", "frostheart", "magmacore", "obsidianshard", "reaperessence", "reinforcedbone", "reinforcedboneblock", "endercore", "swordmold", "shadowcloak", "stormcrystal", "venomgland", "voidessence", "wheelessence"
+                        "chaosorb", "chaospowder", "chaosfragment", "chaoscore", "condensedchaosorb", "enderfragment", "frostheart", "magmacore", "obsidianshard", "reaperessence", "reinforcedbone", "reinforcedboneblock", "endercore", "swordmold", "shadowcloak", "stormcrystal", "venomgland", "voidessence", "wheelessence",
+                        "wheelcore", "reapercore", "refinednetherite", "sentinelcore", "sentinel", "multiversalcore", "multiverse", "compressedgoldblock", "goldblock", "moltenwheelcore", "moltenwheel", "moltennetherite", "molten", "refinedwheelcore", "refinedwheel"
                 );
                 completions.addAll(items.stream()
                         .filter(i -> i.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
             } else if (subCmd.equals("seal")) {
-                List<String> seals = Arrays.asList("pentagram", "triangle", "celestial", "circle", "ring", "star", "floating", "wings", "wings2");
+                List<String> seals = Arrays.asList("pentagram", "triangle", "celestial", "circle", "ring", "star", "floating", "wings", "wings2", "vortex", "quake", "divine", "storm");
                 completions.addAll(seals.stream()
                         .filter(s -> s.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
@@ -1479,7 +1599,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
                         .filter(a -> a.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
             } else if (subCmd.equals("music")) {
-                List<String> actions = Arrays.asList("play", "stop", "list");
+                List<String> actions = Arrays.asList("play", "stop", "list", "disc");
                 completions.addAll(actions.stream()
                         .filter(a -> a.startsWith(args[1].toLowerCase()))
                         .collect(Collectors.toList()));
@@ -1499,7 +1619,7 @@ public class MSCCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 3) {
             String subCmd = args[0].toLowerCase();
-            if (subCmd.equals("music") && args[1].equalsIgnoreCase("play")) {
+            if (subCmd.equals("music") && (args[1].equalsIgnoreCase("play") || args[1].equalsIgnoreCase("disc"))) {
                 var songs = plugin.getMusicManager().getSongNames();
                 completions.addAll(songs.stream()
                         .filter(s -> s.startsWith(args[2].toLowerCase()))

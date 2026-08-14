@@ -34,6 +34,7 @@ public class MobHandler implements Listener {
     private final Random random = new Random();
     private final MultiverseCreatures plugin;
 
+    private double spawnRateMultiplier;
     private double dioBossChance;
     private double mahoragaChance;
     private double obsidianGuardChance;
@@ -57,21 +58,22 @@ public class MobHandler implements Listener {
 
     public void reloadConfig() {
         var config = plugin.getConfig();
-        dioBossChance = config.getDouble("dio-boss.spawn-chance", 0.005);
-        mahoragaChance = config.getDouble("mahoraga.spawn-chance", 0.02);
-        obsidianGuardChance = config.getDouble("obsidian-guard.spawn-chance", 0.02);
-        headSlimeChance = config.getDouble("head-slime.spawn-chance", 0.1);
-        creeperJrChance = config.getDouble("creeper-jr.spawn-chance", 0.15);
-        shadowRogueChance = config.getDouble("shadow-rogue.spawn-chance", 0.05);
-        boneShieldChance = config.getDouble("bone-shield.spawn-chance", 0.06);
-        flameElementalChance = config.getDouble("flame-elemental.spawn-chance", 0.1);
-        frostGolemChance = config.getDouble("frost-golem.spawn-chance", 0.08);
-        voidCrawlerChance = config.getDouble("void-crawler.spawn-chance", 0.07);
-        stormCallerChance = config.getDouble("storm-caller.spawn-chance", 0.04);
-        venomWitchChance = config.getDouble("venom-witch.spawn-chance", 0.05);
-        soulReaperChance = config.getDouble("soul-reaper.spawn-chance", 0.05);
-        chaosMageChance = config.getDouble("chaos-mage.spawn-chance", 0.06);
-        enderKnightChance = config.getDouble("ender-knight.spawn-chance", 0.04);
+        spawnRateMultiplier = config.getDouble("general.spawn-rate-multiplier", 0.5);
+        dioBossChance = config.getDouble("dio-boss.spawn-chance", 0.005) * spawnRateMultiplier;
+        mahoragaChance = config.getDouble("mahoraga.spawn-chance", 0.02) * spawnRateMultiplier;
+        obsidianGuardChance = config.getDouble("obsidian-guard.spawn-chance", 0.02) * spawnRateMultiplier;
+        headSlimeChance = config.getDouble("head-slime.spawn-chance", 0.1) * spawnRateMultiplier;
+        creeperJrChance = config.getDouble("creeper-jr.spawn-chance", 0.15) * spawnRateMultiplier;
+        shadowRogueChance = config.getDouble("shadow-rogue.spawn-chance", 0.05) * spawnRateMultiplier;
+        boneShieldChance = config.getDouble("bone-shield.spawn-chance", 0.06) * spawnRateMultiplier;
+        flameElementalChance = config.getDouble("flame-elemental.spawn-chance", 0.1) * spawnRateMultiplier;
+        frostGolemChance = config.getDouble("frost-golem.spawn-chance", 0.08) * spawnRateMultiplier;
+        voidCrawlerChance = config.getDouble("void-crawler.spawn-chance", 0.07) * spawnRateMultiplier;
+        stormCallerChance = config.getDouble("storm-caller.spawn-chance", 0.04) * spawnRateMultiplier;
+        venomWitchChance = config.getDouble("venom-witch.spawn-chance", 0.05) * spawnRateMultiplier;
+        soulReaperChance = config.getDouble("soul-reaper.spawn-chance", 0.05) * spawnRateMultiplier;
+        chaosMageChance = config.getDouble("chaos-mage.spawn-chance", 0.06) * spawnRateMultiplier;
+        enderKnightChance = config.getDouble("ender-knight.spawn-chance", 0.04) * spawnRateMultiplier;
     }
 
     @EventHandler

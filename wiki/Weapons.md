@@ -109,7 +109,7 @@ A dagger distilled from the corrosive venom of a Venom Witch.
 | Unbreakable | Yes |
 
 - **Give:** `/msc give venomfang` (alias `dagger`)
-- **Craft:** from **Venom Gland** (dropped by Venom Witch) + Iron Ingot + Stick
+- **Craft:** from **Venom Gland** (dropped by Venom Witch) + Gold Block + Sword Mold + Stick
 - **Theme:** Multiverse (Venom Witch chain via Venom Gland)
 
 ---
@@ -181,3 +181,26 @@ A portable anvil laced with entropy. It cannot create — only twist what is alr
 
 - **Give:** `/msc give chaosforge`
 - **Theme:** Multiverse (Chaos Mage chain via Chaos Orb)
+
+---
+
+### Sentinel Grimoire
+
+> "Every universe answers to the one who reads."
+
+A forbidden tome bound with the leather of a fallen Sentinel. It holds 8 spell pages, each with its own original seal. `Shift + Right-Click` changes the page (action bar shows the selection), `Right-Click` casts the current spell.
+
+| Page | Spell | Effect | Cooldown |
+|---|---|---|---|
+| 1 | 🔥 Blazing Pentagram | Vertical flaming pentagram aimed at your target · 10 dmg + ignite in 3.5 blocks | 8 s |
+| 2 | 🗡️ Lance Rain | Runic triangle seal + rain of luminous lances · 12 dmg over 3 pulses | 7 s |
+| 3 | ⚡ Divine Judgment | Divine seal + 3 lightning strikes · 18 dmg total | 10 s |
+| 4 | ❌ Executioner's Mark | Red executioner's X over the target · explodes after 2.5 s (14 dmg + knock-up + blindness) | 10 s |
+| 5 | 🌀 Singular Vortex | Vortex seal that pulls enemies in · 8 dmg | 15 s |
+| 6 | 🌋 Earthquake | Quake seal · 10 dmg + launch into the air | 9 s |
+| 7 | 🛡️ Celestial Bulwark | Celestial seal · Absorption (4 hearts) + Resistance | 20 s |
+| 8 | ✨ Sentinel Aura | Invulnerability aura · immune to damage for 3.5 s | 45 s |
+
+- **Give:** `/msc give sentinelgrimoire` (alias `grimoire`)
+- **Recipe:** BOOK ×4 + Multiversal Core ×2 + Sentinel Core (see Recipes.md)
+- **Config:** damages/cooldowns under `grimoire:` in config.yml

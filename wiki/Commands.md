@@ -8,7 +8,7 @@ All commands use the **`/msc`** root. **Permission:** `msc.admin` (server OP by 
 /msc seal <pattern> [plane]    Render a particle seal pattern
 /msc dummy ...                 Spawn / pose / animate ArmorStand dummies
 /msc attack <name> [range]     Trigger an ArmorStandBoss attack/mechanic
-/msc music <play|stop|list>    Play / stop NBS songs
+/msc music <play|stop|list|disc>  Play / stop NBS songs, get a jukebox disc
 /msc dimtp <world>             Teleport across worlds
 /msc cleanstands               Remove all MSC-related armor stands
 ```
@@ -26,6 +26,7 @@ Summons a single entity (or a tactical formation) at the executor's location. Th
 | `merchant` | Multiverse Merchant ("Shaggy" Wandering Trader) |
 | `dio` | Dio Brando boss |
 | `mahoraga` | Mahoraga miniboss |
+| `kinger` | Kinger miniboss |
 | `armorstand` (`armorstandboss`) | THE OBSIDIAN SENTINEL final boss |
 | `creeperjr` | Creeper Jr. (×3 — spawns in trio) |
 | `headslime` | Head Slime |
@@ -46,6 +47,7 @@ Summons a single entity (or a tactical formation) at the executor's location. Th
 | `stormcaller` (`storm`) | Storm Caller |
 | `venomwitch` (`venom`) | Venom Witch |
 | `voidcrawler` (`void`) | Void Crawler |
+| `disctrader` | Disc Trader — librarian villager selling music discs |
 
 Details for each entity live in [Bosses](./Bosses.md) and [Creatures](./Creatures.md).
 
@@ -192,7 +194,7 @@ The full list and details are on the [Bosses wiki page](./Bosses.md).
 
 ---
 
-## /msc music <play|stop|list> [song] [loop]
+## /msc music <play|stop|list|disc> [song] [loop]
 
 Plays any `.nbs` file from `plugins/MultiverseCreatures/music/`. Songs are played via the `MusicManager` (note-block-stub protocol packets) to all nearby players within a configurable radius.
 
@@ -200,7 +202,10 @@ Plays any `.nbs` file from `plugins/MultiverseCreatures/music/`. Songs are playe
 /msc music list                List all songs in the music folder
 /msc music play Undertale-Megalovania true   Play (loop=true)
 /msc music stop                 Stop current song
+/msc music disc Megalovania     Give yourself the jukebox disc of a song
 ```
+
+`/msc music disc <song>` gives the matching jukebox disc — insert it in a jukebox to play the song, right-click with an empty hand to eject it. See [Music](./Music.md) for the bundled songs, credits and the Disc Trader.
 
 ---
 

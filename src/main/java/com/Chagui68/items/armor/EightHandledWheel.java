@@ -16,7 +16,7 @@ public class EightHandledWheel {
     public static final ItemStack EIGHT_HANDLED_WHEEL = new ItemStack(Material.NETHERITE_HELMET);
 
     public static final int MAX_CHARGES = 8;
-    public static final int CHARGE_REGEN_TICKS = 200;
+    public static final int CHARGE_REGEN_TICKS = 300;
     public static final int BLOCK_DURATION_TICKS = 160;
 
     public static final String CHARGES_KEY = "msc_wheel_charges";
@@ -36,7 +36,7 @@ public class EightHandledWheel {
             lore.add("");
             lore.add(ChatColor.WHITE + "Passive Effects:");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Holds up to " + ChatColor.GOLD + "8 charges");
-            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Each charge regenerates over " + ChatColor.GOLD + "10 seconds");
+            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Each charge regenerates over " + ChatColor.GOLD + "15 seconds");
             lore.add("");
             lore.add(ChatColor.AQUA + "Item Ability: " + ChatColor.WHITE + "Adaptation " + ChatColor.GRAY + "(Passive)");
             lore.add(ChatColor.GRAY + "  On receiving damage, consume " + ChatColor.GOLD + "1 charge " + ChatColor.GRAY + "to become");

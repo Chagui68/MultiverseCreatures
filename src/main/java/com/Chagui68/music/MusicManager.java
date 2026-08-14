@@ -3,6 +3,7 @@ package com.Chagui68.music;
 import com.Chagui68.MultiverseCreatures;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -188,6 +189,70 @@ public class MusicManager {
 
     public List<String> getSongNames() {
         return new ArrayList<>(songs.keySet());
+    }
+
+    public String getSongTitle(String songName) {
+        NBSSong song = songs.get(songName.toLowerCase());
+        if (song == null) return songName;
+        String title = song.getTitle();
+        if (title == null || title.trim().isEmpty()) {
+            title = prettifyKey(songName);
+        }
+        return title;
+    }
+
+    private static String prettifyKey(String key) {
+        String name = key.replace(".nbs", "").replace('_', ' ');
+        StringBuilder sb = new StringBuilder();
+        for (String word : name.split("\\s+")) {
+            if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0)))
+                  .append(word.substring(1)).append(' ');
+            }
+        }
+        return sb.toString().trim();
+    }
+
+    /**
+     * Plays a song at a world location to every player inside the given
+     * radius, repeating until the task is cancelled or the song ends (if
+     * loop is false). Used by jukebox music discs.
+     */
+    public BukkitTask playAt(String songName, Location loc, double radius, boolean loop) {
+        NBSSong song = songs.get(songName.toLowerCase());
+        if (song == null || loc.getWorld() == null) return null;
+
+        long period = Math.max(1, Math.round(20.0 / song.getSpeed()));
+        return new BukkitRunnable() {
+            int currentTick = 0;
+
+            @Override
+            public void run() {
+                if (loc.getWorld() == null) {
+                    cancel();
+                    return;
+                }
+                List<NBSSong.NoteEvent> notes = song.getNotesAtTick(currentTick);
+                if (!notes.isEmpty()) {
+                    double r2 = radius * radius;
+                    for (Player p : loc.getWorld().getPlayers()) {
+                        if (p.getLocation().distanceSquared(loc) <= r2) {
+                            for (NBSSong.NoteEvent note : notes) {
+                                playNote(p, note);
+                            }
+                        }
+                    }
+                }
+                currentTick++;
+                if (currentTick >= song.getLength()) {
+                    if (loop) {
+                        currentTick = 0;
+                    } else {
+                        cancel();
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0L, period);
     }
 
     public boolean isPlaying(Player player) {

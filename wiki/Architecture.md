@@ -26,6 +26,8 @@ src/main/java/com/Chagui68/
 │   │       ├── ground/                      11 ground attacks (shieldbash, groundslam, ...)
 │   │       └── ranged/                      12 ranged attacks (meteorstorm, spiritbeam, ...)
 │   ├── miniboss/                      DioBoss.java, Mahoraga.java
+│   ├── Kinger.java                    ♟️ chess-piece miniboss (ArmorStand + ItemDisplay suit)
+│   ├── DiscTrader.java                Librarian villager selling music discs
 │   └── handler/
 │       └── MobHandler.java            Natural-spawn router (registered externally)
 ├── items/
@@ -41,7 +43,8 @@ src/main/java/com/Chagui68/
 │       ├── melee/                     CinderGreatsword, Excalibur, NullshearEdge, SoulreapScythe
 │       └── ranged/                    AetherPullshot
 ├── listener/                          Bukkit event handlers (one per item/boss/relic system)
-├── music/                             NBS song playback: NBSSong, MusicManager
+├── music/                             NBS song playback: NBSSong, MusicManager, MusicDisc,
+│                                      DiscJukeboxHandler (jukebox discs)
 ├── ritual/                             Ritual structures & private boss dimension
 └── utils/
     ├── ItemBuilder.java               Fluent builder for ItemStacks (lore, PDC tags, enchants)
@@ -164,4 +167,5 @@ Dependencies (all `provided` by Paper/Purpur at runtime):
 | Mob spawn routing | `entities/handler/MobHandler.java` |
 | Player ability | `ability/FreezeAbility.java` |
 | Packet interception | `listener/MantisClawsHandler.java` |
-| Music engine | `music/NBSSong.java`, `music/MusicManager.java` |
+| Music engine | `music/NBSSong.java`, `music/MusicManager.java`, `music/MusicDisc.java` |
+| Jukebox discs | `listener/misc/DiscJukeboxHandler.java`, `entities/DiscTrader.java` |

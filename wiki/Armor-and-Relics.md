@@ -25,6 +25,7 @@ A crown carved from a fragment of the Eight-Handled Wheel that once turned again
 The wheel **learns the type of damage you take**, then adapts. Different damage causes have independent cooldowns.
 
 - **Give:** `/msc give eighthandledwheel` (alias `wheel`)
+- **Craft:** Refined Wheel Core (Wheel Essence → Wheel Core → *Blast Furnace* → Molten Wheel Core + Molten Netherite → Refined Wheel Core) + 4 Netherite Blocks (see [Recipes](./Recipes.md))
 - **Theme:** Jujutsu Kaisen (Mahoraga drop → Wheel Essence)
 
 ---

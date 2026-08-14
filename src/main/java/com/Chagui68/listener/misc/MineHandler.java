@@ -1,6 +1,7 @@
 package com.Chagui68.listener.misc;
 
 import com.Chagui68.MultiverseCreatures;
+import com.Chagui68.items.misc.MilitaryMine;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -18,6 +19,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,15 +75,31 @@ public class MineHandler implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.getBlock().getType() != Material.TNT) return;
+        if (!isMilitaryMine(event.getItemInHand())) return;
 
         Block block = event.getBlock();
         Location loc = block.getLocation();
 
         Material camouflage = determineCamouflage(block);
+        if (camouflage == Material.AIR) {
+            camouflage = Material.STONE;
+        }
         block.setType(camouflage);
+        // Some blocks (e.g. wall signs) break themselves when set without the
+        // support they need, leaving an invisible but still-armed mine. Fall back
+        // to stone so the mine stays visible.
+        if (block.getType() != camouflage) {
+            block.setType(Material.STONE);
+        }
 
         mineLocations.put(loc, Bukkit.createBlockData(Material.TNT));
+    }
+
+    private boolean isMilitaryMine(ItemStack item) {
+        if (item == null || item.getType() != Material.TNT) return false;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+        return meta.getPersistentDataContainer().has(MilitaryMine.MINE_KEY, PersistentDataType.INTEGER);
     }
 
     @EventHandler
@@ -156,12 +176,14 @@ public class MineHandler implements Listener {
 
     private boolean isValidCamouflage(Material type) {
         if (!type.isBlock() || type == Material.TNT) return false;
+        if (type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR) return false;
         if (UNCOPYABLE.contains(type)) return false;
 
         if (Tag.BUTTONS.isTagged(type)) return false;
         if (Tag.PRESSURE_PLATES.isTagged(type)) return false;
         if (Tag.RAILS.isTagged(type)) return false;
         if (Tag.SIGNS.isTagged(type)) return false;
+        if (Tag.WALL_SIGNS.isTagged(type)) return false;
         if (BANNERS.contains(type)) return false;
         if (HANGING_SIGNS.contains(type)) return false;
         if (Tag.BEDS.isTagged(type)) return false;

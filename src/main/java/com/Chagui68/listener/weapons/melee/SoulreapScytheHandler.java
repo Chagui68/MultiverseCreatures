@@ -11,12 +11,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +50,11 @@ public class SoulreapScytheHandler implements Listener {
         ItemStack main = p.getInventory().getItemInMainHand();
         if (!isScythe(main)) return;
         if (!(event.getEntity() instanceof LivingEntity target)) return;
+        // Only the scythe's own melee hits apply its mechanics. Re-dealt or
+        // secondary damage (e.g. Dio's stand re-deals its hits as THORNS with
+        // the player as the direct entity, which fires this same event type)
+        // must not trigger the drain again.
+        if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
 
         UUID uuid = p.getUniqueId();
         if (!inHit.add(uuid)) return;
@@ -56,7 +64,15 @@ public class SoulreapScytheHandler implements Listener {
             boolean inReap = reapEnds.getOrDefault(uuid, 0L) > now;
 
             int hpDrain = inReap ? SoulreapScythe.LIFESTEAL_HIT * 2 : SoulreapScythe.LIFESTEAL_HIT;
-            target.setHealth(Math.max(0, target.getHealth() - hpDrain));
+            // Deal the drain through the real damage pipeline instead of
+            // setHealth() so protective systems (e.g. the Eight-Handled Wheel)
+            // can adapt to it. THORNS bypasses armor, same as the old drain.
+            // The inHit guard above stops the resulting event from re-entering.
+            DamageSource drainSource = DamageSource.builder(DamageType.THORNS)
+                    .withCausingEntity(p)
+                    .withDirectEntity(p)
+                    .build();
+            target.damage(hpDrain, drainSource);
 
             double maxHealth = p.getAttribute(Attribute.MAX_HEALTH).getValue();
             double newHealth = Math.min(maxHealth, p.getHealth() + hpDrain);

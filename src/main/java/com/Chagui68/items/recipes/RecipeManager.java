@@ -6,6 +6,7 @@ import com.Chagui68.items.components.ChaosCore;
 import com.Chagui68.items.components.ChaosFragment;
 import com.Chagui68.items.components.ChaosOrb;
 import com.Chagui68.items.components.ChaosPowder;
+import com.Chagui68.items.components.CompressedGoldBlock;
 import com.Chagui68.items.components.CondensedChaosOrb;
 import com.Chagui68.items.components.EnderCore;
 import com.Chagui68.items.components.EnderFragment;
@@ -13,9 +14,14 @@ import com.Chagui68.items.components.FrostHeart;
 import com.Chagui68.items.components.HeadSlimeHeart;
 import com.Chagui68.items.components.MagmaCore;
 import com.Chagui68.items.components.MilitaryComponent;
+import com.Chagui68.items.components.MoltenNetherite;
+import com.Chagui68.items.components.MoltenWheelCore;
+import com.Chagui68.items.components.MultiversalCore;
 import com.Chagui68.items.components.ObsidianShard;
 import com.Chagui68.items.components.ReaperCore;
 import com.Chagui68.items.components.ReaperEssence;
+import com.Chagui68.items.components.RefinedWheelCore;
+import com.Chagui68.items.components.SentinelCore;
 import com.Chagui68.items.components.RefinedNetherite;
 import com.Chagui68.items.components.ReinforcedBone;
 import com.Chagui68.items.components.ReinforcedBoneBlock;
@@ -33,6 +39,7 @@ import com.Chagui68.items.misc.offhand.FrostHeartOffhand;
 import com.Chagui68.items.misc.offhand.MarrowAegis;
 import com.Chagui68.items.misc.offhand.VeilwalkerMantle;
 import com.Chagui68.items.weapons.magic.ChaosForge;
+import com.Chagui68.items.weapons.magic.SentinelGrimoire;
 import com.Chagui68.items.weapons.magic.SkyfireTalisman;
 import com.Chagui68.items.weapons.melee.CinderGreatsword;
 import com.Chagui68.items.weapons.melee.NullshearEdge;
@@ -43,6 +50,8 @@ import com.Chagui68.items.weapons.ranged.AetherPullshot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.BlastingRecipe;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 
@@ -71,6 +80,9 @@ public class RecipeManager {
         registerVeilwalkerMantle();
         registerCinderGreatsword();
         registerObsidianBastion();
+        registerCompressedGoldBlock();
+        registerMultiversalCore();
+        registerSentinelGrimoire();
     }
 
     private static NamespacedKey key(String name) {
@@ -199,7 +211,7 @@ public class RecipeManager {
         Bukkit.addRecipe(recipe);
     }
 
-    // Wheel Core (intermediate component) -> Eight-Handled Wheel (high tier)
+    // Wheel Core -> Molten (blast furnace) -> Refined Wheel Core -> Eight-Handled Wheel (very high tier)
     private static void registerEightHandledWheel() {
         ShapedRecipe coreRecipe = new ShapedRecipe(key("wheel_core"), WheelCore.WHEEL_CORE.clone());
         coreRecipe.shape("WDW", "DED", "WDW");
@@ -208,10 +220,36 @@ public class RecipeManager {
         coreRecipe.setIngredient('E', Material.NETHER_STAR);
         Bukkit.addRecipe(coreRecipe);
 
+        RecipeChoice wheelCoreChoice = new RecipeChoice.MaterialChoice(WheelCore.WHEEL_CORE.getType());
+
+        BlastingRecipe moltenCore = new BlastingRecipe(key("molten_wheel_core_blast"), MoltenWheelCore.MOLTEN_WHEEL_CORE.clone(),
+                wheelCoreChoice, 0.5f, 100);
+        Bukkit.addRecipe(moltenCore);
+
+        FurnaceRecipe moltenCoreFurnace = new FurnaceRecipe(key("molten_wheel_core_furnace"), MoltenWheelCore.MOLTEN_WHEEL_CORE.clone(),
+                wheelCoreChoice, 0.5f, 100);
+        Bukkit.addRecipe(moltenCoreFurnace);
+
+        RecipeChoice netheriteChoice = new RecipeChoice.MaterialChoice(RefinedNetherite.REFINED_NETHERITE.getType());
+
+        BlastingRecipe moltenNetherite = new BlastingRecipe(key("molten_netherite_blast"), MoltenNetherite.MOLTEN_NETHERITE.clone(),
+                netheriteChoice, 0.5f, 100);
+        Bukkit.addRecipe(moltenNetherite);
+
+        FurnaceRecipe moltenNetheriteFurnace = new FurnaceRecipe(key("molten_netherite_furnace"), MoltenNetherite.MOLTEN_NETHERITE.clone(),
+                netheriteChoice, 0.5f, 100);
+        Bukkit.addRecipe(moltenNetheriteFurnace);
+
+        ShapedRecipe refinedMix = new ShapedRecipe(key("refined_wheel_core"), RefinedWheelCore.REFINED_WHEEL_CORE.clone());
+        refinedMix.shape("AB");
+        refinedMix.setIngredient('A', new RecipeChoice.ExactChoice(MoltenWheelCore.MOLTEN_WHEEL_CORE.clone()));
+        refinedMix.setIngredient('B', new RecipeChoice.ExactChoice(MoltenNetherite.MOLTEN_NETHERITE.clone()));
+        Bukkit.addRecipe(refinedMix);
+
         ShapedRecipe recipe = new ShapedRecipe(key("eight_handled_wheel"), EightHandledWheel.EIGHT_HANDLED_WHEEL.clone());
-        recipe.shape("WCW", "C C", "C C");
-        recipe.setIngredient('W', new RecipeChoice.ExactChoice(WheelCore.WHEEL_CORE.clone()));
-        recipe.setIngredient('C', Material.NETHERITE_INGOT);
+        recipe.shape(".N.", "NWN", ".N.");
+        recipe.setIngredient('N', Material.NETHERITE_BLOCK);
+        recipe.setIngredient('W', new RecipeChoice.ExactChoice(RefinedWheelCore.REFINED_WHEEL_CORE.clone()));
         Bukkit.addRecipe(recipe);
     }
 
@@ -285,11 +323,21 @@ public class RecipeManager {
         Bukkit.addRecipe(recipe);
     }
 
+    // Compressed Gold Block (intermediate component) -> Refined Netherite
+    private static void registerCompressedGoldBlock() {
+        ShapedRecipe recipe = new ShapedRecipe(key("compressed_gold_block"), CompressedGoldBlock.COMPRESSED_GOLD_BLOCK.clone());
+        recipe.shape("GGG", "GGG", "GGG");
+        recipe.setIngredient('G', Material.GOLD_BLOCK);
+        Bukkit.addRecipe(recipe);
+    }
+
     // Refined Netherite (intermediate component) -> Obsidian Bastion set (very high tier)
     private static void registerObsidianBastion() {
         ShapedRecipe refinedRecipe = new ShapedRecipe(key("refined_netherite"), RefinedNetherite.REFINED_NETHERITE.clone());
-        refinedRecipe.shape("NNN", "NNN", "NNN");
+        refinedRecipe.shape("SNS", "NGN", "SNS");
+        refinedRecipe.setIngredient('S', new RecipeChoice.ExactChoice(StarCore.STAR_CORE.clone()));
         refinedRecipe.setIngredient('N', Material.NETHERITE_SCRAP);
+        refinedRecipe.setIngredient('G', new RecipeChoice.ExactChoice(CompressedGoldBlock.COMPRESSED_GOLD_BLOCK.clone()));
         Bukkit.addRecipe(refinedRecipe);
 
         RecipeChoice refinedChoice = new RecipeChoice.ExactChoice(RefinedNetherite.REFINED_NETHERITE.clone());
@@ -318,5 +366,25 @@ public class RecipeManager {
         boots.setIngredient('O', new RecipeChoice.ExactChoice(ObsidianShard.OBSIDIAN_SHARD.clone()));
         boots.setIngredient('N', refinedChoice);
         Bukkit.addRecipe(boots);
+    }
+
+    // Sentinel Core (boss drop) -> Multiversal Core (apex component)
+    private static void registerMultiversalCore() {
+        ShapedRecipe recipe = new ShapedRecipe(key("multiversal_core"), MultiversalCore.MULTIVERSAL_CORE.clone());
+        recipe.shape("NSN", "SRS", "NSN");
+        recipe.setIngredient('N', new RecipeChoice.ExactChoice(RefinedNetherite.REFINED_NETHERITE.clone()));
+        recipe.setIngredient('S', new RecipeChoice.ExactChoice(StarCore.STAR_CORE.clone()));
+        recipe.setIngredient('R', new RecipeChoice.ExactChoice(SentinelCore.SENTINEL_CORE.clone()));
+        Bukkit.addRecipe(recipe);
+    }
+
+    // Sentinel Grimoire (apex weapon): Multiversal Core + Sentinel Core + books
+    private static void registerSentinelGrimoire() {
+        ShapedRecipe recipe = new ShapedRecipe(key("sentinel_grimoire"), SentinelGrimoire.GRIMOIRE.clone());
+        recipe.shape(".B.", "MSM", ".B.");
+        recipe.setIngredient('B', Material.BOOK);
+        recipe.setIngredient('M', new RecipeChoice.ExactChoice(MultiversalCore.MULTIVERSAL_CORE.clone()));
+        recipe.setIngredient('S', new RecipeChoice.ExactChoice(SentinelCore.SENTINEL_CORE.clone()));
+        Bukkit.addRecipe(recipe);
     }
 }

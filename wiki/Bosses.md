@@ -1,6 +1,6 @@
 # 🐉 Bosses
 
-MultiverseCreatures includes **one final boss** and **two minibosses**. All bosses are spawned via `/msc spawn <type>` (OP-only) and have configurable health/damage/cooldowns in `config.yml`.
+MultiverseCreatures includes **one final boss** and **three minibosses**. All bosses are spawned via `/msc spawn <type>` (OP-only) and have configurable health/damage/cooldowns in `config.yml`.
 
 ---
 
@@ -127,3 +127,33 @@ Outfit: white stained-glass helmet + white leather armor (unbreakable).
 **MSC friendly-fire protection:** if both damager and target carry any `MSC_` scoreboard tag, the damage event is cancelled — Mahoraga cannot harm other MSC mobs (and vice versa).
 
 **Drops:** 75% chance **Wheel Essence**. 150 XP. Custom player-death messages via `mahoraga.death-messages`.
+
+---
+
+## ♟️ Kinger — Miniboss (The Amazing Digital Circus)
+
+A living chess king: an invisible 2.0-scale ArmorStand dressed in a 15-piece ItemDisplay suit (base, legs, torso, collar, belt, arms, head and ornament) that walks, fights and tracks players like a chess piece come to life.
+
+| Stat | Default |
+|---|---|
+| Health | `kinger.health` (120) |
+| Aggro range | `kinger.aggro-range` (25 blocks) |
+| Move speed | `kinger.move-speed` (0.32) |
+| Melee range / radius / damage | `kinger.melee-range` (3) · `kinger.melee-radius` (3.5) · `kinger.melee-damage` (8) |
+| Ranged range / damage | `kinger.ranged-range` (30) · `kinger.ranged-damage` (6) |
+| Cooldowns | melee 25 ticks · ranged 45 ticks |
+| Spawn | `/msc spawn kinger` — **or** place an ArmorStand |
+| ArmorStand replacement | `kinger.spawn-on-armorstand-chance` (1.0 = every placed ArmorStand becomes Kinger; set to 0 to disable) — respects `kinger.enabled` |
+
+### AI behaviour
+
+- **Chases** the nearest player within aggro range (walks at `move-speed`, snaps to the ground) and **faces** the target while tracking its head pitch.
+- **Melee** (≤3 blocks): purple dust + smoke burst, `melee-damage` to all players within the melee radius, with a 1.3-velocity knockback.
+- **Ranged** (>3 and ≤30 blocks): fires a **ShulkerBullet** from the right hand (`MSC_KingerBullet`) with a shulker shoot sound.
+- **Animations**: walking sway, melee wind-up and ranged cast poses on the suit parts.
+
+**Boss bar:** purple "Kinger" bar, always updated with current health.
+
+**Persistence:** tagged `MSC_Kinger`, so it survives plugin reloads and is picked up again on startup.
+
+**Death:** removes all suit displays and broadcasts one of the chess-themed `kinger.death-messages` ("checked by the King", "knocked off the board", "lost the game"...).

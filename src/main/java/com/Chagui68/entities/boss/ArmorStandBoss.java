@@ -3,6 +3,7 @@ package com.Chagui68.entities.boss;
 import com.Chagui68.entities.BossInstance;
 import com.Chagui68.entities.boss.MagicSealListener;
 import com.Chagui68.entities.boss.attack.BossAttack;
+import com.Chagui68.items.components.SentinelCore;
 import com.Chagui68.entities.boss.attack.aerial.AerialRushAttack;
 import com.Chagui68.entities.boss.attack.aerial.AirSlamAttack;
 import com.Chagui68.entities.boss.attack.aerial.CrossSlashAttack;
@@ -2050,6 +2051,11 @@ public class ArmorStandBoss implements Listener {
 
         event.getDrops().clear();
         event.setDroppedExp(1000);
+
+        double dropChance = plugin.getConfig().getDouble("armor-stand-boss.sentinel-core-drop-chance", 100.0);
+        if (dropChance > 0.0 && Math.random() * 100.0 < dropChance) {
+            event.getDrops().add(SentinelCore.SENTINEL_CORE.clone());
+        }
 
         stand.getWorld().strikeLightningEffect(stand.getLocation());
         stand.getWorld().playSound(stand.getLocation(), Sound.ENTITY_WITHER_DEATH, 1.5f, 0.5f);

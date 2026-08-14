@@ -224,6 +224,12 @@ public class HeadSlime implements Listener {
             plugin.getLogger().info("[HeadSlime] Tracking target: " + target.getName());
         }
 
+        // The player consumed gelatin mid-chase: drop the target and pick another.
+        if (target instanceof Player p && immunePlayers.contains(p.getUniqueId())) {
+            inst.targetId = findNearestTarget(slime);
+            return;
+        }
+
         double distSq = slime.getLocation().distanceSquared(target.getLocation());
 
         if (distSq > leapRange * leapRange * 4) {
@@ -251,7 +257,8 @@ public class HeadSlime implements Listener {
         return slime.getVehicle() == null
                 && target.getPassengers().isEmpty()
                 && !target.isDead()
-                && target.isValid();
+                && target.isValid()
+                && (!(target instanceof Player p) || !immunePlayers.contains(p.getUniqueId()));
     }
 
     private void tickAttached(HeadSlimeInstance inst) {
@@ -479,7 +486,8 @@ public class HeadSlime implements Listener {
                     && p.getGameMode() != GameMode.CREATIVE
                     && p.getGameMode() != GameMode.SPECTATOR
                     && !p.isDead()
-                    && p.isOnline();
+                    && p.isOnline()
+                    && !immunePlayers.contains(p.getUniqueId());
 
             if (!isTarget && targetEntities && entity instanceof Monster) {
                 Set<String> tags = entity.getScoreboardTags();

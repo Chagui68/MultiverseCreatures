@@ -9,6 +9,7 @@ import com.Chagui68.entities.Kinger;
 import com.Chagui68.entities.BoneShield;
 import com.Chagui68.entities.ChaosMage;
 import com.Chagui68.entities.CreeperJr;
+import com.Chagui68.entities.DiscTrader;
 import com.Chagui68.entities.miniboss.DioBoss;
 import com.Chagui68.entities.EnderKnight;
 import com.Chagui68.entities.FlameElemental;
@@ -29,9 +30,11 @@ import com.Chagui68.listener.bossdimension.BossDimensionCommandHandler;
 import com.Chagui68.listener.bossdimension.BossInvocationManager;
 import com.Chagui68.listener.combat.ItemCombatHandler;
 import com.Chagui68.listener.CustomItemPlaceHandler;
+import com.Chagui68.listener.ComponentEventGuard;
 import com.Chagui68.listener.dio.DioStandHandler;
 import com.Chagui68.listener.entities.EntitiesIAHandler;
 import com.Chagui68.listener.food.ItemFoodHandler;
+import com.Chagui68.listener.misc.DiscJukeboxHandler;
 import com.Chagui68.listener.misc.IceCrownHandler;
 import com.Chagui68.listener.misc.MantisClawsHandler;
 import com.Chagui68.listener.misc.MineHandler;
@@ -42,6 +45,7 @@ import com.Chagui68.listener.offhand.VeilwalkerMantleHandler;
 import com.Chagui68.listener.recipes.RecipeGuardListener;
 import com.Chagui68.listener.ritual.RitualCandleListener;
 import com.Chagui68.listener.weapons.magic.ChaosForgeHandler;
+import com.Chagui68.listener.weapons.magic.GrimoireHandler;
 import com.Chagui68.listener.weapons.magic.SkyfireTalismanHandler;
 import com.Chagui68.listener.weapons.melee.CinderGreatswordHandler;
 import com.Chagui68.listener.weapons.melee.NullshearEdgeHandler;
@@ -80,6 +84,8 @@ public class MultiverseCreatures extends JavaPlugin {
     private ChaosMage chaosMage;
     private EnderKnight enderKnight;
     private Kinger kinger;
+    private DiscTrader discTrader;
+    private DiscJukeboxHandler discJukeboxHandler;
 
     @Override
     public void onEnable() {
@@ -109,6 +115,7 @@ public class MultiverseCreatures extends JavaPlugin {
         chaosMage = new ChaosMage(this);
         enderKnight = new EnderKnight(this);
         kinger = new Kinger(this);
+        discTrader = new DiscTrader(this);
 
         bossDimensionManager = new BossDimensionManager(this);
 
@@ -145,7 +152,11 @@ public class MultiverseCreatures extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AetherPullshotHandler(this), this);
         getServer().getPluginManager().registerEvents(new ChaosForgeHandler(), this);
         getServer().getPluginManager().registerEvents(new VenomfangHandler(), this);
+        getServer().getPluginManager().registerEvents(new GrimoireHandler(this), this);
         getServer().getPluginManager().registerEvents(new CustomItemPlaceHandler(), this);
+        getServer().getPluginManager().registerEvents(new ComponentEventGuard(), this);
+        discJukeboxHandler = new DiscJukeboxHandler(this);
+        getServer().getPluginManager().registerEvents(discJukeboxHandler, this);
 
         com.Chagui68.commands.MSCCommand mscCommand = new com.Chagui68.commands.MSCCommand(this, mobHandler);
         getCommand("msc").setExecutor(mscCommand);
@@ -156,6 +167,9 @@ public class MultiverseCreatures extends JavaPlugin {
     public void onDisable() {
         if (musicManager != null) {
             musicManager.stopAll();
+        }
+        if (discJukeboxHandler != null) {
+            discJukeboxHandler.stopAll();
         }
         if (ritualManager != null) {
             ritualManager.stopAllRituals();
@@ -260,5 +274,9 @@ public class MultiverseCreatures extends JavaPlugin {
 
     public Kinger getKinger() {
         return kinger;
+    }
+
+    public DiscTrader getDiscTrader() {
+        return discTrader;
     }
 }

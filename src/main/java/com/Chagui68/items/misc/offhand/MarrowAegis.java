@@ -1,5 +1,9 @@
 package com.Chagui68.items.misc.offhand;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.BlocksAttacks;
+import io.papermc.paper.datacomponent.item.blocksattacks.DamageReduction;
+import io.papermc.paper.datacomponent.item.blocksattacks.ItemDamageFunction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,6 +20,12 @@ public class MarrowAegis {
     public static final ItemStack MARROW_AEGIS = new ItemStack(Material.SHIELD);
 
     public static final double REFLECT_FRACTION = 0.5;
+    /**
+     * Fraction of the incoming hit that the aegis blocks. Kept below 1.0 on
+     * purpose: a fully-blocked hit skips the vanilla damage tick on modern
+     * Paper (no EntityDamageEvent fires), so the reflect would never trigger.
+     */
+    public static final float BLOCK_FRACTION = 0.5f;
     public static final long RECHARGE_COOLDOWN_MS = 15000L;
     public static final int EFFECT_DURATION_TICKS = 140;
 
@@ -31,8 +41,8 @@ public class MarrowAegis {
             lore.add(ChatColor.GRAY + "imbued with the marrowguard's resolve.");
             lore.add("");
             lore.add(ChatColor.WHITE + "Passive Effects:");
-            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Blocking reflects " + ChatColor.RED + "50% " + ChatColor.GRAY + "of incoming");
-            lore.add(ChatColor.GRAY + "    damage as " + ChatColor.DARK_RED + "true damage " + ChatColor.GRAY + "to the attacker");
+            lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Blocking absorbs " + ChatColor.RED + "50% " + ChatColor.GRAY + "of incoming");
+            lore.add(ChatColor.GRAY + "    damage and reflects the " + ChatColor.DARK_RED + "full hit back");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "On a successful block, grants " + ChatColor.GOLD + "Resistance II");
             lore.add(ChatColor.GRAY + "    and " + ChatColor.GOLD + "Strength I " + ChatColor.GRAY + "for " + ChatColor.GOLD + "7 seconds");
             lore.add(ChatColor.YELLOW + "  ▸ " + ChatColor.GRAY + "Effect cooldown: " + ChatColor.GOLD + "15 seconds");
@@ -46,6 +56,28 @@ public class MarrowAegis {
             meta.getPersistentDataContainer().set(MARROW_KEY, PersistentDataType.INTEGER, 1);
             meta.setUnbreakable(true);
             MARROW_AEGIS.setItemMeta(meta);
+
+            BlocksAttacks vanilla = Material.SHIELD.getDefaultData(DataComponentTypes.BLOCKS_ATTACKS);
+            if (vanilla != null) {
+                BlocksAttacks custom = BlocksAttacks.blocksAttacks()
+                        .blockDelaySeconds(vanilla.blockDelaySeconds())
+                        .disableCooldownScale(vanilla.disableCooldownScale())
+                        .damageReductions(List.of(DamageReduction.damageReduction()
+                                .horizontalBlockingAngle(180f)
+                                .base(0f)
+                                .factor(BLOCK_FRACTION)
+                                .build()))
+                        .itemDamage(ItemDamageFunction.itemDamageFunction()
+                                .threshold(0f)
+                                .base(0f)
+                                .factor(0f)
+                                .build())
+                        .bypassedBy(vanilla.bypassedBy())
+                        .blockSound(vanilla.blockSound())
+                        .disableSound(vanilla.disableSound())
+                        .build();
+                MARROW_AEGIS.setData(DataComponentTypes.BLOCKS_ATTACKS, custom);
+            }
         }
     }
 }

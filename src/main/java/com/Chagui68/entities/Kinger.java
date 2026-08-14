@@ -28,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -169,6 +170,7 @@ public class Kinger implements Listener {
     private int rangedCooldownTicks;
     private int meleeAnimTicks = 12;
     private int rangedAnimTicks = 20;
+    private double armorStandChance;
 
     public Kinger(MultiverseCreatures plugin) {
         this.plugin = plugin;
@@ -192,6 +194,18 @@ public class Kinger implements Listener {
         rangedCooldownTicks = config.getInt("kinger.ranged-cooldown-ticks", 45);
         meleeAnimTicks = config.getInt("kinger.melee-anim-ticks", 12);
         rangedAnimTicks = config.getInt("kinger.ranged-anim-ticks", 20);
+        armorStandChance = config.getDouble("kinger.spawn-on-armorstand-chance", 1.0);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onArmorStandPlace(EntityPlaceEvent event) {
+        if (event.getEntityType() != EntityType.ARMOR_STAND) return;
+        if (event.getPlayer() == null) return;
+        if (!plugin.getConfig().getBoolean("kinger.enabled", true)) return;
+        if (random.nextDouble() >= armorStandChance) return;
+        Location loc = event.getEntity().getLocation();
+        event.setCancelled(true);
+        trySpawn(loc);
     }
 
     private void reloadExisting() {

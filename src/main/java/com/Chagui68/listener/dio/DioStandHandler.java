@@ -11,7 +11,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -19,6 +21,8 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
@@ -174,14 +178,25 @@ public class DioStandHandler implements Listener {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!isHoldingStand(player)) return;
 
+        // The real damage is re-dealt below through a THORNS source with the
+        // player as direct entity, so CraftBukkit fires this same event type
+        // again. Without this guard the re-dealt hit would re-enter here,
+        // recursing until a StackOverflowError, and it would also zero the
+        // event before systems like the Eight-Handled Wheel could adapt.
+        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
+
         if (!(event.getEntity() instanceof LivingEntity target)) return;
 
         double rawDamage = event.getDamage();
         event.setDamage(0);
-        if (target instanceof Player p) {
-            p.setHealth(Math.max(0, p.getHealth() - rawDamage));
-        } else {
-            target.setHealth(Math.max(0, target.getHealth() - rawDamage));
+        // Deal the true damage through the real damage pipeline (THORNS bypasses
+        // armor) so protective systems like the Eight-Handled Wheel can adapt to it.
+        if (!event.isCancelled()) {
+            DamageSource source = DamageSource.builder(DamageType.THORNS)
+                    .withCausingEntity(player)
+                    .withDirectEntity(player)
+                    .build();
+            target.damage(rawDamage, source);
         }
 
         long now = System.currentTimeMillis();
@@ -236,13 +251,19 @@ public class DioStandHandler implements Listener {
                     leftArm = !leftArm;
 
                     if (target.isValid()) {
-                        if (target instanceof Player p) {
-                            p.setHealth(Math.max(0, p.getHealth() - standDamage));
-                        } else {
-                            target.setHealth(Math.max(0, target.getHealth() - standDamage));
+                        DamageSource source = DamageSource.builder(DamageType.THORNS)
+                                .withCausingEntity(player)
+                                .withDirectEntity(player)
+                                .build();
+                        // damage() returns void in this API, so a health change
+                        // is used to detect blocked hits (e.g. cancelled by the
+                        // Eight-Handled Wheel) and skip their impact effects.
+                        double before = target.getHealth();
+                        target.damage(standDamage, source);
+                        if (target.getHealth() < before) {
+                            target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 10, 0.3, 0.5, 0.3, 0.1);
+                            target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 0.8f, 1.2f);
                         }
-                        target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 10, 0.3, 0.5, 0.3, 0.1);
-                        target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 0.8f, 1.2f);
                     }
                 }
 
@@ -254,6 +275,12 @@ public class DioStandHandler implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        ItemStack helm = player.getInventory().getHelmet();
+        if (DioStandHead.isDioStandHead(helm)) {
+            player.getInventory().setHelmet(null);
+            player.getInventory().addItem(helm);
+            player.sendMessage(ChatColor.RED + "Dio's Stand Head cannot be worn as a helmet!");
+        }
         if (hasStandInInventory(player)) {
             ArmorStand stand = spawnStandFor(player);
             if (stand != null) {
@@ -301,6 +328,13 @@ public class DioStandHandler implements Listener {
         ItemStack current = event.getCurrentItem();
 
         if (DioStandHead.isDioStandHead(cursor) || DioStandHead.isDioStandHead(current)) {
+            // Shift-clicks can smuggle the head into the helmet slot, bypassing the
+            // direct-click checks below.
+            if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
+                event.setCancelled(true);
+                player.sendMessage(ChatColor.RED + "This item cannot be worn as a helmet!");
+                return;
+            }
             if (event.getClickedInventory() != null && event.getClickedInventory().getType() == InventoryType.CRAFTING) {
                 int slot = event.getSlot();
                 if (slot == 5 || slot == 6 || slot == 7 || slot == 8) {

@@ -21,9 +21,12 @@ Drop sources — for each component, the mob and chance:
 | **Head Slime Heart** `§a§lHead Slime Heart` (SLIME_BALL) | Head Slime | always (100%) | Slime Kingdom |
 | **Military Component** `§a§lMilitary Component` (GUNPOWDER) | each ZombieHorseTrap unit | 30% (`zombie-horse-trap.military-component-drop-chance`) | Military |
 | **Star Core** `§e§lStar Core` (NETHER_STAR) | special / "from a superior entity" | — | Multiverse |
-| **Wheel Core** `§6§lWheel Core` (MUSIC_DISC_OTHERSIDE) | crafted from **Wheel Essence** + Diamond Block + Nether Star | — | Multiverse (JJK) |
+| **Wheel Core** `§6§lWheel Core` (MUSIC_DISC_OTHERSIDE) | crafted from **Wheel Essence** + Diamond Block + Nether Star; **must be smelted in a Blast Furnace** | — | Multiverse (JJK) |
+| **Molten Wheel Core** `§6§lMolten Wheel Core` (BLAZE_POWDER) | **Blast Furnace**: 1 Wheel Core (100 ticks, 0.5 XP) | — | Multiverse (JJK) |
+| **Molten Netherite** `§8§lMolten Netherite` (ANCIENT_DEBRIS) | **Blast Furnace**: 1 Refined Netherite (100 ticks, 0.5 XP) | — | Multiverse |
+| **Refined Wheel Core** `§6§lRefined Wheel Core` (MUSIC_DISC_OTHERSIDE) | crafted from **Molten Wheel Core** + **Molten Netherite** | — | Multiverse (JJK) |
 | **Reaper Core** `§0§lReaper Core` (WITHER_ROSE) | crafted from **Reaper Essence** + Soul Sand + Nether Star | — | Multiverse |
-| **Refined Netherite** `§8§lRefined Netherite` (NETHERITE_INGOT) | crafted from **9 Netherite Scrap** | — | Multiverse |
+| **Refined Netherite** `§8§lRefined Netherite` (NETHERITE_INGOT) | crafted from **4 Star Core** (corners) + **4 Netherite Scrap** (sides) + **Compressed Gold Block** (center, 9 Gold Blocks) | — | Multiverse |
 
 Each component is just a `msc_<name>` tagged ingredient — it does **nothing on its own**, but it's required to craft the corresponding legendary item.
 
@@ -47,9 +50,10 @@ Obsidian Guard ─► Obsidian Shard► Obsidian Bastion (4-piece set)
 Head Slime ─► Head Slime Heart ─► Head Slime Gelatin (food)
 ZombieHorseTrap ─► Military Comp► Military Mine (camouflaged TNT)
 Superior entity ─► Star Core ───► Excalibur (and beyond...)
-Mahoraga ─► Wheel Essence ─► Wheel Core ─► Eight-Handled Wheel (helmet)
+Mahoraga ─► Wheel Essence ─► Wheel Core ─► [Blast Furnace] Molten Wheel Core ─► Refined Wheel Core ─► Eight-Handled Wheel (helmet)
+Refined Netherite ─► [Blast Furnace] Molten Netherite ─► (mixed with Molten Wheel Core)
 Soul Reaper ─► Reaper Essence ─► Reaper Core ─► Soulreap Scythe
-Obsidian Guard ─► Obsidian Shard + Refined Netherite (9 Scrap) ─► Obsidian Bastion
+Obsidian Guard ─► Obsidian Shard + Refined Netherite (4 Star Core + 4 Scrap + Compressed Gold Block) ─► Obsidian Bastion
 ```
 
 ---
@@ -75,6 +79,9 @@ You can hand yourself any component directly for testing:
 /msc give militarycomponent (alias: component)
 /msc give starcore          (alias: star)
 /msc give wheelcore
+/msc give moltenwheelcore   (alias: moltenwheel)
+/msc give moltennetherite   (alias: molten)
+/msc give refinedwheelcore  (alias: refinedwheel)
 /msc give reapercore
 /msc give refinednetherite
 ```
